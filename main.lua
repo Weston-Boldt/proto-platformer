@@ -1,6 +1,9 @@
 require("player")
 require("mainmenu")
-require("ingame") WIDTH = 256
+require("ingame")
+require("config")
+require("util")
+WIDTH = 256
 HEIGHT = 200
 
 local MAX_FRAMETIME = 1/20
@@ -52,4 +55,16 @@ function love.keypressed(k, uni)
 end
 
 function love.textinput(text)
+end
+
+function updateKeys()
+    for action, key in pairs(config_keys) do
+        if love.keyboard.isDown(key) then
+            keystate[action] = true
+        else
+            keystate[action] = false
+        end
+    end
+
+    -- todo check joystick stuff
 end
