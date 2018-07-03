@@ -11,6 +11,11 @@ local MIN_FRAMETIME = 1/60
 
 
 STATE_MAIN_MENU,STATE_INGAME = 0,1
+local AXIS_COOLDOWN = 0.2
+local xacc = 0
+local yacc = 0
+local xacccool = 0
+local yacccool = 0
 
 gamestates = {
     [STATE_MAIN_MENU]=mainmenu,
@@ -24,6 +29,10 @@ state = nil;
 function love.load()
     love.graphics.setBackgroundColor(0, 0, 0)
     love.graphics.setDefaultFilter("nearest", "nearest")
+    local sw = love.graphics.getWidth()/WIDTH/3
+    local sh = love.graphics.getHeight()/HEIGHT/3
+    love.graphics.scale(sw,sh)
+
 
     mainmenu.enter()
 end
@@ -38,6 +47,14 @@ function love.update(dt)
         deltaTimeToShow = dt
     end
     timesHit = timesHit + 1
+    if xacccool > 0 then
+        xacccool = xacccool - dt
+    end
+    if yacccool > 0 then
+        yacccool = yacccool - dt
+    end
+    gamestates[state].update(dt)
+
     gamestates[state].update(dt)
 end
 

@@ -6,6 +6,7 @@ Player = {
     -- todo fixme calibrate
     corners = {-6, 5, -22, -0.5} 
 }
+-- local PLAYER_WIDTH, PLAYER_HEIGHT = 16, 22
 LEFT = -1
 RIGHT = 1
 PS_RUN, PS_CLIMB, PS_CARRY, PS_THROW, PS_DEAD = 0,1,2,3,4 -- Player states
@@ -76,6 +77,9 @@ function Player:updateRunning(dt)
             changedDir = true
         end 
     end
+
+    -- cap speed
+    self.xspeed = cap(self.xspeed, -MAX_SPEED, MAX_SPEED)
 
     if self.xspeed < 0 then
         self.xspeed = self.xspeed + math.max(dt*BRAKE_SPEED, self.xspeed)
