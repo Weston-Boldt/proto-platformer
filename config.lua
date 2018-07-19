@@ -1,5 +1,5 @@
 config_keys = {
-    up = "up", down = "down", left = "left", right = "right", jump = "s", shoot = "d", action = "a"
+    up = "up", down = "down", left = "left", right = "right", jump = "d", shoot = "s", action = "a"
 }
 
 keynames = {"up","down","left","right","jump","shoot","action"}

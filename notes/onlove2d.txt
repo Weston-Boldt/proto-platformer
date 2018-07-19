@@ -1,0 +1,1 @@
+looks like to decide how big you want the character to be you need to resize the actual image itself

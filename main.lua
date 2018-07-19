@@ -3,8 +3,13 @@ require("mainmenu")
 require("ingame")
 require("config")
 require("util")
-WIDTH = 256
-HEIGHT = 200
+require("map")
+
+-- libs
+bump = require 'libs.bump.bump'
+
+WIDTH = 640
+HEIGHT = 480
 
 local MAX_FRAMETIME = 1/20
 local MIN_FRAMETIME = 1/60
@@ -31,6 +36,7 @@ function love.load()
     love.graphics.setDefaultFilter("nearest", "nearest")
     local sw = love.graphics.getWidth()/WIDTH/3
     local sh = love.graphics.getHeight()/HEIGHT/3
+    love.window.setMode(WIDTH, HEIGHT)
     love.graphics.scale(sw,sh)
 
 
