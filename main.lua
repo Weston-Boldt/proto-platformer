@@ -16,6 +16,10 @@ local MIN_FRAMETIME = 1/60
 
 
 STATE_MAIN_MENU,STATE_INGAME = 0,1
+
+-- init deltatime at 0
+-- just to hopefully ignore a race condition
+DeltaTime = 0
 local AXIS_COOLDOWN = 0.2
 local xacc = 0
 local yacc = 0
@@ -43,24 +47,23 @@ function love.load()
     mainmenu.enter()
 end
 
-local timesHit = 0;
-local deltaTimeToSHow = 0;
+-- This is a different example code because touching the default love.run is not necessary (in the no vsync scenario), and mine is a bit more specifically tailored... so this is a bit more minimal.
+-- function love.update(dt)
+--   accumulator = accumulator + dt
+--   if accumulator >= tickPeriod then
+--     -- Here be your fixed timestep.
+--     acumulator = accumulator - tickPeriod
+--   end
+-- end
+-- love.draw's case is more complex.
+
 function love.update(dt)
-    if timesHit > 100 then
-        timesHit = 0
-    end
-    if timesHit % 20 == 0 then
-        deltaTimeToShow = dt
-    end
-    timesHit = timesHit + 1
     if xacccool > 0 then
         xacccool = xacccool - dt
     end
     if yacccool > 0 then
         yacccool = yacccool - dt
     end
-    gamestates[state].update(dt)
-
     gamestates[state].update(dt)
 end
 
