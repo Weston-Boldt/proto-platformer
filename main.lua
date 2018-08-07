@@ -8,6 +8,7 @@ require("map")
 -- libs
 bump = require 'libs.bump.bump'
 
+TILE_SIZE = 32
 WIDTH = 640
 HEIGHT = 480
 
@@ -68,6 +69,18 @@ function love.update(dt)
 end
 
 function love.draw()
+    local lg = love.graphics;
+    lg.setLineStyle('rough')
+    for x = 1, WIDTH do
+        if x % TILE_SIZE == 0 then
+            lg.line(x, -HEIGHT, x, HEIGHT);
+        end 
+    end
+    for y = -1, -HEIGHT, -1 do
+        if y % TILE_SIZE == 0 then
+            lg.line(-WIDTH, -y, WIDTH, -y);
+        end
+    end
     -- love.graphics.print(deltaTimeToShow)
     -- love.graphics.print(timesHit)
     gamestates[state].draw()
