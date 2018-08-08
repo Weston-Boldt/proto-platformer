@@ -31,7 +31,7 @@ function Map.create(level, player)
     -- map.file = file;
     -- todo make a function to load map assets
     self.world:add(
-        self.file.ground0, 120, 360, 640, 16
+        self.file.ground0, 128, 352, 640, 32
     )
     self.world:add(
         self.file.ground1, 0, 448, 640, 32

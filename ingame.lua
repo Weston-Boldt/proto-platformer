@@ -10,6 +10,8 @@ section = 0;
 local lg = love.graphics
 function ingame.enter()
     state = STATE_INGAME
+    translate_x, translate_y = 0, 0
+
     player = Player.create(startx,starty,level)
     map = Map.create(level, player)
     print(map)
@@ -19,11 +21,14 @@ end
 function ingame.update(dt)
     updateKeys()
     player:update(dt)
+    translate_x = cap(player.x-WIDTH/2, 0, WIDTH)
+    translate_y = cap(player.y-HEIGHT/2, 0, HEIGHT)
     map:update(dt)
 end
 
 function ingame.draw()
     -- #love.graphics.print("test")
+    lg.translate(-math.floor(translate_x), -math.floor(translate_y))
     player:draw()
     map:draw()
 end

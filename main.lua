@@ -9,7 +9,7 @@ require("map")
 bump = require 'libs.bump.bump'
 
 TILE_SIZE = 32
-WIDTH = 640
+WIDTH = 640 
 HEIGHT = 480
 
 local MAX_FRAMETIME = 1/20

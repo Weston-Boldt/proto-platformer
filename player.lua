@@ -30,7 +30,7 @@ function Player.create(x,y,level)
     self.y = y
     self.xspeed = 0
     self.yspeed = 0
-    self.xacc = 55
+    self.xacc = 50
     self.friction = 10
     self.gravity = NORMAL_GRAVITY
     self.hasReachedMax = false
@@ -66,20 +66,20 @@ function Player:updateRunning(dt)
                          (both and self.lastDir == RIGHT)
     local walkingLeft = (not both and keystate.left) or
                         (both and self.lastDir == LEFT)
-    if walkingRight then
+    self.xspeed = self.xspeed * (1 - math.min(dt * self.friction, 1))
+    if walkingRight and self.xspeed > -MAX_SPEED then
         self.xspeed = self.xspeed + self.xacc*dt
         if self.dir == LEFT then
             self.dir = RIGHT
             changedDir = true
         end
-    elseif walkingLeft then
+    elseif walkingLeft and self.xspeed < MAX_SPEED then
         self.xspeed = self.xspeed - self.xacc*dt
         if self.dir == RIGHT then
             self.dir = LEFT
             changedDir = true
         end 
     end
-    self.xspeed = self.xspeed * (1 - math.min(dt * self.friction, 1))
     -- end
 
     -- cap speed
@@ -234,7 +234,7 @@ end
 
 function Player:draw()
     -- lg.draw(self.img, self.x, self.y,0,1,1,self.img:getWidth(),self.img:getHeight())
-    lg.draw(self.img, self.x, self.y)
+    lg.draw(self.img, math.floor(self.x), math.floor(self.y))
     lg.print(self.actionName)
     lg.print("\nx="..self.x.."\t\t\txspeed="..self.xspeed)
     lg.print("\n\ny="..self.y.."\t\t\tyspeed="..self.yspeed)
