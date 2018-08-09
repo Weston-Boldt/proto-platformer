@@ -1,6 +1,13 @@
-Player = {
+local Class = require'libs.hump.class'
+local Entity = require'entity'
+Player = Class{
+    --[[
+    corners = {
+        -6, 5, -22, -0.5,
+    }; -- why does this need a semi colon
+    --]]
+    __includes = Entity
     -- todo fixme calibrate
-    corners = {-6, 5, -22, -0.5} 
 }
 
 -- local PLAYER_WIDTH, PLAYER_HEIGHT = 16, 22 LEFT = -1
@@ -18,14 +25,19 @@ local JUMP_TIME_MAX = 0.5
 local lg = love.graphics
 Player.__index = Player
 
-function Player.create(x,y,level)
-    local self = setmetatable({}, Player)
+function Player:init(x,y, level)
+
+    local img = love.graphics.newImage('assets/character_block.png')
+    local w = img:getWidth()
+    local h = img:getHeight()
+
+    Entity.init(self,x,y,w,h)
+    self.img = img
+    -- local self = setmetatable({}, Player)
     -- todo fixme
     --      actually idk what needs to be fixed here,
     --      maybe it was a comment on how i don't just want a green
     --      block as the player character ?
-    self.img = love.graphics.newImage('assets/character_block.png')
-
     self.x = x
     self.y = y
     self.xspeed = 0
@@ -55,6 +67,9 @@ function Player.create(x,y,level)
     self.timesJumped = 0
 
     return self
+end
+
+function Player.create(x,y,level)
 end
 
 function Player:updateRunning(dt)
@@ -202,6 +217,18 @@ function Player:jump()
     --    end 
     -- self.onGround = false
 end
+
+--[[
+function player:collisionFilter(other)
+    local x, y, w, h = self.world:getRect(other)
+    local playerBottom = self.y + self.h
+    local otherBottom = y + h
+
+    if playerBottom <= y then -- bottom of player collides with top of platform.
+        return 'slide'
+    end
+end
+--]]
 
 function Player:update(dt)
     -- reset shooting

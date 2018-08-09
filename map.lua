@@ -8,11 +8,11 @@ local lg = love.graphics
 function Map.create(level, player)
     local self = setmetatable({}, Map)  
     local levelFileName = "map"..level..".lua";
-    print(levelFileName)
+    -- print(levelFileName)
     -- file = require "maps."..levelFileName
     self.file = love.filesystem.load("maps/"..levelFileName)()
-    print(self.file.ground0)
-    print(self.file.ground1)
+    -- print(self.file.ground0)
+    -- print(self.file.ground1)
     
     -- love.filesystem.load("maps/map0.lua")
     self.world = bump.newWorld(16) 

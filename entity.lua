@@ -21,3 +21,9 @@ end
 function Entity:draw()
     -- does nothing but jic we call update on an object inherited by entity
 end
+
+function Entity:test()
+    print("hello from entity class")
+end
+
+return Entity

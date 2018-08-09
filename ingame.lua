@@ -12,9 +12,10 @@ function ingame.enter()
     state = STATE_INGAME
     translate_x, translate_y = 0, 0
 
-    player = Player.create(startx,starty,level)
+    -- player = Player.create(startx,starty,level)
+    player = Player:init(startx, starty)
     map = Map.create(level, player)
-    print(map)
+    -- print(map)
     ingame.newgame()
 end
 
@@ -27,7 +28,6 @@ function ingame.update(dt)
 end
 
 function ingame.draw()
-    -- #love.graphics.print("test")
     lg.translate(-math.floor(translate_x), -math.floor(translate_y))
     player:draw()
     map:draw()

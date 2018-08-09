@@ -1,6 +1,6 @@
 local Class = require'libs.hump.class'
 local Entity = require'entity'
-local lg = love.graphics
+-- local lg = love.graphics
 
 local Ground = Class{
     -- inherit entity
@@ -15,5 +15,7 @@ end
 
 function Ground:draw()
     -- place holder
-    lg.rectangle('fill', self.getRect())
+--     lg.rectangle('fill', self.getRect())
 end
+
+return Ground
