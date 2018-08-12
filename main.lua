@@ -4,9 +4,11 @@ require("ingame")
 require("config")
 require("util")
 require("map")
+require("resources")
 
 -- libs
 bump = require 'libs.bump.bump'
+anim8 = require 'libs.anim8.anim8'
 
 TILE_SIZE = 32
 WIDTH = 640 
@@ -39,6 +41,9 @@ state = nil;
 function love.load()
     love.graphics.setBackgroundColor(0, 0, 0)
     love.graphics.setDefaultFilter("nearest", "nearest")
+
+    loadResources()
+
     local sw = love.graphics.getWidth()/WIDTH/3
     local sh = love.graphics.getHeight()/HEIGHT/3
     love.window.setMode(WIDTH, HEIGHT)
@@ -71,6 +76,7 @@ end
 function love.draw()
     local lg = love.graphics;
     lg.setLineStyle('rough')
+    --[[
     for x = 1, WIDTH do
         if x % TILE_SIZE == 0 then
             lg.line(x, -HEIGHT, x, HEIGHT);
@@ -81,6 +87,7 @@ function love.draw()
             lg.line(-WIDTH, -y, WIDTH, -y);
         end
     end
+    --]]
     -- love.graphics.print(deltaTimeToShow)
     -- love.graphics.print(timesHit)
     gamestates[state].draw()

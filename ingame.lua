@@ -1,11 +1,18 @@
-ingame = {}
+entities = require'entities'
+ingame = {
+}
+
+TEST_LEVEL = 0;
+LEVEL_START = 1;
 -- todo fixme
--- fill these out
+-- PLACEHOLDER VALUES
 startx = 40;
 starty = 40;
-level = 0;
--- idk if i even want sections yet!
-section = 0;
+level = TEST_LEVEL;
+map = LEVEL_START;
+
+local TILE_HEIGHT = 32
+local TILE_WIDTH = 32
 
 local lg = love.graphics
 function ingame.enter()
@@ -14,20 +21,30 @@ function ingame.enter()
 
     -- player = Player.create(startx,starty,level)
     player = Player:init(startx, starty)
-    map = Map.create(level, player)
+    map = Map.create(level, map,player)
+    entities:add(player)
+    entities:add(player.hitBox)
     -- print(map)
     ingame.newgame()
 end
 
 function ingame.update(dt)
+    -- print("entities length"..tostring(#entities.entityList))
+    --print("hitbox entities length"..tostring(#hitboxEntities.entityList))
     updateKeys()
-    player:update(dt)
+    entities:update(dt)
+    map:update(dt)
+    -- player:update(dt)
     -- translate_x = cap(player.x-WIDTH/2, 0, WIDTH)
-    local mapWidth = map.mapData.width * map.mapData.tilewidth
+    --[[
+    print("map.width = "..tostring(map.width))
+    print("map.mapData.width = "..tostring(map.mapData.width))
+    --]]
+    -- local mapWidth = map.width
+    -- local mapWidth = map.mapData.width * map.mapData.tilewidth
+    local mapWidth = map.width * TILE_WIDTH
     local halfScreen = WIDTH / 2
-    print("map width = "..tostring(mapWidth) .. "player.x = "..tostring(player.x))
-    --  TODO FACTOR ME
-    --  these values probably dont need to be global
+
     if player.x < (mapWidth - halfScreen) then
         translate_x = cap(
             player.x - halfScreen, 0, mapWidth
@@ -39,7 +56,6 @@ function ingame.update(dt)
     end
     -- translate_y = cap(player.y-HEIGHT/2, 0, HEIGHT)
     translate_y = player.y-HEIGHT/2
-    map:update(dt)
 end
 
 function ingame.draw()

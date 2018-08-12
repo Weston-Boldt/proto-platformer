@@ -1,5 +1,7 @@
 local Class = require'libs.hump.class'
 local Entity = require'entity'
+local HitBox = require'components.hitbox'
+
 Player = Class{
     --[[
     corners = {
@@ -14,6 +16,14 @@ Player = Class{
 LEFT = -1
 RIGHT = 1
 PS_RUN, PS_CLIMB, PS_CARRY, PS_THROW, PS_DEAD = 0,1,2,3,4 -- Player states
+
+PLAYER_WIDTH = 32
+PLAYER_HEIGHT = 64
+-- give the player a bit of edge room when being attacked
+-- but still want to collide normally with the map
+HITBOX_WIDTH = PLAYER_WIDTH * .75 
+HITBOX_HEIGHT = PLAYER_HEIGHT
+
 local GD_UP, GD_HORIZONTAL, GD_DOWN = 0,2,4 -- Gun directions
 
 local NORMAL_GRAVITY=80
@@ -33,11 +43,6 @@ function Player:init(x,y, level)
 
     Entity.init(self,x,y,w,h)
     self.img = img
-    -- local self = setmetatable({}, Player)
-    -- todo fixme
-    --      actually idk what needs to be fixed here,
-    --      maybe it was a comment on how i don't just want a green
-    --      block as the player character ?
     self.x = x
     self.y = y
     self.xspeed = 0
@@ -56,25 +61,30 @@ function Player:init(x,y, level)
 
     self.jumping = false;
     self.state = PS_RUN
+    self.actionName = "";
+    self.hitBox = HitBox;
+    self.hitBox:init(
+        self,
+        self.x,
+        self.y,
+        HITBOX_HEIGHT,  
+        HITBOX_WIDTH
+    )
+    --[[
     self.gundir = GD_HORIZONTAL
     self.shooting = false
     self.bulletStreamLength = 0
     self.streamCollided = false
-    self.actionName = "";
     self.bulletQuad = love.graphics.newQuad(
         0, 0, 10, 10, 16, 17
     )
     self.timesJumped = 0
-
+    --]]
     return self
-end
-
-function Player.create(x,y,level)
 end
 
 function Player:updateRunning(dt)
     local changedDir = false
-    -- chcek if both direction keys are pressed
     local both = keystate.right and keystate.left
 
     local walkingRight = (not both and keystate.right) or
@@ -95,44 +105,21 @@ function Player:updateRunning(dt)
             changedDir = true
         end 
     end
-    -- end
 
-    -- cap speed
     self.xspeed = cap(self.xspeed, -MAX_SPEED, MAX_SPEED);
-    -- self.x = self.x + self.xspeed*dt
     goalX = self.x + self.xspeed
-    -- if collideX(self) == true then
-    -- end
 
     self.yspeed = self.yspeed * (1 - math.min(dt * self.friction, 1))
-    -- Move in y axis
-    -- check for collisions
-    -- self.y = self.y + self.yspeed*dt
-    -- if love.keyboard.isDown(config_keys.jump) then 
     if not self.onGround then
         print("not on the ground")
         if self.jumping then
             print("jumping so should be jumping")
             self:updateJumping(dt)
         end
-        --[[
-        lg.print("\n\n\n\n\n\n\nupdating jump");
-        print("not on ground so adding gravity")
-        if self.jumping then
-            print("jumping so should be updating jump")
-            self:updateJumping(dt)
-        end
-        self.yspeed = self.yspeed + self.gravity*dt
-    else
-        self.gravity = NORMAL_GRAVITY
-        self.yspeed = 0
-        --]]
     end
     
     self.yspeed = self.yspeed + self.gravity *dt
-    -- self.xspeed = cap(self.xspeed, -MAX_SPEED, MAX_SPEED)
 
-    
     goalY = self.y + self.yspeed
     self.x, self.y, collisions = map.world:move(self, goalX, goalY)
 
@@ -141,11 +128,6 @@ function Player:updateRunning(dt)
             print("first if check");
             player.hasReachedMax = true
             self.onGround = false
-        -- elseif coll.touch.y < goalY and self.jumping then
-        --     print("second if check");
-        --     self.jumping = false
-        --     player.hasReachedMax = true
-        --     self.onGround = false
         elseif coll.normal.y < 0 then
             self.jumping = false
             player.hasReachedMax = false
@@ -154,14 +136,6 @@ function Player:updateRunning(dt)
             self.jump_time = JUMP_TIME_MAX
         end
     end
-    --[[
-    if self.y >= 500 then
-        self.y = 500
-        self.yspeed = 0
-        self.timesJumped = 0
-        self.onGround = true
-    end
-    -- ]]
 end
 
 function Player:updateJumping(dt)
@@ -174,94 +148,28 @@ function Player:updateJumping(dt)
         print("jump speed is gonna  = "..targetJumpSpeed.."\n")
         self.yspeed = self.yspeed - targetJumpSpeed
     end
-    --[[
-    if -self.yspeed < MAX_JUMP and not self.hasReachedMax then
-        self.gravity = 0;
-        print("self yspeed is less than < MAX_JUMP")
-        local targetJumpSpeed = self.jumpAcc*dt;
-        print("jump speed is gonna  = "..targetJumpSpeed.."\n")
-        self.yspeed = self.yspeed - targetJumpSpeed
-    elseif math.abs(self.yspeed) > MAX_JUMP then
-        self.gravity = NORMAL_GRAVITY
-        print("has reached max\n");
-        self.hasReachedMax = true
-    end
-    --]]
-    --[[
-    print("before self.yspeed = "..self.yspeed.." max_jump="..MAX_JUMP)
-    if -self.yspeed < MAX_JUMP and not self.hasReachedMax then
-        print('not hit max_jump');
-        self.yspeed = self.yspeed - self.jumpAcc* dt
-        -- self.gravity = self.gravity * .5
-        self.gravity = 50;
-        print("after yspeed = "..self.yspeed)
-    end
-    if math.abs(self.yspeed) > MAX_JUMP then
-        print('hit max_jump');
-        self.gravity = 100
-        self.hasReachedMax = true
-    end
-    print("after self.yspeed = "..self.yspeed.." max_jump="..MAX_JUMP)
-    --]]
 end
 
 function Player:jump()
     self.jumping = true
     self.onGround = false
     self.yspeed = self.yspeed - self.jumpAcc
-    --    if self.onGround == true --[[ and self.state ~= PS_DEAD --]] or
-    --    self.onGround == false and self.timesJumped < 2 then
-    --        self.timesJumped = self.timesJumped + 1
-    --        self.onGround = false
-    --        self.yspeed = -JUMP_POWER
-    --    end 
-    -- self.onGround = false
 end
-
---[[
-function player:collisionFilter(other)
-    local x, y, w, h = self.world:getRect(other)
-    local playerBottom = self.y + self.h
-    local otherBottom = y + h
-
-    if playerBottom <= y then -- bottom of player collides with top of platform.
-        return 'slide'
-    end
-end
---]]
 
 function Player:update(dt)
     -- reset shooting
-    self.shooting = false
+    -- self.shooting = false
     -- first update states
     if self.state == PS_RUN then
         self:updateRunning(dt)
     end
-    -- Cap speeds
-    --[[
-    if self.xspeed < 0 then
-        self.xspeed = self.xspeed + math.max(dt*BRAKE_SPEED, self.xspeed)
-    elseif self.xspeed > 0 then
-        self.xspeed = self.xspeed - math.min(dt*BRAKE_SPEED, self.xspeed)
-    end
-    --]]
 
-    -- check for collisions
-    --[[
-    if collideX(self) == true then
-        self.xspeed = -1.0*self.xspeed
-    end
-    --]]
-    --[[
-    if collideY(self) == true then
-        self.yspeed = 0
-    end
-    --]]
+    self.hitBox:update(dt)
 end
 
 function Player:draw()
-    -- lg.draw(self.img, self.x, self.y,0,1,1,self.img:getWidth(),self.img:getHeight())
     lg.draw(self.img, math.floor(self.x), math.floor(self.y))
+    --[[
     lg.print(self.actionName)
     lg.print("\nx="..self.x.."\t\t\txspeed="..self.xspeed)
     lg.print("\n\ny="..self.y.."\t\t\tyspeed="..self.yspeed)
@@ -282,6 +190,7 @@ function Player:draw()
     lg.print("\n\n\n\n\nself.actionName="..self.actionName)
     lg.print("\n\n\n\n\n\njumping="..tostring(self.jumping).."\n")
     lg.print("\n\n\n\n\n\n\ngravity="..tostring(self.gravity).."\n\n")
+    --]]
 end
 
 function Player:action(actionName)

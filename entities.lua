@@ -1,3 +1,23 @@
+--[[
+todo instantiate this
+local Class = require'libs.hump.class'
+-- collection of entities for a map to have (or world)
+-- thanks osm stuidios tutorial
+Entities = Class{
+}
+
+function Entities:init()
+    self.active = true
+    self.map = nil
+    self.entityList = {}
+    return self
+end
+local Class = require'libs.hump.class'
+-- collection of entities for a map to have (or world)
+-- thanks osm stuidios tutorial
+Entities = Class{
+}
+--]]
 -- collection of entities for a map to have (or world)
 -- thanks osm stuidios tutorial
 local Entities = {
