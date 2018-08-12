@@ -29,32 +29,38 @@ function Map.create(level, map, player)
 
     local file = love.filesystem.load(levelFileName)()
 
-    maptest2 = cartographer.load(levelFileName)
-
-
-
-
+    --[[
     for index, value in ipairs(file.layers) do
         print("layer name = "..value.name)
     end 
+    --]]
 
     self.width = file.width
     self.height = file.height
-
-    --[[
-    self.frontBatch = lg.newSpriteBatch(
-        self.assets.tilesheet
-    )
-    self.backBatch = lg.newSpriteBatch(
-        self.assets.tilesheet
-    )
-    --]]
-
     self.viewX, self.viewY, self.viewW, self.viewH = 0, 0, 0, 0
 
     -- old map implementation
     -- love.filesystem.load("maps/map0.lua")
-    -- self.mapData = sti(levelFileName, { 'bump' })
+    self.mapData = sti(levelFileName, { 'bump' })
+    for key, val in pairs(self.mapData.layers.player_spawn_point.objects[1]) do
+        print(tostring(key).." = "..tostring(val))
+    end
+    print("\tbreak")
+    for key2, val2 in pairs(self.mapData.layers.player_spawn_point.objects) do
+        print(tostring(key2).." = "..tostring(val2))
+        local obj = val2
+        print(obj.properties)
+        print("break\n")
+        for key3, val3 in pairs(obj.properties) do
+        print(tostring(key3).." = "..tostring(val3))
+        end
+    end
+
+    --[[
+    for key, val in pairs(self.mapData.layers.player_spawn_point.objects[1].properties) do
+        print(tostring(key).." = "..tostring(val))
+    end
+    --]]
     -- print("map = "..tostring(self.mapData))
     self.world = bump.newWorld(32) 
     -- for the hit boxes to collide freely
@@ -63,7 +69,7 @@ function Map.create(level, map, player)
     --     lg.getWidth(),
     --     lg.getHeight()
     -- )
-    -- self.mapData:bump_init(self.world)
+    self.mapData:bump_init(self.world)
 
     self.objects = {}
     self.particles = {}
@@ -100,7 +106,7 @@ function Map.create(level, map, player)
         end
     end
     --]]
-    self.populate()
+    self:populate()
     return self
 end
 
@@ -113,18 +119,30 @@ function Map:get(x,y)
 end
 
 function Map:populate()
+    for key, value in pairs(
+        self.mapData.layers.player_spawn_point.objects
+    ) do
+        local obj = value
+        for k, v in pairs(obj.properties) do
+            if v == "player" then
+                self.player.x = obj.x
+                self.player.y = obj.y
+            end
+        end
+    end
 end
 
 function Map:update(dt)
-    maptest2:update(dt)
-    -- self.mapData:update(dt)
+    --maptest2:update(dt)
+    self.mapData:update(dt)
 end
 
 function Map:draw(trans_x, trans_y)
     --print("trans_x = "..tostring(trans_x)..
     --    "translate_x"..tostring(-math.floor(translate_x)))
+    --print("mapData = "..dump(self.mapData.layers["Tile Layer 1"]))
+    self.mapData.layers["Tile Layer 1"]:draw(-math.floor(translate_x), -math.floor(translate_y))
     -- self.mapData:draw(-math.floor(translate_x), -math.floor(translate_y))
-    maptest2:draw()
     -- self.mapData:draw(trans_x, trans_y)
     -- love.graphics.setColor(256, 0, 0)
     -- self.mapData:bump_draw(self.world)

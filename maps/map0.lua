@@ -108,13 +108,15 @@ return {
           name = "Spawn Point",
           type = "",
           shape = "rectangle",
-          x = 1858,
-          y = 256,
+          x = 738.667,
+          y = 126.667,
           width = 30,
           height = 29,
           rotation = 0,
           visible = true,
-          properties = {}
+          properties = {
+            [" name"] = "player"
+          }
         }
       }
     }

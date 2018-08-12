@@ -6,8 +6,6 @@ TEST_LEVEL = 0;
 LEVEL_START = 1;
 -- todo fixme
 -- PLACEHOLDER VALUES
-startx = 40;
-starty = 40;
 level = TEST_LEVEL;
 map = LEVEL_START;
 
@@ -20,7 +18,7 @@ function ingame.enter()
     translate_x, translate_y = 0, 0
 
     -- player = Player.create(startx,starty,level)
-    player = Player:init(startx, starty)
+    player = Player:init()
     map = Map.create(level, map,player)
     entities:add(player)
     entities:add(player.hitBox)

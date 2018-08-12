@@ -35,7 +35,7 @@ local JUMP_TIME_MAX = 0.5
 local lg = love.graphics
 Player.__index = Player
 
-function Player:init(x,y, level)
+function Player:init(level)
 
     local img = love.graphics.newImage('assets/character_block.png')
     local w = img:getWidth()
@@ -43,8 +43,8 @@ function Player:init(x,y, level)
 
     Entity.init(self,x,y,w,h)
     self.img = img
-    self.x = x
-    self.y = y
+    self.x = 0
+    self.y = 0
     self.xspeed = 0
     self.yspeed = 0
     self.xacc = 50
@@ -111,9 +111,9 @@ function Player:updateRunning(dt)
 
     self.yspeed = self.yspeed * (1 - math.min(dt * self.friction, 1))
     if not self.onGround then
-        print("not on the ground")
+        --print("not on the ground")
         if self.jumping then
-            print("jumping so should be jumping")
+           -- print("jumping so should be jumping")
             self:updateJumping(dt)
         end
     end
@@ -125,7 +125,7 @@ function Player:updateRunning(dt)
 
     for i, coll in ipairs(collisions) do
         if coll.touch.y > goalY then
-            print("first if check");
+            -- print("first if check");
             player.hasReachedMax = true
             self.onGround = false
         elseif coll.normal.y < 0 then
@@ -139,13 +139,13 @@ function Player:updateRunning(dt)
 end
 
 function Player:updateJumping(dt)
-    print("top of Player:updateJumping")
+    -- print("top of Player:updateJumping")
     if self.jump_time > 0
     and love.keyboard.isDown(config_keys.jump) then
         self.jump_time = self.jump_time - dt
         self.yspeed = self.yspeed - self.jumpAcc * (dt / JUMP_TIME_MAX)
         local targetJumpSpeed = self.jumpAcc*dt;
-        print("jump speed is gonna  = "..targetJumpSpeed.."\n")
+        -- print("jump speed is gonna  = "..targetJumpSpeed.."\n")
         self.yspeed = self.yspeed - targetJumpSpeed
     end
 end
@@ -198,7 +198,7 @@ function Player:action(actionName)
     self.actionName = actionName
 
     if actionName == "jump" and not self.jumping then
-        print("initiating jump")
+        --print("initiating jump")
         self:jump()
     elseif actionName == "left" or actionName == "right" then
         if actionName == "left" then
