@@ -71,7 +71,6 @@ function Map:get(x,y)
     end
 end
 
--- currently broken
 function Map:getObjectToSpawn(objName)
     print("objName = "..tostring(objName))
     objects = {
@@ -82,7 +81,6 @@ function Map:getObjectToSpawn(objName)
                 self.player,
                 self.player.x, self.player.y,
                 32, 64
-                -- player.img:getWidth() * 25, player.img:getHeight()
             )
 
             self.hitBoxWorld:add(
