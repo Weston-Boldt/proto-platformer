@@ -95,7 +95,7 @@ return {
     },
     {
       type = "objectgroup",
-      name = "player_spawn_point",
+      name = "spawn_points",
       visible = true,
       opacity = 1,
       offsetx = 0,
@@ -115,7 +115,7 @@ return {
           rotation = 0,
           visible = true,
           properties = {
-            [" name"] = "player"
+            [" name"] = "Player"
           }
         }
       }

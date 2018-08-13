@@ -35,7 +35,7 @@ local JUMP_TIME_MAX = 0.5
 local lg = love.graphics
 Player.__index = Player
 
-function Player:init(level)
+function Player:init(x,y,level)
 
     local img = love.graphics.newImage('assets/character_block.png')
     local w = img:getWidth()
@@ -43,8 +43,8 @@ function Player:init(level)
 
     Entity.init(self,x,y,w,h)
     self.img = img
-    self.x = 0
-    self.y = 0
+    self.x = x
+    self.y = y
     self.xspeed = 0
     self.yspeed = 0
     self.xacc = 50

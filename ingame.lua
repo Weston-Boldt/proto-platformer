@@ -14,14 +14,16 @@ local TILE_WIDTH = 32
 
 local lg = love.graphics
 function ingame.enter()
+    self = setmetatable({}, Map)
+
     state = STATE_INGAME
     translate_x, translate_y = 0, 0
 
     -- player = Player.create(startx,starty,level)
-    player = Player:init()
     map = Map.create(level, map,player)
-    entities:add(player)
-    entities:add(player.hitBox)
+    player = map.player
+    -- entities:add(player)
+    -- entities:add(player.hitBox)
     -- print(map)
     ingame.newgame()
 end
@@ -30,7 +32,7 @@ function ingame.update(dt)
     -- print("entities length"..tostring(#entities.entityList))
     --print("hitbox entities length"..tostring(#hitboxEntities.entityList))
     updateKeys()
-    entities:update(dt)
+    -- entities:update(dt)
     map:update(dt)
     -- player:update(dt)
     -- translate_x = cap(player.x-WIDTH/2, 0, WIDTH)
@@ -61,7 +63,7 @@ function ingame.draw()
     local trans_y = -math.floor(translate_y)
     lg.translate(trans_x, trans_y)
     map:draw(trans_x, trans_y)
-    player:draw()
+    -- player:draw()
 end
 
 function ingame.keypressed(k, uni)
