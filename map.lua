@@ -31,9 +31,11 @@ function Map.create(level, map)
     self.mapData = sti(levelFileName, { 'bump' })
     self.width = self.mapData.width
     self.height = self.mapData.height
+    --[[
     for key, val in pairs(self.mapData) do
         print(tostring(key).." = "..tostring(val))
     end
+    --]]
     --[[
     print("\tbreak")
     for key2, val2 in pairs(self.mapData.layers.spawn_points.objects) do
@@ -69,6 +71,35 @@ function Map:get(x,y)
     end
 end
 
+-- currently broken
+function Map:getObjectToSpawn(objName)
+    print("objName = "..tostring(objName))
+    objects = {
+        Player = function (x, y)
+            self.player = Player:init(x,y)
+            entities:add(self.player)
+            self.world:add(
+                self.player,
+                self.player.x, self.player.y,
+                32, 64
+                -- player.img:getWidth() * 25, player.img:getHeight()
+            )
+
+            self.hitBoxWorld:add(
+                self.player.hitBox,
+                self.player.hitBox.x,
+                self.player.hitBox.y,
+                self.player.hitBox.w,
+                self.player.hitBox.h
+            )
+            return player
+        end,
+    }
+    local returnObject = objects[objName]
+    print("return object = "..tostring(returnObject))
+    return objects[objName]
+end
+
 --[[
 @description
     this function loads objects according to there
@@ -86,9 +117,11 @@ function Map:populate()
         self.mapData.layers.spawn_points.objects
     ) do
         local obj = value
-        for k, v in pairs(obj.properties) do
-            print(tostring(k).." = "..tostring(v))
-            if v == "Player" then
+        for key, value in pairs(obj.properties) do
+            local new_entity = self:getObjectToSpawn(value)(obj.x, obj.y)
+            --[[
+            print(tostring(key).." = "..tostring(value))
+            if value == "Player" then
                 self.player = Player:init(obj.x, obj.y)
                 entities:add(self.player)
                 -- entities:add(player.hitBox)
@@ -107,6 +140,7 @@ function Map:populate()
                     self.player.hitBox.h
                 )
             end
+            --]]
         end
     end
 end

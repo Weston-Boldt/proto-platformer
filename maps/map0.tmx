@@ -43,7 +43,7 @@
 </data>
  </layer>
  <objectgroup name="spawn_points">
-  <object id="6" name="Spawn Point" x="738.667" y="126.667" width="30" height="29">
+  <object id="6" name="Spawn Point" x="737.334" y="130.667" width="30" height="29">
    <properties>
     <property name=" name" value="Player"/>
    </properties>
