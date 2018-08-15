@@ -1,5 +1,12 @@
 config_keys = {
-    up = "up", down = "down", left = "left", right = "right", jump = "d", shoot = "s", action = "a"
+    up = "up",
+    down = "down",
+    left = "left",
+    right = "right",
+    jump = "d",
+    shoot = "s",
+    action = "a",
+    respawn = "r",
 }
 
 keynames = {"up","down","left","right","jump","shoot","action"}

@@ -15,8 +15,7 @@ Player = Class{
 -- local PLAYER_WIDTH, PLAYER_HEIGHT = 16, 22 LEFT = -1
 LEFT = -1
 RIGHT = 1
-PS_RUN, PS_CLIMB, PS_CARRY, PS_THROW, PS_DEAD = 0,1,2,3,4 -- Player states
-
+PS_RUN, PS_CLIMB, PS_CARRY, PS_THROW, PS_DEAD = 0,1,2,3,4 -- Player states 
 PLAYER_WIDTH = 32
 PLAYER_HEIGHT = 64
 -- give the player a bit of edge room when being attacked
@@ -38,13 +37,15 @@ Player.__index = Player
 function Player:init(x,y,level)
 
     local img = love.graphics.newImage('assets/character_block.png')
-    local w = img:getWidth()
-    local h = img:getHeight()
+    local w = PLAYER_WIDTH
+    local h = PLAYER_HEIGHT
 
     Entity.init(self,x,y,w,h)
     self.img = img
     self.x = x
     self.y = y
+    self.w = w -- img:getWidth()
+    self.h = h -- img:getHeight()
     self.xspeed = 0
     self.yspeed = 0
     self.xacc = 50
@@ -70,6 +71,9 @@ function Player:init(x,y,level)
         HITBOX_HEIGHT,  
         HITBOX_WIDTH
     )
+    self.spawnX = self.x
+    self.spawnY = self.y - 10
+    self.doRespawn = false
     --[[
     self.gundir = GD_HORIZONTAL
     self.shooting = false
@@ -169,28 +173,25 @@ end
 
 function Player:draw()
     lg.draw(self.img, math.floor(self.x), math.floor(self.y))
-    --[[
-    lg.print(self.actionName)
-    lg.print("\nx="..self.x.."\t\t\txspeed="..self.xspeed)
-    lg.print("\n\ny="..self.y.."\t\t\tyspeed="..self.yspeed)
+end
 
-    if keystate.right then
-        lg.print("\n\n\npressing right")
-    elseif keystate.left then
-        lg.print("\n\n\npressing left")
-    end
-    if self.jumping then
-        lg.print("\n\n\njumping")
-    else 
-        lg.print("\n\n\nnot jumping")
-    end
+-- kind of a weak warp function
+function Player:warp(x,y)
+    print("hitting warp")
+    print("x = "..tostring(x).." y = "..tostring(y))
+    self.x = x
+    self.y = y
+    self.xspeed = 0
+    self.yspeed = 0
+end
 
-    -- lg.print("\n\n\n\nlastDir="..self.lastDir.."\tdir="..self.dir)
-    lg.print("\n\n\n\nself.onGround="..tostring(self.onGround))
-    lg.print("\n\n\n\n\nself.actionName="..self.actionName)
-    lg.print("\n\n\n\n\n\njumping="..tostring(self.jumping).."\n")
-    lg.print("\n\n\n\n\n\n\ngravity="..tostring(self.gravity).."\n\n")
-    --]]
+function Player:respawn()
+    print("top of respawn()")
+    self.doRespawn = true
+    self:warp(
+        self.spawnX,
+        self.spawnY
+    )
 end
 
 function Player:action(actionName)
@@ -206,5 +207,7 @@ function Player:action(actionName)
         else
             self.lastDir = RIGHT
         end 
+    elseif actionName == "respawn" then
+        self:respawn()
     end 
 end

@@ -29,25 +29,15 @@ function Map.create(level, map)
     local levelFileName = "maps/map"..level..".lua";
 
     self.mapData = sti(levelFileName, { 'bump' })
+    for key, value in pairs(self.mapData.layers) do
+        print(tostring(key).." = "..tostring(value))
+    end
+
+    -- set layer objects on to the self obj
+    self:prepLayers(self.mapData.layers)
+
     self.width = self.mapData.width
     self.height = self.mapData.height
-    --[[
-    for key, val in pairs(self.mapData) do
-        print(tostring(key).." = "..tostring(val))
-    end
-    --]]
-    --[[
-    print("\tbreak")
-    for key2, val2 in pairs(self.mapData.layers.spawn_points.objects) do
-        print(tostring(key2).." = "..tostring(val2))
-        local obj = val2
-        print(obj.properties)
-        print("break\n")
-        for key3, val3 in pairs(obj.properties) do
-        print(tostring(key3).." = "..tostring(val3))
-        end
-    end
-    --]]
 
     self.world = bump.newWorld(32) 
     self.hitBoxWorld = bump.newWorld(32)
@@ -63,6 +53,18 @@ function Map.create(level, map)
     return self
 end
 
+function Map:prepLayers(layers)
+    -- obj layers
+    self.levelTriggers = self.mapData.layers['level_triggers']
+    self.spawnPoints = self.mapData.layers['spawn_points'];
+    -- sprite layers
+    self.frontLayer = self.mapData.layers['front_sprite']
+    self.foreGroundLayer = self.mapData.layers['foreground_sprite']
+    self.backGroundLayer = self.mapData.layers['background_sprite']
+    self.farBackGroundLayer = self.mapData.layers['far_background_sprite']
+    self.furtherMostBackGroundLayer = self.mapData.layers['further_most_background_sprite']
+end
+
 function Map:get(x,y)
     if x < 0 or y < 0 or x > self.width or y > self.height then
         return 0
@@ -71,31 +73,45 @@ function Map:get(x,y)
     end
 end
 
+function Map:addEntityToWorld(entity)
+    entities:add(entity)
+    self.world:add(
+        entity,
+        entity.x, entity.y,
+        entity.w, entity.h
+    )
+end
+
+function Map:addEntityToHitBoxWorld(hitBox)
+    entities:add(hitBox)
+    self.hitBoxWorld:add(
+        hitBox,
+        hitBox.x, hitBox.y,
+        hitBox.w, hitBox.h
+    )
+end
+
 function Map:getObjectToSpawn(objName)
     print("objName = "..tostring(objName))
     objects = {
         Player = function (x, y)
             self.player = Player:init(x,y)
-            entities:add(self.player)
-            self.world:add(
-                self.player,
-                self.player.x, self.player.y,
-                32, 64
-            )
-
-            self.hitBoxWorld:add(
-                self.player.hitBox,
-                self.player.hitBox.x,
-                self.player.hitBox.y,
-                self.player.hitBox.w,
-                self.player.hitBox.h
-            )
+            self:addEntityToWorld(self.player)
+            self:addEntityToHitBoxWorld(self.player.hitBox)
             return player
         end,
     }
     local returnObject = objects[objName]
-    print("return object = "..tostring(returnObject))
-    return objects[objName]
+    -- didn't find a callable object
+    -- return a closure with nil to avoid
+    -- a lua err
+    if not returnObject then
+        return function ()
+            return nil
+        end
+    else 
+        return objects[objName]
+    end
 end
 
 --[[
@@ -111,46 +127,46 @@ end
     hard to imagine
 --]]
 function Map:populate()
+    -- get all the stuff in spawn points
     for key, value in pairs(
-        self.mapData.layers.spawn_points.objects
+        self.spawnPoints.objects
     ) do
         local obj = value
-        for key, value in pairs(obj.properties) do
-            local new_entity = self:getObjectToSpawn(value)(obj.x, obj.y)
-            --[[
+        -- attempt to construct objects (if they exist)
+        for key, value in pairs(obj) do
             print(tostring(key).." = "..tostring(value))
-            if value == "Player" then
-                self.player = Player:init(obj.x, obj.y)
-                entities:add(self.player)
-                -- entities:add(player.hitBox)
-                self.world:add(
-                    self.player,
-                    self.player.x, self.player.y,
-                    32, 64
-                    -- player.img:getWidth() * 25, player.img:getHeight()
-                )
-
-                self.hitBoxWorld:add(
-                    self.player.hitBox,
-                    self.player.hitBox.x,
-                    self.player.hitBox.y,
-                    self.player.hitBox.w,
-                    self.player.hitBox.h
-                )
+            if key == "name" then
+                local new_entity = self:getObjectToSpawn(value)(obj.x, obj.y)
             end
-            --]]
         end
     end
 end
 
 function Map:update(dt)
+    if (self.player.Respawn) then
+        self.doRespawn = false
+        self.world:move(
+            player,
+            self.player.spawnX,
+            self.player.spawnY
+        )
+        self.hitBoxWorld:move(
+            player.hitBox,
+            self.player.hitBox.x,
+            self.player.hitBox.y
+        )
+    end
     entities:update(dt)
     self.mapData:update(dt)
 end
 
 function Map:draw(trans_x, trans_y)
     -- todo fixme, this can be handled a bit easier later on
-    self.mapData.layers["Tile Layer 1"]:draw(-math.floor(translate_x), -math.floor(translate_y))
+    self.furtherMostBackGroundLayer:draw()
+    self.farBackGroundLayer:draw()
+    self.backGroundLayer:draw()
+    self.foreGroundLayer:draw(-math.floor(translate_x), -math.floor(translate_y))
+    self.frontLayer:draw()
     entities:draw()
     return true
 end
