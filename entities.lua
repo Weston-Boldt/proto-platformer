@@ -1,3 +1,4 @@
+local Class = require'libs.hump.class'
 --[[
 todo instantiate this
 local Class = require'libs.hump.class'
@@ -20,12 +21,18 @@ Entities = Class{
 --]]
 -- collection of entities for a map to have (or world)
 -- thanks osm stuidios tutorial
-local Entities = {
-    active = true,
+local Entities = Class{}
+
+function Entities:init(map)
+    print("top of entities:init")
+    self.active = true
     -- world = nil,
-    map = nil,
-    entityList = {}
-}
+    self.map = map
+    -- todo total hack,
+    -- but we don't really need to deal with it
+    self.entityList = {}
+--     return self
+end
 
 function Entities:enter(--[[world,--]]map)
     self:clear()

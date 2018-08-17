@@ -1,3 +1,30 @@
+function collX(objALeft, objARight, objBLeft, objBRight)
+    if
+        objALeft < objBRight and
+        objARight > objBLeft
+    then
+        return true
+    end
+
+    return false
+end
+
+function collY(objATop, objABottom, objBTop, objBBottom)
+    -- todo fixme
+    --  i think this werks, but the y values go from
+    --  0 1 2
+    --  1
+    --  2
+    --  so it may not need to be flip
+    if 
+        objATop < objBBottom and
+        objABottom > objBTop
+    then
+        return true
+    end
+    return false
+end
+
 function collideX(object)
     if object.xspeed == 0 then
         return

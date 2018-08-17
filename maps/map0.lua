@@ -8,7 +8,7 @@ return {
   height = 20,
   tilewidth = 32,
   tileheight = 32,
-  nextobjectid = 19,
+  nextobjectid = 27,
   properties = {},
   tilesets = {
     {
@@ -277,7 +277,21 @@ return {
       properties = {
         ["description"] = "level beginnings and level ends"
       },
-      objects = {}
+      objects = {
+        {
+          id = 25,
+          name = "map_end",
+          type = "",
+          shape = "rectangle",
+          x = 224,
+          y = 292,
+          width = 32,
+          height = 32,
+          rotation = 0,
+          visible = true,
+          properties = {}
+        }
+      }
     }
   }
 }

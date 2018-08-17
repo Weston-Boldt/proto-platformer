@@ -1,3 +1,4 @@
+-- todo rm this class
 local bump = require'libs.bump.bump'
 local Class = require'libs.hump.class'
 local sti = require'libs.sti.sti'

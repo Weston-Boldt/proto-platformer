@@ -1,5 +1,6 @@
 local bump = require'libs.bump.bump'
-local entities = require'entities'
+local Entities = require'entities'
+print("Entities = "..tostring(Entities))
 local Class = require'libs.hump.class'
 local sti = require'libs.Simple-Tiled-Implementation.sti'
 local cartographer = require'libs.cartographer.cartographer'
@@ -43,6 +44,13 @@ function Map.create(level, map)
     self.hitBoxWorld = bump.newWorld(32)
     self.mapData:bump_init(self.world)
 
+    self.entities = Entities(self)
+    print("entities = "..tostring(self.entities))
+    print("entities.entityList = "..tostring(self.entities.entityList))
+    self.triggers = Entities(self)
+    print("triggers = "..tostring(self.triggers))
+    print("triggers.entitylist = "..tostring(self.triggers.entityList))
+
     self.objects = {}
     self.particles = {}
     self.enemies = {}
@@ -74,7 +82,7 @@ function Map:get(x,y)
 end
 
 function Map:addEntityToWorld(entity)
-    entities:add(entity)
+    self.entities:add(entity)
     self.world:add(
         entity,
         entity.x, entity.y,
@@ -83,12 +91,21 @@ function Map:addEntityToWorld(entity)
 end
 
 function Map:addEntityToHitBoxWorld(hitBox)
-    entities:add(hitBox)
+    self.entities:add(hitBox)
     self.hitBoxWorld:add(
         hitBox,
         hitBox.x, hitBox.y,
         hitBox.w, hitBox.h
     )
+end
+
+function Map:getTriggerToSpawn(TriggerName)
+    Triggers = {
+        MapEnd = function(x,y,w,h)
+            self.MapEnd = MapEnd:init(x,y,w,h)
+            self.triggers:add(MapEnd)
+        end,
+    }
 end
 
 function Map:getObjectToSpawn(objName)
@@ -125,20 +142,55 @@ end
     as the if else 
     here is dirty and more than likely
     hard to imagine
+@update 
+    i actually prefer this way of adding entities for now, and im not
+    super excited to move into the _G[type] method so i probably wont be
+    using it 
 --]]
 function Map:populate()
-    -- get all the stuff in spawn points
     for key, value in pairs(
         self.spawnPoints.objects
     ) do
         local obj = value
-        -- attempt to construct objects (if they exist)
-        for key, value in pairs(obj) do
-            print(tostring(key).." = "..tostring(value))
-            if key == "name" then
-                local new_entity = self:getObjectToSpawn(value)(obj.x, obj.y)
-            end
+        if obj.name then
+            print("obj.name = "..tostring(obj.name))
+            local new_entity = self:getObjectToSpawn(obj.name)(obj.x, obj.y)
         end
+    end
+
+    for key, value in pairs(
+        self.levelTriggers.objects
+    ) do
+        local trigger = value
+        if trigger.name then
+            print("hey found a trigger to load")
+        end
+    end
+end
+
+
+--[[
+(RectA.Left < RectB.Right && RectA.Right > RectB.Left &&
+     RectA.Top > RectB.Bottom && RectA.Bottom < RectB.Top ) 
+-- dirty rect to avoid creating a "world"
+--]]
+function Map:reachedEnd()
+    for key, obj in pairs(self.levelTriggers.objects) do
+        if obj.name == "map_end" or obj.name == "level_end" then
+            if
+                collX(
+                    self.player.x, self.player.x+self.player.h,
+                    obj.x, obj.x + obj.width     
+                )
+            and
+                collY(
+                    self.player.y,  self.player.y + self.player.h,
+                    obj.y, obj.y + obj.height
+                )
+            then
+                print("got a collision A")
+            end
+        end 
     end
 end
 
@@ -156,7 +208,10 @@ function Map:update(dt)
             self.player.hitBox.y
         )
     end
-    entities:update(dt)
+
+    self:reachedEnd()
+    self.entities:update(dt)
+    self.triggers:update(dt)
     self.mapData:update(dt)
 end
 
@@ -167,6 +222,7 @@ function Map:draw(trans_x, trans_y)
     self.backGroundLayer:draw()
     self.foreGroundLayer:draw(-math.floor(translate_x), -math.floor(translate_y))
     self.frontLayer:draw()
-    entities:draw()
+    self.entities:draw()
+    self.triggers:draw()
     return true
 end
