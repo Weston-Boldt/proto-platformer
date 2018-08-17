@@ -42,6 +42,7 @@ function Entities:enter(--[[world,--]]map)
 end
 
 function Entities:add(entity)
+    print("mapend = "..tostring(entity))
     table.insert(self.entityList, entity)
 end
 

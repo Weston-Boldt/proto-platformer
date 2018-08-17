@@ -99,13 +99,25 @@ function Map:addEntityToHitBoxWorld(hitBox)
     )
 end
 
-function Map:getTriggerToSpawn(TriggerName)
-    Triggers = {
+function Map:getTriggerToSpawn(triggerName)
+    local trigs = {
         MapEnd = function(x,y,w,h)
-            self.MapEnd = MapEnd:init(x,y,w,h)
-            self.triggers:add(MapEnd)
+            self.MapEnd = MapEnd(x,y,w,h)
+            print("mapend = "..tostring(self.MapEnd))
+            self.triggers:add(self.MapEnd)
+            return self.MapEnd
         end,
     }
+    local returnTrigger = trigs[triggerName]
+    print("return Trigger = "..tostring(returnTrigger))
+
+    if not returnTrigger then
+        return function()
+            return nil
+        end
+    else
+        return returnTrigger
+    end
 end
 
 function Map:getObjectToSpawn(objName)
@@ -115,7 +127,7 @@ function Map:getObjectToSpawn(objName)
             self.player = Player:init(x,y)
             self:addEntityToWorld(self.player)
             self:addEntityToHitBoxWorld(self.player.hitBox)
-            return player
+            return self.player
         end,
     }
     local returnObject = objects[objName]
@@ -163,7 +175,10 @@ function Map:populate()
     ) do
         local trigger = value
         if trigger.name then
-            print("hey found a trigger to load")
+            print("trigger.name = "..tostring(trigger.name))
+            local new_trigger = self:getTriggerToSpawn(trigger.name)(
+                trigger.x,trigger.y,trigger.width,trigger.height
+            )
         end
     end
 end
@@ -222,7 +237,7 @@ function Map:draw(trans_x, trans_y)
     self.backGroundLayer:draw()
     self.foreGroundLayer:draw(-math.floor(translate_x), -math.floor(translate_y))
     self.frontLayer:draw()
-    self.entities:draw()
     self.triggers:draw()
+    self.entities:draw()
     return true
 end

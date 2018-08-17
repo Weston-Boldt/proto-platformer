@@ -10,6 +10,9 @@ require("resources")
 bump = require 'libs.bump.bump'
 anim8 = require 'libs.anim8.anim8'
 
+-- todo rm me after debugging
+lg = love.graphics
+
 TILE_SIZE = 32
 WIDTH = 640 
 HEIGHT = 480

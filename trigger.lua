@@ -13,6 +13,11 @@ function Trigger:init(x,y,w,h)
     self.y = y
     self.w = w
     self.h = h
+
+    self.img = love.graphics.newImage(
+        'assets/entity_stub.png'
+    )
+    print("self.img = "..tostring(self.img))
 end
 
 function Trigger:getRect()
@@ -23,6 +28,7 @@ function Trigger:update(dt)
 end
 
 function Trigger:draw()
+    lg.draw(self.img, math.floor(self.x), math.floor(self.y))
 end
 
 return Trigger

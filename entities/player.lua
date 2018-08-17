@@ -6,8 +6,7 @@ Player = Class{
     --[[
     corners = {
         -6, 5, -22, -0.5,
-    }; -- why does this need a semi colon
-    --]]
+    }; -- why does this need a semi colon --]]
     __includes = Entity
     -- todo fixme calibrate
 }
