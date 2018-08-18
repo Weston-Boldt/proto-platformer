@@ -1,7 +1,11 @@
-function collX(objALeft, objARight, objBLeft, objBRight)
+function collX(objALeft,objARight,objBLeft,objBRight)
+    --[[
+    print("a left = "..tostring(objALeft).." a right = "..tostring(objARight)..
+            " b left"..tostring(objBLeft).. " b right"..tostring(objBRight))
+    --]]
     if
-        objALeft < objBRight and
-        objARight > objBLeft
+        objALeft <= objBRight and
+        objARight >= objBLeft
     then
         return true
     end

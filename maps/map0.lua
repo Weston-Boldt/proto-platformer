@@ -8,7 +8,7 @@ return {
   height = 20,
   tilewidth = 32,
   tileheight = 32,
-  nextobjectid = 28,
+  nextobjectid = 31,
   properties = {},
   tilesets = {
     {
@@ -284,19 +284,6 @@ return {
           type = "",
           shape = "rectangle",
           x = 224,
-          y = 288,
-          width = 32,
-          height = 32,
-          rotation = 0,
-          visible = true,
-          properties = {}
-        },
-        {
-          id = 27,
-          name = "MapEnd",
-          type = "",
-          shape = "rectangle",
-          x = 288,
           y = 288,
           width = 32,
           height = 32,

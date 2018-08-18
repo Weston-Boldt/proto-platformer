@@ -83,6 +83,7 @@ function Player:init(x,y,level)
     )
     self.timesJumped = 0
     --]]
+
     return self
 end
 
@@ -159,6 +160,9 @@ function Player:jump()
 end
 
 function Player:update(dt)
+    --print("before doing action = "..tostring(self.doingAction))
+    self.doingAction = false
+    --print("after doing action = "..tostring(self.doingAction))
     --[[
     if not love.keyboard.isDown(config_keys.action) then
         self.doingAction = false
@@ -172,7 +176,6 @@ function Player:update(dt)
     end
 
     self.hitBox:update(dt)
-    self.doingAction = false
 end
 
 function Player:draw()

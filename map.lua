@@ -175,9 +175,11 @@ function Map:populate()
     ) do
         local trigger = value
         if trigger.name then
-            print("trigger.name = "..tostring(trigger.name))
+            -- print("trigger.name = "..tostring(trigger.name))
             local new_trigger = self:getTriggerToSpawn(trigger.name)(
-                trigger.x,trigger.y,trigger.width,trigger.height
+                trigger.x,trigger.y,trigger.width,trigger.height,
+                trigger.properties,
+                self.map
             )
         end
     end
@@ -189,27 +191,35 @@ end
      RectA.Top > RectB.Bottom && RectA.Bottom < RectB.Top ) 
 -- dirty rect to avoid creating a "world"
 --]]
-function Map:reachedEnd()
-    for key, obj in pairs(self.levelTriggers.objects) do
-        if obj.name == "map_end" or obj.name == "level_end" then
-            if
-                collX(
-                    self.player.x, self.player.x+self.player.h,
-                    obj.x, obj.x + obj.width     
-                )
-            and
-                collY(
-                    self.player.y,  self.player.y + self.player.h,
-                    obj.y, obj.y + obj.height
-                )
-            then
-                print("got a collision A")
-            end
-        end 
-    end
+--TODO broken
+function Map:playerTriggerOverLap()
+    -- print("about to check trigger overlap")
+    for key, obj in pairs(self.triggers.entityList) do
+        if
+            collX(
+                self.player.x, self.player.x+self.player.w,
+                obj.x, obj.x + obj.w
+            )
+        and
+            collY(
+                self.player.y,  self.player.y + self.player.h,
+                obj.y, obj.y + obj.h
+            )
+        then
+            -- print("got a collision")
+            if not obj.pressable then
+                print("activated a trigger via walking over it")
+                obj.active = true;
+            elseif obj.pressable and self.player.doingAction then
+                print("activating a trigger via hitting the action button")
+                obj.active = true;
+            else
+            end 
+        end
+    end 
 end
 
-function Map:update(dt)
+function Map:checkForRespawn()
     if (self.player.Respawn) then
         self.doRespawn = false
         self.world:move(
@@ -224,7 +234,12 @@ function Map:update(dt)
         )
     end
 
-    self:reachedEnd()
+end
+
+function Map:update(dt)
+    self:checkForRespawn()
+    -- print("self.player.doingAction = "..tostring(self.player.doingAction))
+    self:playerTriggerOverLap()
     self.entities:update(dt)
     self.triggers:update(dt)
     self.mapData:update(dt)
