@@ -58,6 +58,12 @@ function Map.create(level, map)
     self.items = {}
 
     self:populate()
+    --[[
+    local items, len = self.world:queryPoint(240,369)
+    for key, value in pairs(items[1].properties) do
+        print("item key = "..tostring(key)..",  item value = "..tostring(value))
+    end
+    --]]
     return self
 end
 
@@ -77,12 +83,13 @@ function Map:get(x,y)
     if x < 0 or y < 0 or x > self.width or y > self.height then
         return 0
     else
-        return self.data[y*self.width+x+1]
+        return self.mapData[y*self.width+x+1]
     end
 end
 
 function Map:addEntityToWorld(entity)
     self.entities:add(entity)
+    print("entity.name = "..entity.name)
     self.world:add(
         entity,
         entity.x, entity.y,
@@ -129,6 +136,12 @@ function Map:getObjectToSpawn(objName)
             self:addEntityToHitBoxWorld(self.player.hitBox)
             return self.player
         end,
+        BaseEnemy = function (x, y)
+            local baseEnemy = BaseEnemy(x,y)
+            print("baseEnemy = "..tostring(baseEnemy))
+            self:addEntityToWorld(baseEnemy)
+            self:addEntityToHitBoxWorld(baseEnemy.hitBox)
+        end,
     }
     local returnObject = objects[objName]
     -- didn't find a callable object
@@ -167,6 +180,8 @@ function Map:populate()
         if obj.name then
             print("obj.name = "..tostring(obj.name))
             local new_entity = self:getObjectToSpawn(obj.name)(obj.x, obj.y)
+            local get_result = self:get(obj.x, obj.y)
+            print("get_result = "..tostring(get_result))
         end
     end
 

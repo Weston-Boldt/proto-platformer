@@ -1,3 +1,4 @@
+-- i don't think i'll really use this class
 local Class = require'libs.hump.class'
 local Entity = require'entity'
 -- local lg = love.graphics

@@ -7,6 +7,8 @@ HitBox = Class {
 
 function HitBox:init(obj,x,y,w,h)
     Entity:init(self,x,y,w,h)
+    self.name = "HitBox"
+    self.collType = "slide" -- default
     self.obj = obj
     self.x = x
     self.y = y

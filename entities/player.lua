@@ -35,19 +35,21 @@ Player.__index = Player
 
 function Player:init(x,y,level)
 
-    local img = love.graphics.newImage('assets/character_block.png')
+    -- local img = love.graphics.newImage('assets/character_block.png')
+    local img = love.graphics.newImage('assets/blue_tough_guy.png')
     local w = PLAYER_WIDTH
     local h = PLAYER_HEIGHT
-
+    self.boundingQuad = lg.newQuad(12, 0, 53, 64, img:getDimensions())
     Entity.init(self,x,y,w,h)
+    self.name = "Player"
     self.img = img
-    self.x = x
+    self.x = x + PLAYER_WIDTH
     self.y = y
     self.w = w -- img:getWidth()
     self.h = h -- img:getHeight()
     self.xspeed = 0
     self.yspeed = 0
-    self.xacc = 50
+    self.xacc = 35
     self.friction = 10
     self.gravity = NORMAL_GRAVITY
     self.hasReachedMax = false
@@ -70,6 +72,7 @@ function Player:init(x,y,level)
         HITBOX_HEIGHT,  
         HITBOX_WIDTH
     )
+    print("player hitbox = "..tostring(self.hitBox))
     self.spawnX = self.x
     self.spawnY = self.y - 10
     self.doRespawn = false
@@ -139,6 +142,9 @@ function Player:updateRunning(dt)
             self.yspeed = 0
             self.jump_time = JUMP_TIME_MAX
         end
+        for key, value in pairs(coll.other) do
+            print("key = "..tostring(key).." = "..tostring(value))
+        end
     end
 end
 
@@ -153,6 +159,17 @@ function Player:updateJumping(dt)
     end
 end
 
+--[[
+you can do that! try setting a minimum and maximum jump speed.
+if Input.is_action_just_pressed("ui_up"):
+                    velocity.y = JUMP_SPEED
+if velocity.y < MIN_JUMP_SPEED and Input.is_action_just_released("ui_up"):
+                     velocity.y = MIN_JUMP_SPEED
+so your upwards velocity
+if it's greater than the minimum jump speed, and you release your jump button
+it makes a smaller jump
+but if you hold it, it'll give you the full jump height
+--]]
 function Player:jump()
     self.jumping = true
     self.onGround = false
@@ -179,7 +196,7 @@ function Player:update(dt)
 end
 
 function Player:draw()
-    lg.draw(self.img, math.floor(self.x), math.floor(self.y))
+    lg.draw(self.img, self.boundingQuad, math.floor(self.x), math.floor(self.y), 0, 1, 1, 4)
 end
 
 -- kind of a weak warp function

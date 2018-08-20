@@ -9,7 +9,7 @@ function Entity:init(--[[world,--]]x,y,w,h)
     self.w = w
     self.h = h
 
-    self.name = Entity
+    self.name = 'Entity'
 end
 
 function Entity:getRect()

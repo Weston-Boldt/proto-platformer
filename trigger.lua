@@ -9,6 +9,7 @@ local Class = require'libs.hump.class'
 local Trigger = Class{}
 
 function Trigger:init(x,y,w,h,properties,map)
+    self.name = 'Trigger'
     self.x = x
     self.y = y
     self.w = w

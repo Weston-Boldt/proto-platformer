@@ -8,6 +8,7 @@ MapEnd = Class{
 
 function MapEnd:init(x,y,w,h,properties,map)
     Trigger:init(self,x,y,w,h)
+    self.name = "MapEnd"
     self.x = x
     self.y = y
     self.w = w
