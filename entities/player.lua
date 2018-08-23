@@ -142,8 +142,10 @@ function Player:updateRunning(dt)
             self.yspeed = 0
             self.jump_time = JUMP_TIME_MAX
         end
+        -- todo fixme coll type will be depending
+        -- on what coll type the object has
         for key, value in pairs(coll.other) do
-            print("key = "..tostring(key).." = "..tostring(value))
+            -- print("key = "..tostring(key).." = "..tostring(value))
         end
     end
 end

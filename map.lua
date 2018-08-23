@@ -1,6 +1,6 @@
 local bump = require'libs.bump.bump'
 local Entities = require'entities'
-print("Entities = "..tostring(Entities))
+-- print("Entities = "..tostring(Entities))
 local Class = require'libs.hump.class'
 local sti = require'libs.Simple-Tiled-Implementation.sti'
 local cartographer = require'libs.cartographer.cartographer'
@@ -31,7 +31,7 @@ function Map.create(level, map)
 
     self.mapData = sti(levelFileName, { 'bump' })
     for key, value in pairs(self.mapData.layers) do
-        print(tostring(key).." = "..tostring(value))
+        -- print(tostring(key).." = "..tostring(value))
     end
 
     -- set layer objects on to the self obj
@@ -45,11 +45,11 @@ function Map.create(level, map)
     self.mapData:bump_init(self.world)
 
     self.entities = Entities(self)
-    print("entities = "..tostring(self.entities))
-    print("entities.entityList = "..tostring(self.entities.entityList))
+    -- print("entities = "..tostring(self.entities))
+    -- print("entities.entityList = "..tostring(self.entities.entityList))
     self.triggers = Entities(self)
-    print("triggers = "..tostring(self.triggers))
-    print("triggers.entitylist = "..tostring(self.triggers.entityList))
+    -- print("triggers = "..tostring(self.triggers))
+    -- print("triggers.entitylist = "..tostring(self.triggers.entityList))
 
     self.objects = {}
     self.particles = {}
@@ -110,13 +110,13 @@ function Map:getTriggerToSpawn(triggerName)
     local trigs = {
         MapEnd = function(x,y,w,h)
             self.MapEnd = MapEnd(x,y,w,h)
-            print("mapend = "..tostring(self.MapEnd))
+            -- print("mapend = "..tostring(self.MapEnd))
             self.triggers:add(self.MapEnd)
             return self.MapEnd
         end,
     }
     local returnTrigger = trigs[triggerName]
-    print("return Trigger = "..tostring(returnTrigger))
+    -- print("return Trigger = "..tostring(returnTrigger))
 
     if not returnTrigger then
         return function()
@@ -128,7 +128,7 @@ function Map:getTriggerToSpawn(triggerName)
 end
 
 function Map:getObjectToSpawn(objName)
-    print("objName = "..tostring(objName))
+    -- print("objName = "..tostring(objName))
     objects = {
         Player = function (x, y)
             self.player = Player:init(x,y)
@@ -138,7 +138,7 @@ function Map:getObjectToSpawn(objName)
         end,
         BaseEnemy = function (x, y)
             local baseEnemy = BaseEnemy(x,y)
-            print("baseEnemy = "..tostring(baseEnemy))
+            -- print("baseEnemy = "..tostring(baseEnemy))
             self:addEntityToWorld(baseEnemy)
             self:addEntityToHitBoxWorld(baseEnemy.hitBox)
         end,
@@ -178,10 +178,10 @@ function Map:populate()
     ) do
         local obj = value
         if obj.name then
-            print("obj.name = "..tostring(obj.name))
+            -- print("obj.name = "..tostring(obj.name))
             local new_entity = self:getObjectToSpawn(obj.name)(obj.x, obj.y)
             local get_result = self:get(obj.x, obj.y)
-            print("get_result = "..tostring(get_result))
+            -- print("get_result = "..tostring(get_result))
         end
     end
 
