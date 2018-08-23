@@ -1,6 +1,39 @@
 PROTO-PLATFORMER
 W-I-P (name not final)
 
+i am in the first half of iteration 1 still
+
+a note about what i mean about iterations
+that is simply where i feel like the stages of development is going to be
+none of this is set in stone and is entirely elastic, however i do need to have
+a high level roadmap in order to keep track of what the heck to work on and prioritize
+right now i have time to spend about 1 - 3 hours a night 4 nights a week on this game
+so on inbetween days i can kind of forget what to hack on. maybe the readme is not a good
+place for project management but i feel like at this time it might be manageable.
+
+ITERATION 1
+goals:
+  get enough features added to extend into a bigger game
+  this is less than a prototype, its more of a base to build the prototype on
+
+ITERATION 2
+goals:
+  different enemies
+  5 levels
+  stub assets and finished assets
+  beginning of polish
+
+ITERATION 3
+goals:
+  polish
+  
+ITERATION 4
+goals:
+  -- if we are here i'm feeling like something must have gone horrible some where
+  -- and we need to keep working so ideally the game is "shipped" before this point
+  fix broken stuff
+  polish more
+
 features i've added
   jumping
   walking
