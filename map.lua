@@ -112,6 +112,10 @@ function Map:getTriggerToSpawn(triggerName)
     end
 end
 
+-- todo fixme, this function is going to get
+-- way out of hand and needs to be factored to be handled
+-- i'm imagining there would be a player object check
+-- and then some sort of base case depending on an object type
 function Map:getObjectToSpawn(objName)
     -- print("objName = "..tostring(objName))
     objects = {
@@ -119,13 +123,15 @@ function Map:getObjectToSpawn(objName)
             self.player = Player:init(x,y)
             self:addEntityToWorld(self.player)
             self:addEntityToHitBoxWorld(self.player.hitBox)
+            print("player collisions = "..tostring(self.player.collisions))
             return self.player
         end,
         BaseEnemy = function (x, y)
             local baseEnemy = BaseEnemy(x,y)
-            -- print("baseEnemy = "..tostring(baseEnemy))
+            print("baseEnemy = "..tostring(baseEnemy))
             self:addEntityToWorld(baseEnemy)
             self:addEntityToHitBoxWorld(baseEnemy.hitBox)
+            print("base_enemy collisions = "..tostring(baseEnemy.collisions))
         end,
     }
     local returnObject = objects[objName]
@@ -193,47 +199,23 @@ end
 --]]
 --TODO broken
 function Map:playerTriggerOverLap()
+    local activateFn = function(player, obj)
+        if not obj.pressable then
+            obj.active = true
+            print("activated a trigger via walking over it")
+        else
+            obj.active = player.doingAction
+            if player.doingAction then
+                print("activating a trigger via hitting the action button")
+            end
+        end
+    end
+
     self:rectOverLap(
         self.triggers.entityList,
         self.player,
-        function(player, obj)
-            if not obj.pressable then
-                obj.active = true
-                print("activated a trigger via walking over it")
-            else
-                obj.active = player.doingAction
-                if player.doingAction then
-                    print("activating a trigger via hitting the action button")
-                end
-            end
-        end
+        activateFn
     )
-    -- print("about to check trigger overlap")
-    --[[
-    for key, obj in pairs(self.triggers.entityList) do
-        if
-            collX(
-                self.player.x, self.player.x+self.player.w,
-                obj.x, obj.x + obj.w
-            )
-        and
-            collY(
-                self.player.y,  self.player.y + self.player.h,
-                obj.y, obj.y + obj.h
-            )
-        then
-            -- print("got a collision")
-            if not obj.pressable then
-                print("activated a trigger via walking over it")
-                obj.active = true;
-            elseif obj.pressable and self.player.doingAction then
-                print("activating a trigger via hitting the action button")
-                obj.active = true;
-            else
-            end 
-        end
-    end 
-    --]]
 end
 
 function Map:rectOverLap(layer, checkObject, checkObjectFn)
@@ -288,6 +270,18 @@ function Map:checkForRespawn()
 
 end
 
+function Map:moveObjects(entityList,dt)
+    for key, obj in pairs(entityList) do
+        local collisions = nil;
+        if (obj.name == "HitBox") then
+            obj.x, obj.y, collisions = self.hitBoxWorld:move(obj, obj.x, obj.y)
+        else
+            obj.x, obj.y, collisions = self.world:move(obj, obj.x, obj.y)
+        end
+        obj:handleCollisions(collisions,dt)
+    end
+end
+
 function Map:update(dt)
     self:checkForRespawn()
     -- print("self.player.doingAction = "..tostring(self.player.doingAction))
@@ -295,6 +289,13 @@ function Map:update(dt)
     self.entities:update(dt)
     self.triggers:update(dt)
     self.mapData:update(dt)
+    self:moveObjects(self.entities.entityList, dt)
+
+    -- updated all of the data?
+    -- time to move the stuff and then handle collisions
+    for key, obj in pairs(self.entities.entityList) do
+       
+    end
 end
 
 function Map:draw(trans_x, trans_y)

@@ -39,8 +39,8 @@ function Player:init(x,y,level)
     local img = love.graphics.newImage('assets/blue_tough_guy.png')
     local w = PLAYER_WIDTH
     local h = PLAYER_HEIGHT
-    self.boundingQuad = lg.newQuad(12, 0, 53, 64, img:getDimensions())
     Entity.init(self,x,y,w,h)
+    self.boundingQuad = lg.newQuad(12, 0, 53, 64, img:getDimensions())
     self.name = "Player"
     self.img = img
     self.x = x + PLAYER_WIDTH
@@ -76,6 +76,7 @@ function Player:init(x,y,level)
     self.spawnX = self.x
     self.spawnY = self.y - 10
     self.doRespawn = false
+    self.collisions = {}
     --[[
     self.gundir = GD_HORIZONTAL
     self.shooting = false
@@ -114,7 +115,7 @@ function Player:updateRunning(dt)
     end
 
     self.xspeed = cap(self.xspeed, -MAX_SPEED, MAX_SPEED);
-    goalX = self.x + self.xspeed
+    self.x = self.x + self.xspeed
 
     self.yspeed = self.yspeed * (1 - math.min(dt * self.friction, 1))
     if not self.onGround then
@@ -127,12 +128,13 @@ function Player:updateRunning(dt)
     
     self.yspeed = self.yspeed + self.gravity *dt
 
-    goalY = self.y + self.yspeed
-    self.x, self.y, collisions = map.world:move(self, goalX, goalY)
+    self.y = self.y + self.yspeed
+    -- self.x, self.y, collisions = map.world:move(self, self.x, self.y)
+end
 
-    for i, coll in ipairs(collisions) do
-        if coll.touch.y > goalY then
-            -- print("first if check");
+function Player:handleCollisions(collisions, dt)
+    for i, coll in pairs(collisions) do
+        if coll.touch.y > self.y then
             player.hasReachedMax = true
             self.onGround = false
         elseif coll.normal.y < 0 then
@@ -145,10 +147,9 @@ function Player:updateRunning(dt)
         -- todo fixme coll type will be depending
         -- on what coll type the object has
         for key, value in pairs(coll.other) do
-            -- print("key = "..tostring(key).." = "..tostring(value))
         end
     end
-end
+end 
 
 function Player:updateJumping(dt)
     -- print("top of Player:updateJumping")

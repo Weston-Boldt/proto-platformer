@@ -11,6 +11,7 @@ local ENEMY_HEIGHT = 64
 local ENEMY_WIDTH = 32
 local SENSOR_SIZE = 32
 function BaseEnemy:init(x,y)
+    Entity:init(x,y,ENEMY_WIDTH, ENEMY_HEIGHT)
     print("top of BaseEnemy init")
     local img = love.graphics.newImage('assets/base_enemy_block.png')
     local w = ENEMY_WIDTH
@@ -35,6 +36,7 @@ function BaseEnemy:init(x,y)
     )
 
     print("enemy hitbox = "..tostring(self.hitBox))
+    self.collisions = {}
     return self
 end
 
@@ -46,6 +48,9 @@ function BaseEnemy:update(dt)
     self.rightSensor:update(
         self.x + ENEMY_WIDTH, self.y + ENEMY_HEIGHT, dt
     )
+end
+
+function BaseEnemy:handleCollisions(dt)
 end
 
 function BaseEnemy:draw()

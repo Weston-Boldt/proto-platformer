@@ -10,6 +10,7 @@ function Entity:init(--[[world,--]]x,y,w,h)
     self.h = h
 
     self.name = 'Entity'
+    self.collisions = {}
 end
 
 function Entity:getRect()

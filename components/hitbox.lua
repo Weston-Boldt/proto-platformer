@@ -23,6 +23,9 @@ function HitBox:update(dt)
     --    "HitBox.y = "..tostring(self.y))
 end
 
+function HitBox:handleCollisions(dt)
+end
+
 function HitBox:draw()
 end
 
