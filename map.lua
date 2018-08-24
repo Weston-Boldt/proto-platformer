@@ -30,10 +30,6 @@ function Map.create(level, map)
     local levelFileName = "maps/map"..level..".lua";
 
     self.mapData = sti(levelFileName, { 'bump' })
-    for key, value in pairs(self.mapData.layers) do
-        -- print(tostring(key).." = "..tostring(value))
-    end
-
     -- set layer objects on to the self obj
     self:prepLayers(self.mapData.layers)
 
@@ -45,12 +41,7 @@ function Map.create(level, map)
     self.mapData:bump_init(self.world)
 
     self.entities = Entities(self)
-    -- print("entities = "..tostring(self.entities))
-    -- print("entities.entityList = "..tostring(self.entities.entityList))
     self.triggers = Entities(self)
-    -- print("triggers = "..tostring(self.triggers))
-    -- print("triggers.entitylist = "..tostring(self.triggers.entityList))
-
     self.objects = {}
     self.particles = {}
     self.enemies = {}
@@ -58,12 +49,6 @@ function Map.create(level, map)
     self.items = {}
 
     self:populate()
-    --[[
-    local items, len = self.world:queryPoint(240,369)
-    for key, value in pairs(items[1].properties) do
-        print("item key = "..tostring(key)..",  item value = "..tostring(value))
-    end
-    --]]
     return self
 end
 
@@ -208,7 +193,23 @@ end
 --]]
 --TODO broken
 function Map:playerTriggerOverLap()
+    self:rectOverLap(
+        self.triggers.entityList,
+        self.player,
+        function(player, obj)
+            if not obj.pressable then
+                obj.active = true
+                print("activated a trigger via walking over it")
+            else
+                obj.active = player.doingAction
+                if player.doingAction then
+                    print("activating a trigger via hitting the action button")
+                end
+            end
+        end
+    )
     -- print("about to check trigger overlap")
+    --[[
     for key, obj in pairs(self.triggers.entityList) do
         if
             collX(
@@ -232,6 +233,42 @@ function Map:playerTriggerOverLap()
             end 
         end
     end 
+    --]]
+end
+
+function Map:rectOverLap(layer, checkObject, checkObjectFn)
+    for key, obj in pairs(layer) do
+        if
+            collX(
+                -- left
+                checkObject.x,
+                -- right
+                checkObject.x + checkObject.w,
+                -- left
+                obj.x,
+                -- right
+                obj.x + obj.w
+            ) 
+        and
+            collY(
+                -- top
+                checkObject.y,
+                -- bottom
+                checkObject.y + checkObject.h,
+                -- top
+                obj.y,
+                -- bottom
+                obj.y + obj.h
+            )
+        then
+            -- lua will not complain if an argument
+            -- is not specified in the function
+            checkObjectFn(checkObject, obj)
+        end
+    end
+end
+
+function Map:sensorOverLap()
 end
 
 function Map:checkForRespawn()
