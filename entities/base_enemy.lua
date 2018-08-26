@@ -50,7 +50,10 @@ function BaseEnemy:update(dt)
     )
 end
 
-function BaseEnemy:handleCollisions(dt)
+function BaseEnemy:handleCollisions(collisions,dt)
+    for i, coll in pairs(collisions) do
+        print("coll = "..coll)
+    end
 end
 
 function BaseEnemy:draw()
