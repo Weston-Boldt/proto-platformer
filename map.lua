@@ -273,11 +273,15 @@ end
 function Map:moveObjects(entityList,dt)
     for key, obj in pairs(entityList) do
         local collisions = nil;
+        local newX;
+        local newY;
         if (obj.name == "HitBox") then
-            obj.x, obj.y, collisions = self.hitBoxWorld:move(obj, obj.x, obj.y)
+            newX, newY, collisions = self.hitBoxWorld:move(obj, obj.x, obj.y)
         else
-            obj.x, obj.y, collisions = self.world:move(obj, obj.x, obj.y)
+            newX, newY, collisions = self.world:move(obj, obj.x, obj.y)
         end
+        obj.x = newX
+        obj.y = newY
         obj:handleCollisions(collisions,dt)
     end
 end

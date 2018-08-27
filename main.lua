@@ -4,6 +4,7 @@ require("ingame")
 require("config")
 require("util")
 require("map")
+require("globals")
 require("resources")
 
 -- libs

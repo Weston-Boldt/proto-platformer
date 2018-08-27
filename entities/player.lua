@@ -12,8 +12,6 @@ Player = Class{
 }
 
 -- local PLAYER_WIDTH, PLAYER_HEIGHT = 16, 22 LEFT = -1
-LEFT = -1
-RIGHT = 1
 PS_RUN, PS_CLIMB, PS_CARRY, PS_THROW, PS_DEAD = 0,1,2,3,4 -- Player states 
 PLAYER_WIDTH = 32
 PLAYER_HEIGHT = 64
@@ -24,7 +22,6 @@ HITBOX_HEIGHT = PLAYER_HEIGHT
 
 local GD_UP, GD_HORIZONTAL, GD_DOWN = 0,2,4 -- Gun directions
 
-local NORMAL_GRAVITY=80
 local BRAKE_SPEED = 350
 local MAX_SPEED = 160
 local MAX_JUMP = 100
@@ -49,14 +46,13 @@ function Player:init(x,y,level)
     self.h = h -- img:getHeight()
     self.xspeed = 0
     self.yspeed = 0
-    self.xacc = 35
+    self.xacc = 45
     self.friction = 10
     self.gravity = NORMAL_GRAVITY
-    self.hasReachedMax = false
     self.jump_time = JUMP_TIME_MAX
+    self.letGoOfJump = false
 
     self.onGround = false
-    self.time = 0
     self.lastDir = RIGHT
     self.dir = RIGHT
     self.jumpAcc = 25
@@ -76,7 +72,6 @@ function Player:init(x,y,level)
     self.spawnX = self.x
     self.spawnY = self.y - 10
     self.doRespawn = false
-    self.collisions = {}
     --[[
     self.gundir = GD_HORIZONTAL
     self.shooting = false
@@ -133,13 +128,16 @@ function Player:updateRunning(dt)
 end
 
 function Player:handleCollisions(collisions, dt)
+    -- we are likely in the air?
+    if #collisions == 0 then
+        self.onGround = false
+    end
     for i, coll in pairs(collisions) do
         if coll.touch.y > self.y then
-            player.hasReachedMax = true
             self.onGround = false
+            self.jump_time = JUMP_TIME_MAX
         elseif coll.normal.y < 0 then
             self.jumping = false
-            player.hasReachedMax = false
             self.onGround = true
             self.yspeed = 0
             self.jump_time = JUMP_TIME_MAX
@@ -154,11 +152,15 @@ end
 function Player:updateJumping(dt)
     -- print("top of Player:updateJumping")
     if self.jump_time > 0
-    and love.keyboard.isDown(config_keys.jump) then
+    and love.keyboard.isDown(config_keys.jump)
+    and not self.letGoOfJump then
         self.jump_time = self.jump_time - dt
-        self.yspeed = self.yspeed - self.jumpAcc * (dt / JUMP_TIME_MAX) local targetJumpSpeed = self.jumpAcc*dt;
+        self.yspeed = self.yspeed - self.jumpAcc * (dt / JUMP_TIME_MAX)
+        local targetJumpSpeed = self.jumpAcc*dt;
         -- print("jump speed is gonna  = "..targetJumpSpeed.."\n")
         self.yspeed = self.yspeed - targetJumpSpeed
+    else
+        self.letGoOfJump = true
     end
 end
 
@@ -174,9 +176,12 @@ it makes a smaller jump
 but if you hold it, it'll give you the full jump height
 --]]
 function Player:jump()
-    self.jumping = true
-    self.onGround = false
-    self.yspeed = self.yspeed - self.jumpAcc
+    if self.onGround then
+        self.jumping = true
+        self.onGround = false
+        self.letGoOfJump = false
+        self.yspeed = self.yspeed - self.jumpAcc
+    end
 end
 
 function Player:update(dt)
