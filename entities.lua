@@ -47,7 +47,7 @@ function Entities:add(entity)
 end
 
 function Entities:addMany(entities)
-    for _, entity in pairs do
+    for _, entity in pairs(entities) do
         self:add(entity)
     end
 end

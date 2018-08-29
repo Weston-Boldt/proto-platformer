@@ -42,6 +42,7 @@ function Map.create(level, map)
 
     self.entities = Entities(self)
     self.triggers = Entities(self)
+    self.sensors = Entities(self)
     self.objects = {}
     self.particles = {}
     self.enemies = {}
@@ -131,6 +132,8 @@ function Map:getObjectToSpawn(objName)
             print("baseEnemy = "..tostring(baseEnemy))
             self:addEntityToWorld(baseEnemy)
             self:addEntityToHitBoxWorld(baseEnemy.hitBox)
+            print("baseEnemy.sensors = "..tostring(baseEnemy.sensors)) 
+            self.sensors:addMany(baseEnemy.sensors)
             print("base_enemy collisions = "..tostring(baseEnemy.collisions))
         end,
     }
@@ -250,7 +253,10 @@ function Map:rectOverLap(layer, checkObject, checkObjectFn)
     end
 end
 
+-- self.foreGroundLayer
 function Map:sensorOverLap()
+    local OverLapFn = function()
+    end
 end
 
 function Map:checkForRespawn()

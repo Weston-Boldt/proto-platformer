@@ -1,3 +1,7 @@
+--[[
+basic go left until its time to go right enemy
+--]]
+
 local Class = require'libs.hump.class'
 local Entity = require'entity'
 local HitBox = require'components.hitbox'
@@ -45,6 +49,7 @@ function BaseEnemy:init(x,y)
         self.x + ENEMY_WIDTH, self.y + ENEMY_HEIGHT
     )
 
+    self.sensors = {self.leftSensor, self.rightSensor}
     self.xspeed = 0;
     self.yspeed = 0;
 
@@ -76,24 +81,11 @@ function BaseEnemy:updateRunning(dt)
         ((self.xacc*dt) * self.dir) 
     end
     self.xspeed = cap(self.xspeed, -MAX_SPEED, MAX_SPEED)
-    self.yspeed = self.yspeed +
-        -- gravity
-        self.gravity * dt *
-        -- friction
-        (1 - math.min(dt * self.friction, 1))
+    self.speed = self.yspeed * (1 - math.min(dt * self.friction, 1))
+    self.yspeed = self.yspeed + self.gravity * dt
 
     self.x = self.x + self.xspeed
     self.y = self.y + self.yspeed
-
-    -- todo fixme, rn these sensors lag
-    -- by one cycle...need to be at a point wher ethey get updated potentially
-    -- twice
-    self.leftSensor:update(
-        self.x - ENEMY_WIDTH, self.y + ENEMY_HEIGHT, dt
-    )
-    self.rightSensor:update(
-        self.x + ENEMY_WIDTH, self.y + ENEMY_HEIGHT, dt
-    )
 end
 
 function BaseEnemy:handleCollisions(collisions,dt)
@@ -109,6 +101,16 @@ function BaseEnemy:handleCollisions(collisions,dt)
             self.yspeed = 0
         end
     end
+
+    -- todo fixme, rn these sensors lag
+    -- by one cycle...need to be at a point wher ethey get updated potentially
+    -- twice
+    self.leftSensor:update(
+        self.x - ENEMY_WIDTH, self.y + ENEMY_HEIGHT, dt
+    )
+    self.rightSensor:update(
+        self.x + ENEMY_WIDTH, self.y + ENEMY_HEIGHT, dt
+    )
 end
 
 function BaseEnemy:draw()
