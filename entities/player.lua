@@ -127,6 +127,22 @@ function Player:updateRunning(dt)
     -- self.x, self.y, collisions = map.world:move(self, self.x, self.y)
 end
 
+function Player:getCollisionFilter(other)
+    if not other.name then
+        return 'slide'
+    end
+    local collTypes = {
+        EnemyCollision = 'cross'
+    }
+
+    local collType = collTypes[other.name]
+    if collType then
+        return collType
+    else
+        return 'slide'
+    end
+end
+
 function Player:handleCollisions(collisions, dt)
     -- we are likely in the air?
     if #collisions == 0 then
@@ -144,8 +160,6 @@ function Player:handleCollisions(collisions, dt)
         end
         -- todo fixme coll type will be depending
         -- on what coll type the object has
-        for key, value in pairs(coll.other) do
-        end
     end
 end 
 

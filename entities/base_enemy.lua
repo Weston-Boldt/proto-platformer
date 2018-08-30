@@ -1,11 +1,6 @@
---[[
-basic go left until its time to go right enemy
---]]
-
 local Class = require'libs.hump.class'
 local Entity = require'entity'
 local HitBox = require'components.hitbox'
-local Sensor = require'components.sensor'
 
 BaseEnemy = Class{
     __includes = Entity
@@ -13,7 +8,6 @@ BaseEnemy = Class{
 
 local ENEMY_HEIGHT = 64
 local ENEMY_WIDTH = 32
-local SENSOR_SIZE = 32
 
 -- enemy states
 local BES_RUN = 0
@@ -21,7 +15,7 @@ local BES_RUN = 0
 local RIGHT = 1
 local LEGFT = -1
 
-local MAX_SPEED = 100
+local MAX_SPEED = 80
 
 local BASE_FRICTION = 10
 function BaseEnemy:init(x,y)
@@ -40,20 +34,11 @@ function BaseEnemy:init(x,y)
 
     self.img = img
 
-    self.sensors = nil;
     self.hitBox = HitBox(self, self.x, self.y, HITBOX_HEIGHT, HITBOX_WIDTH)
-    self.leftSensor = Sensor(
-        self.x - ENEMY_WIDTH, self.y + ENEMY_HEIGHT
-    )
-    self.rightSensor = Sensor(
-        self.x + ENEMY_WIDTH, self.y + ENEMY_HEIGHT
-    )
-
-    self.sensors = {self.leftSensor, self.rightSensor}
     self.xspeed = 0;
     self.yspeed = 0;
 
-    self.xacc = 35
+    self.xacc = 25
     self.moving = true
     self.onGround = false
     self.lastDir = RIGHT
@@ -101,21 +86,9 @@ function BaseEnemy:handleCollisions(collisions,dt)
             self.yspeed = 0
         end
     end
-
-    -- todo fixme, rn these sensors lag
-    -- by one cycle...need to be at a point wher ethey get updated potentially
-    -- twice
-    self.leftSensor:update(
-        self.x - ENEMY_WIDTH, self.y + ENEMY_HEIGHT, dt
-    )
-    self.rightSensor:update(
-        self.x + ENEMY_WIDTH, self.y + ENEMY_HEIGHT, dt
-    )
 end
 
 function BaseEnemy:draw()
     -- print("hitting baseEnemy:draw")
     lg.draw(self.img, math.floor(self.x), math.floor(self.y))
-    self.leftSensor:draw()
-    self.rightSensor:draw()
 end

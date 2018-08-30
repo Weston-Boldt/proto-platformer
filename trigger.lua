@@ -8,7 +8,7 @@ local Class = require'libs.hump.class'
 
 local Trigger = Class{}
 
-function Trigger:init(x,y,w,h,properties,map)
+function Trigger:init(x,y,w,h,properties)
     self.name = 'Trigger'
     self.x = x
     self.y = y
@@ -35,6 +35,12 @@ function Trigger:update(dt)
     if not active then
         return nil;
     end
+end
+
+function Trigger:handleCollisions()
+end
+
+function Trigger:collisionFilter(item, other)
 end
 
 function Trigger:draw()

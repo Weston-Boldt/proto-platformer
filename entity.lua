@@ -29,4 +29,8 @@ function Entity:test()
     print("hello from entity class")
 end
 
+function Entity:getCollisionFilter(item, other)
+    return 'slide'
+end
+
 return Entity

@@ -6,7 +6,7 @@ MapEnd = Class{
     __includes = Trigger
 }
 
-function MapEnd:init(x,y,w,h,properties,map)
+function MapEnd:init(x,y,w,h,properties)
     Trigger:init(self,x,y,w,h)
     self.name = "MapEnd"
     self.x = x

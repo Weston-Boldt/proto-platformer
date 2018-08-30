@@ -42,7 +42,6 @@ function Map.create(level, map)
 
     self.entities = Entities(self)
     self.triggers = Entities(self)
-    self.sensors = Entities(self)
     self.objects = {}
     self.particles = {}
     self.enemies = {}
@@ -100,6 +99,15 @@ function Map:getTriggerToSpawn(triggerName)
             self.triggers:add(self.MapEnd)
             return self.MapEnd
         end,
+        EnemyCollision = function(x,y,w,h)
+            local enColl = EnemyCollision(x,y,w,h)
+            self.triggers:add(enColl)
+            self.world:add(
+                enColl,
+                enColl.x, enColl.y,
+                enColl.w, enColl.h
+            )
+        end
     }
     local returnTrigger = trigs[triggerName]
     -- print("return Trigger = "..tostring(returnTrigger))
@@ -132,8 +140,6 @@ function Map:getObjectToSpawn(objName)
             print("baseEnemy = "..tostring(baseEnemy))
             self:addEntityToWorld(baseEnemy)
             self:addEntityToHitBoxWorld(baseEnemy.hitBox)
-            print("baseEnemy.sensors = "..tostring(baseEnemy.sensors)) 
-            self.sensors:addMany(baseEnemy.sensors)
             print("base_enemy collisions = "..tostring(baseEnemy.collisions))
         end,
     }
@@ -281,11 +287,19 @@ function Map:moveObjects(entityList,dt)
         local collisions = nil;
         local newX;
         local newY;
+        local world;
         if (obj.name == "HitBox") then
-            newX, newY, collisions = self.hitBoxWorld:move(obj, obj.x, obj.y)
+            world = self.hitBoxWorld
         else
-            newX, newY, collisions = self.world:move(obj, obj.x, obj.y)
+            world = self.world
         end
+
+        newX, newY, collisions = world:move(
+            obj,
+            obj.x, obj.y,
+            obj.getCollisionFilter
+        )
+
         obj.x = newX
         obj.y = newY
         obj:handleCollisions(collisions,dt)
