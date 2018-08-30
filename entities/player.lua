@@ -169,7 +169,7 @@ function Player:handleCollisions(collisions, dt)
             end
             if coll.touch.y > self.y then
                 self.onGround = false
-                self.jump_time = JUMP_TIME_MAX
+                -- self.jump_time = JUMP_TIME_MAX
             elseif coll.normal.y < 0 then
                 self.jumping = false
                 self.onGround = true
