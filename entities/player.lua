@@ -87,6 +87,7 @@ function Player:init(x,y,level)
 end
 
 function Player:updateRunning(dt)
+    applyFriction(self, dt)
     local changedDir = false
     local both = keystate.right and keystate.left
 
@@ -94,13 +95,8 @@ function Player:updateRunning(dt)
                          (both and self.lastDir == RIGHT)
     local walkingLeft = (not both and keystate.left) or
                         (both and self.lastDir == LEFT)
-    print("walkingLeft = "..tostring(walkingLeft))
-    print("walkingRight = "..tostring(walkingRight))
-    -- if (self.xspeed > 0.0001 or self.xspeed < -0.0001) then
-        self.xspeed = self.xspeed * (1 - math.min(dt * self.friction, 1))
-    -- else
-        -- self.xspeed = 0
-    -- end
+
+
     if walkingRight and self.xspeed > -MAX_SPEED then
         self.xspeed = self.xspeed + self.xacc*dt
         if self.dir == LEFT then
@@ -121,7 +117,6 @@ function Player:updateRunning(dt)
     end
     self.x = self.x + self.xspeed
 
-    self.yspeed = self.yspeed * (1 - math.min(dt * self.friction, 1))
     if not self.onGround then
         --print("not on the ground")
         if self.jumping then
@@ -153,10 +148,11 @@ function Player:getCollisionFilter(other)
 end
 
 function Player:handleCollisions(collisions, dt)
-    print("self.xspeed = "..self.xspeed)
+    Entity:handleCollisions(self)
     -- we are likely in the air?
     if #collisions == 0 then
         self.onGround = false
+        return
     end
 
     for i, coll in pairs(collisions) do

@@ -61,12 +61,13 @@ function BaseEnemy:update(dt)
 end
 
 function BaseEnemy:updateRunning(dt)
+    applyFriction(self,dt)
+
     if self.moving then
-        self.xspeed = (self.xspeed * (1 - math.min(dt * self.friction, 1))) +
-        ((self.xacc*dt) * self.dir) 
+        self.xspeed = self.xspeed + ((self.xacc*dt) * self.dir) 
     end
+
     self.xspeed = cap(self.xspeed, -MAX_SPEED, MAX_SPEED)
-    self.speed = self.yspeed * (1 - math.min(dt * self.friction, 1))
     self.yspeed = self.yspeed + self.gravity * dt
 
     self.x = self.x + self.xspeed
@@ -74,9 +75,8 @@ function BaseEnemy:updateRunning(dt)
 end
 
 function BaseEnemy:handleCollisions(collisions,dt)
-    if #collisions == 0 then
-        self.onGround = false
-    end
+    Entity:handleCollisions(self)
+
     for i, coll in pairs(collisions) do
         if coll.normal.x ~= 0 then
             self.dir = self.dir * -1

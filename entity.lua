@@ -11,6 +11,14 @@ function Entity:init(--[[world,--]]x,y,w,h)
 
     self.name = 'Entity'
     self.collisions = {}
+    self.friction = 0
+end
+
+function Entity:handleCollisions(collisions, dt)
+    if #collisions == 0 then
+        self.onGround = false
+        return
+    end
 end
 
 function Entity:getRect()
