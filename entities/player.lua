@@ -40,7 +40,7 @@ function Player:init(x,y,level)
     self.boundingQuad = lg.newQuad(12, 0, 53, 64, img:getDimensions())
     self.name = "Player"
     self.img = img
-    self.x = x + PLAYER_WIDTH
+    self.x = x -- + PLAYER_WIDTH
     self.y = y
     self.w = w -- img:getWidth()
     self.h = h -- img:getHeight()
@@ -94,7 +94,13 @@ function Player:updateRunning(dt)
                          (both and self.lastDir == RIGHT)
     local walkingLeft = (not both and keystate.left) or
                         (both and self.lastDir == LEFT)
-    self.xspeed = self.xspeed * (1 - math.min(dt * self.friction, 1))
+    print("walkingLeft = "..tostring(walkingLeft))
+    print("walkingRight = "..tostring(walkingRight))
+    -- if (self.xspeed > 0.0001 or self.xspeed < -0.0001) then
+        self.xspeed = self.xspeed * (1 - math.min(dt * self.friction, 1))
+    -- else
+        -- self.xspeed = 0
+    -- end
     if walkingRight and self.xspeed > -MAX_SPEED then
         self.xspeed = self.xspeed + self.xacc*dt
         if self.dir == LEFT then
@@ -110,6 +116,9 @@ function Player:updateRunning(dt)
     end
 
     self.xspeed = cap(self.xspeed, -MAX_SPEED, MAX_SPEED);
+    if math.floor(self.xspeed) == 0 and not (walkingLeft or walkingRight) then
+        self.xspeed = 0
+    end
     self.x = self.x + self.xspeed
 
     self.yspeed = self.yspeed * (1 - math.min(dt * self.friction, 1))
@@ -144,15 +153,19 @@ function Player:getCollisionFilter(other)
 end
 
 function Player:handleCollisions(collisions, dt)
+    print("self.xspeed = "..self.xspeed)
     -- we are likely in the air?
     if #collisions == 0 then
         self.onGround = false
     end
+
     for i, coll in pairs(collisions) do
+        -- skip these for now without checking what they are
+        -- as we are choosing to go through em anyways
         if coll.type == "cross" then
         else 
-            for key, value in pairs(coll) do
-                print(key.." = "..tostring(value))
+            if coll.normal.x ~= 0 then
+                self.xspeed = 0
             end
             if coll.touch.y > self.y then
                 self.onGround = false
