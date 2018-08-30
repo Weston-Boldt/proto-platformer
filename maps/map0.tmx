@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="1.1.5" orientation="orthogonal" renderorder="right-down" width="200" height="20" tilewidth="32" tileheight="32" infinite="0" nextobjectid="36">
+<map version="1.0" tiledversion="1.1.5" orientation="orthogonal" renderorder="right-down" width="200" height="20" tilewidth="32" tileheight="32" infinite="0" nextobjectid="37">
  <tileset firstgid="1" name="first_sprite_sheet" tilewidth="32" tileheight="32" tilecount="136" columns="17">
   <image source="../assets/first_sprite_sheet.png" trans="ff00ff" width="544" height="256"/>
   <tile id="119">
@@ -166,5 +166,6 @@ TODO FIXME idk if this doesn't want to be a rect or whatever</property>
   </properties>
   <object id="25" name="MapEnd" x="224" y="288" width="32" height="32"/>
   <object id="33" name="EnemyCollision" x="512" y="320" width="32" height="32"/>
+  <object id="36" name="EnemyCollision" x="256" y="320" width="32" height="32"/>
  </objectgroup>
 </map>

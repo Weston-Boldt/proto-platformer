@@ -149,14 +149,20 @@ function Player:handleCollisions(collisions, dt)
         self.onGround = false
     end
     for i, coll in pairs(collisions) do
-        if coll.touch.y > self.y then
-            self.onGround = false
-            self.jump_time = JUMP_TIME_MAX
-        elseif coll.normal.y < 0 then
-            self.jumping = false
-            self.onGround = true
-            self.yspeed = 0
-            self.jump_time = JUMP_TIME_MAX
+        if coll.type == "cross" then
+        else 
+            for key, value in pairs(coll) do
+                print(key.." = "..tostring(value))
+            end
+            if coll.touch.y > self.y then
+                self.onGround = false
+                self.jump_time = JUMP_TIME_MAX
+            elseif coll.normal.y < 0 then
+                self.jumping = false
+                self.onGround = true
+                self.yspeed = 0
+                self.jump_time = JUMP_TIME_MAX
+            end
         end
         -- todo fixme coll type will be depending
         -- on what coll type the object has
