@@ -37,7 +37,7 @@ end
 
 function HitBox:handleCollisions(collisions,dt)
     for key, value in pairs(collisions) do
-        print(key)
+        --print(key)
     end
 end
 
@@ -46,7 +46,7 @@ function HitBox:draw()
 end
 
 function HitBox:getCollisionFilter(item, other)
-    return 'slide'
+    return 'bounce'
 end
 
 return HitBox

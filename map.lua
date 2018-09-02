@@ -307,22 +307,41 @@ function Map:moveObjects(entityList,dt)
     end
 end
 
+function Map:checkForNewSpawningObject()
+    local addHitBox = function(hitBox)
+        if not self.hitBoxes:exists(hitBox) then
+            self:addEntityToHitBoxWorld(hitBox)
+        end
+    end
+
+    for key, obj in pairs(self.entities.entityList) do
+        if obj.attackHitBox then
+            addHitBox(obj.attackHitBox)
+        elseif obj.attackHitBoxes then
+            for i, attackHitBox in ipairs(obj.attackHitBoxes) do
+                addHitBox(attackHitBox)
+            end
+        end
+    end
+end
+
 function Map:update(dt)
     self:checkForRespawn()
     -- print("self.player.doingAction = "..tostring(self.player.doingAction))
     self:playerTriggerOverLap()
     self.entities:update(dt)
+    -- updated all of the data?
+    -- time to move the stuff and then handle collisions
     -- hitBoxes will be updated by the entities that hold them
     self.triggers:update(dt)
     self.mapData:update(dt)
+
+    self:checkForNewSpawningObject()
+
+    -- two calls to moveObjects
+    -- once for the entities, then the hitboxes
     self:moveObjects(self.entities.entityList, dt)
     self:moveObjects(self.hitBoxes.entityList, dt)
-
-    -- updated all of the data?
-    -- time to move the stuff and then handle collisions
-    for key, obj in pairs(self.entities.entityList) do
-       
-    end
 end
 
 function Map:draw(trans_x, trans_y)

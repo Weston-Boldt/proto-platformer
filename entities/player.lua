@@ -50,7 +50,7 @@ function Player:init(x,y,level)
     self.xacc = 45
     self.friction = 10
     self.gravity = NORMAL_GRAVITY
-    self.jump_time = JUMP_TIME_MAX
+    self.jumpTime = JUMP_TIME_MAX
     self.letGoOfJump = false
 
     self.onGround = false
@@ -188,7 +188,7 @@ function Player:handleCollisions(collisions, dt)
                 self.jumping = false
                 self.onGround = true
                 self.yspeed = 0
-                self.jump_time = JUMP_TIME_MAX
+                self.jumpTime = JUMP_TIME_MAX
             end
         end
         -- todo fixme coll type will be depending
@@ -198,10 +198,10 @@ end
 
 function Player:updateJumping(dt)
     -- print("top of Player:updateJumping")
-    if self.jump_time > 0
+    if self.jumpTime > 0
     and love.keyboard.isDown(config_keys.jump)
     and not self.letGoOfJump then
-        self.jump_time = self.jump_time - dt
+        self.jumpTime = self.jumpTime - dt
         self.yspeed = self.yspeed - self.jumpAcc * (dt / JUMP_TIME_MAX)
         local targetJumpSpeed = self.jumpAcc*dt;
         -- print("jump speed is gonna  = "..targetJumpSpeed.."\n")

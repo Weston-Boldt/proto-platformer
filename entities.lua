@@ -46,6 +46,16 @@ function Entities:add(entity)
     table.insert(self.entityList, entity)
 end
 
+function Entities:exists(entity)
+    for i, e in ipairs(self.entityList) do
+        if e == entity then
+            return true
+        end
+    end
+
+    return false
+end
+
 function Entities:addMany(entities)
     for _, entity in pairs(entities) do
         self:add(entity)

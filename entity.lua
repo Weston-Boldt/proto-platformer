@@ -12,6 +12,14 @@ function Entity:init(--[[world,--]]x,y,w,h)
     self.name = 'Entity'
     self.collisions = {}
     self.friction = 0
+
+    -- an entity has a good chance of having a hitbox
+    self.hitBox = nil
+    -- singular attack
+    self.attackHitBox = nil
+    -- mutliple attacks ? todo fixme
+    -- i don't know about this yet
+    self.attackHitBoxes = nil
 end
 
 function Entity:handleCollisions(collisions, dt)
