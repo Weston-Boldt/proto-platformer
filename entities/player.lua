@@ -26,6 +26,9 @@ local BRAKE_SPEED = 350
 local MAX_SPEED = 160
 local MAX_JUMP = 100
 local JUMP_TIME_MAX = 0.5
+
+local ATTACK_TIME_MAX = 0.25
+
 local BASE_ACC = 45
 
 local lg = love.graphics
@@ -73,6 +76,7 @@ function Player:init(x,y,level)
         HITBOX_HEIGHT  
     )
     self.attackHitBox = nil;
+    self.attackTime = ATTACK_TIME_MAX
     self.spawnX = self.x
     self.spawnY = self.y - 10
     self.doRespawn = false
@@ -136,6 +140,12 @@ function Player:updateRunning(dt)
 end
 
 function Player:updateShooting(dt)
+    if self.attackTime > 0 then
+        self.attackTime = self.attackTime - dt
+    else
+        self.state = PS_RUN
+    end
+
     applyFriction(self, dt)
     applyGravity(self,dt)
     if not self.onGround then
