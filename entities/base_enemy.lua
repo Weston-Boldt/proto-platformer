@@ -34,7 +34,7 @@ function BaseEnemy:init(x,y)
 
     self.img = img
 
-    self.hitBox = HitBox(self, self.x, self.y, HITBOX_HEIGHT, HITBOX_WIDTH)
+    self.hitBox = HitBox(self, self.x, self.y, HITBOX_WIDTH, HITBOX_HEIGHT)
     self.xspeed = 0;
     self.yspeed = 0;
 
@@ -56,8 +56,7 @@ function BaseEnemy:update(dt)
     end
 
     -- print("hitting baseEnemy:update")
-    self.hitBox:update(dt)
-
+    self.hitBox:update(self.x,self.y,dt)
 end
 
 function BaseEnemy:updateRunning(dt)
@@ -91,4 +90,5 @@ end
 function BaseEnemy:draw()
     -- print("hitting baseEnemy:draw")
     lg.draw(self.img, math.floor(self.x), math.floor(self.y))
+    self.hitBox:draw()
 end

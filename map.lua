@@ -41,6 +41,7 @@ function Map.create(level, map)
     self.mapData:bump_init(self.world)
 
     self.entities = Entities(self)
+    self.hitBoxes = Entities(self)
     self.triggers = Entities(self)
     self.objects = {}
     self.particles = {}
@@ -83,7 +84,7 @@ function Map:addEntityToWorld(entity)
 end
 
 function Map:addEntityToHitBoxWorld(hitBox)
-    self.entities:add(hitBox)
+    self.hitBoxes:add(hitBox)
     self.hitBoxWorld:add(
         hitBox,
         hitBox.x, hitBox.y,
@@ -284,17 +285,17 @@ end
 
 function Map:moveObjects(entityList,dt)
     for key, obj in pairs(entityList) do
-        local collisions = nil;
         local newX;
         local newY;
         local world;
-        if (obj.name == "HitBox") then
+        local collisionFilter
+        if obj.name == "HitBox" then
             world = self.hitBoxWorld
         else
             world = self.world
         end
 
-        newX, newY, collisions = world:move(
+        newX, newY, collisions, len = world:move(
             obj,
             obj.x, obj.y,
             obj.getCollisionFilter
@@ -311,9 +312,11 @@ function Map:update(dt)
     -- print("self.player.doingAction = "..tostring(self.player.doingAction))
     self:playerTriggerOverLap()
     self.entities:update(dt)
+    -- hitBoxes will be updated by the entities that hold them
     self.triggers:update(dt)
     self.mapData:update(dt)
     self:moveObjects(self.entities.entityList, dt)
+    self:moveObjects(self.hitBoxes.entityList, dt)
 
     -- updated all of the data?
     -- time to move the stuff and then handle collisions

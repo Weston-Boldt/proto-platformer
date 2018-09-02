@@ -3,6 +3,10 @@ function applyFriction(object,dt)
     object.yspeed = object.yspeed * (1 - math.min(dt * object.friction, 1))
 end
 
+function applyGravity(object, dt)
+    object.yspeed = object.yspeed + object.gravity * dt
+end
+
 function collX(objALeft,objARight,objBLeft,objBRight)
     --[[
     print("a left = "..tostring(objALeft).." a right = "..tostring(objARight)..

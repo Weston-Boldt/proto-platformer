@@ -12,12 +12,12 @@ Player = Class{
 }
 
 -- local PLAYER_WIDTH, PLAYER_HEIGHT = 16, 22 LEFT = -1
-PS_RUN, PS_CLIMB, PS_CARRY, PS_THROW, PS_DEAD = 0,1,2,3,4 -- Player states 
+PS_RUN, PS_SHOOTING, PS_CARRY, PS_THROW, PS_DEAD = 0,1,2,3,4,5 -- Player states 
 PLAYER_WIDTH = 32
 PLAYER_HEIGHT = 64
 -- give the player a bit of edge room when being attacked
 -- but still want to collide normally with the map
-HITBOX_WIDTH = PLAYER_WIDTH * .75 
+HITBOX_WIDTH = PLAYER_WIDTH
 HITBOX_HEIGHT = PLAYER_HEIGHT
 
 local GD_UP, GD_HORIZONTAL, GD_DOWN = 0,2,4 -- Gun directions
@@ -26,6 +26,7 @@ local BRAKE_SPEED = 350
 local MAX_SPEED = 160
 local MAX_JUMP = 100
 local JUMP_TIME_MAX = 0.5
+local BASE_ACC = 45
 
 local lg = love.graphics
 Player.__index = Player
@@ -63,12 +64,15 @@ function Player:init(x,y,level)
     self.hitBox = HitBox;
     self.hitBox:init(
         self,
-        self.x,
-        self.y,
-        HITBOX_HEIGHT,  
-        HITBOX_WIDTH
+        self.x, self.y,
+        --[[
+        (self.x + self.w) / 2,
+        self.y + (self.h / 2 ),
+        --]]
+        HITBOX_WIDTH,
+        HITBOX_HEIGHT  
     )
-    print("player hitbox = "..tostring(self.hitBox))
+    self.attackHitBox = nil;
     self.spawnX = self.x
     self.spawnY = self.y - 10
     self.doRespawn = false
@@ -125,10 +129,24 @@ function Player:updateRunning(dt)
         end
     end
     
-    self.yspeed = self.yspeed + self.gravity *dt
+    applyGravity(self,dt)
 
     self.y = self.y + self.yspeed
     -- self.x, self.y, collisions = map.world:move(self, self.x, self.y)
+end
+
+function Player:updateShooting(dt)
+    applyFriction(self, dt)
+    applyGravity(self,dt)
+    if not self.onGround then
+        --print("not on the ground")
+        if self.jumping then
+           -- print("jumping so should be jumping")
+            self:updateJumping(dt)
+        end
+    end
+    self.x = self.x + self.xspeed 
+    self.y = self.y + self.yspeed 
 end
 
 function Player:getCollisionFilter(other)
@@ -227,13 +245,29 @@ function Player:update(dt)
     -- first update states
     if self.state == PS_RUN then
         self:updateRunning(dt)
+    elseif self.state == PS_SHOOTING then
+        self:updateShooting(dt)
     end
 
-    self.hitBox:update(dt)
+    self.hitBox:update(
+        self.x, self.y,
+        dt
+    )
+
+    -- print("update player hitBox with x "..tostring(self.x))
 end
 
 function Player:draw()
+
+    self.hitBox:draw(
+        math.floor(self.hitBox.x),math.floor(self.hitBox.y)
+    )
     lg.draw(self.img, self.boundingQuad, math.floor(self.x), math.floor(self.y), 0, 1, 1, 4)
+    if self.attackHitBox then
+        self.attackHitBox:draw(
+            math.floor(self.attackHitBox.x),math.floor(self.attackHitBox.y)
+        )
+    end
 end
 
 -- kind of a weak warp function
@@ -259,6 +293,20 @@ function Player:doAction()
     self.doingAction = true
 end
 
+function Player:shoot()
+    self.state=PS_SHOOTING;
+    local hitBotX = nil;
+    if self.dir == LEFT then
+        hitBotX = self.x - 64
+    else 
+        hitBotX = self.x + self.w
+    end
+    self.attackHitBox = HitBox(self,
+        hitBotX, self.y,
+        64, HIT_BOX_HEIGHT
+    )
+end
+
 function Player:action(actionName)
     -- debugging 
     self.actionName = actionName
@@ -272,6 +320,8 @@ function Player:action(actionName)
         else
             self.lastDir = RIGHT
         end 
+    elseif actionName == "shoot" then
+        self:shoot()
     elseif actionName == "respawn" then
         self:respawn()
     elseif actionName == "action" then

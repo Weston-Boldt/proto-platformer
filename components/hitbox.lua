@@ -2,11 +2,9 @@ local Entity = require'../entity'
 local Class = require'../libs.hump.class'
 
 HitBox = Class {
-    __includes = Entity
 }
 
 function HitBox:init(obj,x,y,w,h)
-    Entity:init(self,x,y,w,h)
     self.name = "HitBox"
     self.collType = "slide" -- default
     self.obj = obj
@@ -14,19 +12,41 @@ function HitBox:init(obj,x,y,w,h)
     self.y = y
     self.w = w
     self.h = h
+
+    self.img = love.graphics.newImage(
+        'assets/entity_stub.png'
+    )
 end
 
-function HitBox:update(dt)
-    self.x = self.obj.x
-    self.y = self.obj.y
-    -- print("HitBox.x = "..tostring(self.x)..
-    --    "HitBox.y = "..tostring(self.y))
+function HitBox:update(xPos,yPos,dt)
+    local targetX = nil;
+    local targetY = nil;
+    if not xPos then
+        targetX = self.obj.x
+    else 
+        targetX = xPos
+    end
+    if not yPos then
+        targetY = self.obj.y
+    else 
+        targetY = yPos
+    end
+    self.x = targetX
+    self.y = targetY
 end
 
-function HitBox:handleCollisions(dt)
+function HitBox:handleCollisions(collisions,dt)
+    for key, value in pairs(collisions) do
+        print(key)
+    end
 end
 
 function HitBox:draw()
+    lg.draw(self.img, math.floor(self.x), math.floor(self.y))
+end
+
+function HitBox:getCollisionFilter(item, other)
+    return 'slide'
 end
 
 return HitBox
