@@ -75,7 +75,7 @@ end
 
 function Map:addEntityToWorld(entity)
     self.entities:add(entity)
-    print("entity.name = "..entity.name)
+    -- print("entity.name = "..entity.name)
     self.world:add(
         entity,
         entity.x, entity.y,
@@ -133,7 +133,7 @@ function Map:getObjectToSpawn(objName)
             self.player = Player:init(x,y)
             self:addEntityToWorld(self.player)
             self:addEntityToHitBoxWorld(self.player.hitBox)
-            print("player collisions = "..tostring(self.player.collisions))
+            -- print("player collisions = "..tostring(self.player.collisions))
             return self.player
         end,
         BaseEnemy = function (x, y)
@@ -316,11 +316,24 @@ function Map:checkForNewSpawningObject()
 
     for key, obj in pairs(self.entities.entityList) do
         if obj.attackHitBox then
+            -- print("should be adding hitbox")
             addHitBox(obj.attackHitBox)
-        elseif obj.attackHitBoxes then
+        end
+        if obj.attackHitBoxes then
             for i, attackHitBox in ipairs(obj.attackHitBoxes) do
                 addHitBox(attackHitBox)
             end
+        end
+    end
+
+    for key, hitBox in pairs(self.hitBoxes.entityList) do
+        -- does the hitbox no longer have a
+        -- object reference?
+        -- clear it off of the world
+        if not hitBox.obj then
+            -- print("found a hitbox without obj ref")
+            self.hitBoxes:remove(hitBox)
+            self.hitBoxWorld:remove(hitBox)
         end
     end
 end

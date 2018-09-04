@@ -16,6 +16,16 @@ function HitBox:init(obj,x,y,w,h)
     self.img = love.graphics.newImage(
         'assets/entity_stub.png'
     )
+    return self
+end
+
+
+function HitBox:detach()
+    -- print("calling detach")
+    -- print("self = "..tostring(self))
+    -- print("self.obj = "..tostring(self.obj))
+    self.obj = false
+    -- print("after self.obj = "..tostring(self.obj))
 end
 
 function HitBox:update(xPos,yPos,dt)
@@ -46,7 +56,7 @@ function HitBox:draw()
 end
 
 function HitBox:getCollisionFilter(item, other)
-    return 'bounce'
+    return 'slide'
 end
 
 return HitBox

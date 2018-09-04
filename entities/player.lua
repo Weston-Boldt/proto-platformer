@@ -27,7 +27,7 @@ local MAX_SPEED = 160
 local MAX_JUMP = 100
 local JUMP_TIME_MAX = 0.5
 
-local ATTACK_TIME_MAX = 0.25
+local ATTACK_TIME_MAX = 0.5
 
 local BASE_ACC = 45
 
@@ -75,7 +75,7 @@ function Player:init(x,y,level)
         HITBOX_WIDTH,
         HITBOX_HEIGHT  
     )
-    self.attackHitBox = nil;
+    self.attackHitBox = false;
     self.attackTime = ATTACK_TIME_MAX
     self.spawnX = self.x
     self.spawnY = self.y - 10
@@ -143,6 +143,14 @@ function Player:updateShooting(dt)
     if self.attackTime > 0 then
         self.attackTime = self.attackTime - dt
     else
+        -- print("about to detatch")
+        -- detatch the hitbox off the object
+        -- to get swept up and removed by the 
+        -- print("before "..tostring(self.attackHitBox.obj))
+        self.attackHitBox:detach()
+        -- print("after "..tostring(self.attackHitBox.obj))
+        self.attackHitBox = false;
+        self.attackTime = ATTACK_TIME_MAX
         self.state = PS_RUN
     end
 
@@ -240,8 +248,16 @@ function Player:jump()
         self.yspeed = self.yspeed - self.jumpAcc
     end
 end
-
+attackHBox = nil
 function Player:update(dt)
+    if self.attackHitBox and not attackHBox then
+        -- print('setting')
+        attackHBox = self.attackHitBox
+    end
+    if attackHBox then
+        -- print("hitboxes obj = "..tostring(attackHBox.obj))
+        -- print("player = "..tostring(self))
+    end
     --print("before doing action = "..tostring(self.doingAction))
     self.doingAction = false
     --print("after doing action = "..tostring(self.doingAction))
@@ -263,6 +279,14 @@ function Player:update(dt)
         self.x, self.y,
         dt
     )
+
+    if self.attackHitBox then
+        local hitBoxX = self:getAttackHitBoxX();
+        self.attackHitBox:update(
+            hitBoxX, self.y,
+            64, 32
+        )
+    end
 
     -- print("update player hitBox with x "..tostring(self.x))
 end
@@ -303,17 +327,27 @@ function Player:doAction()
     self.doingAction = true
 end
 
-function Player:shoot()
-    self.state=PS_SHOOTING;
-    local hitBotX = nil;
+function Player:getAttackHitBoxX()
+    local hitBoxX = nil;
     if self.dir == LEFT then
-        hitBotX = self.x - 64
+        hitBoxX = self.x - 64
     else 
-        hitBotX = self.x + self.w
+        hitBoxX = self.x + self.w
     end
+    return hitBoxX
+end
+
+function Player:shoot()
+    if self.state == PS_SHOOTING then
+        print("here")
+        return
+    end
+
+    self.state=PS_SHOOTING;
+    local hitBoxX = self:getAttackHitBoxX()
     self.attackHitBox = HitBox(self,
-        hitBotX, self.y,
-        64, HIT_BOX_HEIGHT
+        hitBoxX, self.y,
+        64, 32
     )
 end
 

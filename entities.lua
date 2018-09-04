@@ -24,7 +24,7 @@ Entities = Class{
 local Entities = Class{}
 
 function Entities:init(map)
-    print("top of entities:init")
+    -- print("top of entities:init")
     self.active = true
     -- world = nil,
     self.map = map
@@ -67,12 +67,15 @@ function Entities:removeAt(index)
 end
 
 function Entities:remove(entity)
-  for i, e in ipairs(self.entityList) do
-    if e == entity then
-      table.remove(self.entityList, i)
-      return
+    -- print("calling remove")
+    -- print("entity = "..tostring(entity))
+    for i, e in ipairs(self.entityList) do
+        -- print("e = "..tostring(e))
+        if e == entity then
+            -- print("should be removing now")
+            table.remove(self.entityList, i)
+        end
     end
-  end
 end
 
 function Entities:clear()

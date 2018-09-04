@@ -1,6 +1,12 @@
 local Class = require'libs.hump.class'
 
-local Entity = Class{}
+local Entity = Class{
+    -- if they are not active
+    -- they twill get swept up
+    -- and removed
+    -- my the map object
+    active = true
+}
 
 function Entity:init(--[[world,--]]x,y,w,h)
     -- self.world = world
