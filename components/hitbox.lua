@@ -4,7 +4,7 @@ local Class = require'../libs.hump.class'
 HitBox = Class {
 }
 
-function HitBox:init(obj,x,y,w,h)
+function HitBox:init(obj,x,y,w,h,attack)
     self.name = "HitBox"
     self.collType = "slide" -- default
     self.obj = obj
@@ -12,6 +12,12 @@ function HitBox:init(obj,x,y,w,h)
     self.y = y
     self.w = w
     self.h = h
+
+    if not attack then
+        self.attack = false
+    else
+        self.attack = attack
+    end
 
     self.img = love.graphics.newImage(
         'assets/entity_stub.png'
@@ -45,9 +51,28 @@ function HitBox:update(xPos,yPos,dt)
     self.y = targetY
 end
 
+function HitBox:handleCollision(obj, dt)
+    for key, value in pairs(obj) do
+        print(tostring(key).." = "..tostring(value))
+        if obj.name == self.obj.name then
+            return
+            --[[
+            if self.attack then
+                return
+            end
+            --]]
+        end
+        if self.attack then
+            -- fill out some attack info
+            -- to be grabbed by the map class
+        end
+    end
+end
+
 function HitBox:handleCollisions(collisions,dt)
-    for key, value in pairs(collisions) do
-        --print(key)
+    for index, coll in ipairs(collisions) do
+        local obj =  coll.other
+        self:handleCollision(obj,dt)
     end
 end
 

@@ -347,7 +347,8 @@ function Player:shoot()
     local hitBoxX = self:getAttackHitBoxX()
     self.attackHitBox = HitBox(self,
         hitBoxX, self.y,
-        64, 32
+        32, 64,
+        HB_ATTACK
     )
 end
 

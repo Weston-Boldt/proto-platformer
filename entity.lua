@@ -55,4 +55,7 @@ function Entity:getCollisionFilter(item, other)
     return 'slide'
 end
 
+function Entity:hitWithAttack(obj, dt)
+end
+
 return Entity
