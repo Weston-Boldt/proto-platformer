@@ -1,3 +1,17 @@
+function empty(tblOrVar)
+    if type(tblOrVar) == "table" then
+        return #tblOrVar == 0
+    end
+
+    if not tblOrVar then
+        return true
+    elseif tblOrVar == '' then
+        return true
+    end
+
+    return false
+end
+
 function applyFriction(object,dt)
     object.xspeed = object.xspeed * (1 - math.min(dt * object.friction, 1))
     object.yspeed = object.yspeed * (1 - math.min(dt * object.friction, 1))
