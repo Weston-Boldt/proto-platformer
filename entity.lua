@@ -5,7 +5,11 @@ local Entity = Class{
     -- they twill get swept up
     -- and removed
     -- my the map object
-    active = true
+    active = true,
+
+    -- attacks on all entities
+    -- even if ya don't need em
+    attacks = {}
 }
 
 function Entity:init(--[[world,--]]x,y,w,h)
