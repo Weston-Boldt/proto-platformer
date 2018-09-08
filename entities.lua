@@ -1,12 +1,7 @@
 local Class = require'libs.hump.class'
 --[[
-todo instantiate this
-local Class = require'libs.hump.class'
 -- collection of entities for a map to have (or world)
 -- thanks osm stuidios tutorial
-Entities = Class{
-}
-
 function Entities:init()
     self.active = true
     self.map = nil

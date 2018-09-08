@@ -6,7 +6,9 @@
 -- even if its code duplication
 local Class = require'libs.hump.class'
 
-local Trigger = Class{}
+local Trigger = Class{
+    objType = 'Trigger'
+}
 
 function Trigger:init(x,y,w,h,properties)
     self.name = 'Trigger'

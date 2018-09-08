@@ -2,6 +2,7 @@ local Entity = require'../entity'
 local Class = require'../libs.hump.class'
 
 HitBox = Class {
+    objType = 'HitBox'
 }
 
 function HitBox:init(obj,x,y,w,h,attack)
@@ -51,25 +52,39 @@ function HitBox:update(xPos,yPos,dt)
     self.y = targetY
 end
 
-function HitBox:handleCollision(obj, dt)
-    for key, value in pairs(obj) do
-        print(tostring(key).." = "..tostring(value))
-        if obj.name == self.obj.name then
-            return
-            --[[
-            if self.attack then
-                return
-            end
-            --]]
-        end
+function HitBox:addAttack(obj)
+    table.insert(
+        self.obj.attacks, {
+            attacker = self.obj, 
+            target = obj
+        }
+    )
+end
+
+function HitBox:handleCollision(hbox, dt)
+    if hbox.obj.name == self.obj.name then
+        return
+        --[[
         if self.attack then
-            -- fill out some attack info
-            -- to be grabbed by the map class
+            return
         end
+        --]]
+    end
+    --[[
+    print('hbox.obj.name = '..tostring(hbox.obj.name))
+    print('self.obj.name = '..tostring(self.obj.name))
+    print('self.attack = '..tostring(self.attack))
+    --]]
+    if self.attack and hbox.obj.objType == 'Entity' then
+        -- is the hitbox an entity 'attacking'
+        -- another entity?
+        self.addAttack(hbox)
     end
 end
 
 function HitBox:handleCollisions(collisions,dt)
+    if (self.attack) then
+    end
     for index, coll in ipairs(collisions) do
         local obj =  coll.other
         self:handleCollision(obj,dt)
@@ -81,6 +96,11 @@ function HitBox:draw()
 end
 
 function HitBox:getCollisionFilter(item, other)
+    --[[
+    for key, value in pairs(other) do
+        print(tostring(key).." = "..tostring(value))
+    end
+    --]]
     return 'slide'
 end
 

@@ -284,12 +284,15 @@ function Map:checkForRespawn()
 end
 
 function Map:moveObjects(entityList,dt)
+    local attackHbox = nil
     for key, obj in pairs(entityList) do
         local newX;
         local newY;
         local world;
-        local collisionFilter
         if obj.name == "HitBox" then
+            if obj.attack then
+                attackHbox = true
+            end
             world = self.hitBoxWorld
         else
             world = self.world
@@ -316,7 +319,6 @@ function Map:checkForNewSpawningObject()
 
     for key, obj in pairs(self.entities.entityList) do
         if obj.attackHitBox then
-            -- print("should be adding hitbox")
             addHitBox(obj.attackHitBox)
         end
         if obj.attackHitBoxes then
@@ -331,7 +333,7 @@ function Map:checkForNewSpawningObject()
         -- object reference?
         -- clear it off of the world
         if not hitBox.obj then
-            -- print("found a hitbox without obj ref")
+            print("found a hitbox without obj ref")
             self.hitBoxes:remove(hitBox)
             self.hitBoxWorld:remove(hitBox)
         end

@@ -6,6 +6,7 @@ require("util")
 require("map")
 require("globals")
 require("resources")
+print("HB_ATTACK = "..tostring(HB_ATTACK))
 
 -- libs
 bump = require 'libs.bump.bump'

@@ -9,7 +9,8 @@ local Entity = Class{
 
     -- attacks on all entities
     -- even if ya don't need em
-    attacks = {}
+    attacks = {},
+    objType = 'Entity'
 }
 
 function Entity:init(--[[world,--]]x,y,w,h)

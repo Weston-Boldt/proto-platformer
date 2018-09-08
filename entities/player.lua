@@ -64,8 +64,7 @@ function Player:init(x,y,level)
     self.jumping = false;
     self.state = PS_RUN
     self.actionName = "";
-    self.hitBox = HitBox;
-    self.hitBox:init(
+    self.hitBox = HitBox(
         self,
         self.x, self.y,
         --[[
@@ -75,6 +74,7 @@ function Player:init(x,y,level)
         HITBOX_WIDTH,
         HITBOX_HEIGHT  
     )
+    print('self.hitbox'..tostring(self.hitbox))
     self.attackHitBox = false;
     self.attackTime = ATTACK_TIME_MAX
     self.spawnX = self.x
@@ -347,9 +347,10 @@ function Player:shoot()
     local hitBoxX = self:getAttackHitBoxX()
     self.attackHitBox = HitBox(self,
         hitBoxX, self.y,
-        32, 64,
-        HB_ATTACK
+        64, 32,
+        true
     )
+    print('should have created a hbox')
 end
 
 function Player:action(actionName)
