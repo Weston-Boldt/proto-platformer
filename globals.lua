@@ -1,0 +1,7 @@
+LEFT = -1
+RIGHT = 1
+
+NORMAL_GRAVITY=80
+
+HB_ATTACK = true
+HB_NOT_ATTACK = false
