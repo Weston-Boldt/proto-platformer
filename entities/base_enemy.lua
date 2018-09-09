@@ -10,7 +10,7 @@ local ENEMY_HEIGHT = 64
 local ENEMY_WIDTH = 32
 
 -- enemy states
-local BES_RUN = 0
+local ENS_RUN = 0
 
 local RIGHT = 1
 local LEGFT = -1
@@ -18,6 +18,10 @@ local LEGFT = -1
 local MAX_SPEED = 80
 
 local BASE_FRICTION = 10
+
+local BASE_HEALTH = 2
+local BASE_DAMAGE = 1
+
 function BaseEnemy:init(x,y)
     Entity:init(x,y,ENEMY_WIDTH, ENEMY_HEIGHT)
     print("top of BaseEnemy init")
@@ -45,13 +49,14 @@ function BaseEnemy:init(x,y)
     self.dir = RIGHT
     self.friction = 10
     self.gravity = NORMAL_GRAVITY
+    self.state = ENS_RUN
 
     print("enemy hitbox = "..tostring(self.hitBox))
     return self
 end
 
 function BaseEnemy:update(dt)
-    if self.state == EN_RUN then
+    if self.state == ENS_RUN then
         self:updateRunning(dt)
     end
 

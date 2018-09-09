@@ -267,17 +267,23 @@ function Map:sensorOverLap()
 end
 
 function Map:checkForRespawn()
+    local collisionFilter = function(item, other)
+        return 'cross'
+    end
+
     if (self.player.Respawn) then
         self.doRespawn = false
         self.world:move(
             player,
             self.player.spawnX,
-            self.player.spawnY
+            self.player.spawnY,
+            collisionFilter
         )
         self.hitBoxWorld:move(
             player.hitBox,
             self.player.hitBox.x,
-            self.player.hitBox.y
+            self.player.hitBox.y,
+            collisionFilter
         )
     end
 

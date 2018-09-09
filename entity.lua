@@ -1,5 +1,6 @@
 local Class = require'libs.hump.class'
 
+local ENTS_ACTIVE, ENTS_DEAD = 0, 1
 local Entity = Class{
     -- if they are not active
     -- they twill get swept up
@@ -10,7 +11,8 @@ local Entity = Class{
     -- attacks on all entities
     -- even if ya don't need em
     attacks = {},
-    objType = 'Entity'
+    objType = 'Entity',
+    state = ENTS_ACTIVE
 }
 
 function Entity:init(--[[world,--]]x,y,w,h)

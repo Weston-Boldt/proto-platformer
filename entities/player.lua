@@ -31,6 +31,9 @@ local ATTACK_TIME_MAX = 0.5
 
 local BASE_ACC = 45
 
+local HEALTH_MAX = 5
+local BASE_DAMAGE = 1
+
 local lg = love.graphics
 Player.__index = Player
 
@@ -80,6 +83,9 @@ function Player:init(x,y,level)
     self.spawnX = self.x
     self.spawnY = self.y - 10
     self.doRespawn = false
+
+    self.health = BASE_HEALTH
+    self.attackDmg = BASE_DAMAGE
     --[[
     self.gundir = GD_HORIZONTAL
     self.shooting = false
