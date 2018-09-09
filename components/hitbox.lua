@@ -52,11 +52,12 @@ function HitBox:update(xPos,yPos,dt)
     self.y = targetY
 end
 
-function HitBox:addAttack(obj)
+function HitBox:addAttack(hbox)
+    print('hbox'..tostring(hbox))
     table.insert(
         self.obj.attacks, {
             attacker = self.obj, 
-            target = obj
+            target = hbox.obj
         }
     )
 end
@@ -78,7 +79,8 @@ function HitBox:handleCollision(hbox, dt)
     if self.attack and hbox.obj.objType == 'Entity' then
         -- is the hitbox an entity 'attacking'
         -- another entity?
-        self.addAttack(hbox)
+        print('hbox'..tostring(hbox))
+        self:addAttack(hbox)
     end
 end
 

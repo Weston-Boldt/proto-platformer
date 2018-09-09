@@ -346,10 +346,19 @@ function Map:checkForNewSpawningObject()
     end
 end
 
+function Map:handleAttack(attack)
+    local attacker = attack.attacker;
+    local target = attack.target
+    print('attacker.name = '..tostring(attacker.name))
+    print('target.name = '..tostring(target.name))
+end
+
 function Map:handleAttacks()
     for _, object in ipairs(self.entities.entityList) do
         if not empty(object.attacks) then
-            print('this entity has attacks')
+            for _, attack in ipairs(object.attacks) do
+                self:handleAttack(attack)
+            end
             object:clearAttacks()
         end
     end

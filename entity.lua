@@ -1,5 +1,7 @@
 local Class = require'libs.hump.class'
 
+local BASE_HEALTH = 3
+local BASE_ATTACK = 1
 local ENTS_ACTIVE, ENTS_DEAD = 0, 1
 local Entity = Class{
     -- if they are not active
@@ -12,7 +14,9 @@ local Entity = Class{
     -- even if ya don't need em
     attacks = {},
     objType = 'Entity',
-    state = ENTS_ACTIVE
+    state = ENTS_ACTIVE,
+    hp = BASE_HEALTH,
+    attackDamage = BASE_ATTACK
 }
 
 function Entity:init(--[[world,--]]x,y,w,h)
