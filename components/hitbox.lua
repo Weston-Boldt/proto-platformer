@@ -20,6 +20,10 @@ function HitBox:init(obj,x,y,w,h,attack)
         self.attack = attack
     end
 
+    -- don't want to attack something you've
+    -- already attacked with a attack hitbox
+    self.attackedObjects = {}
+    
     self.img = love.graphics.newImage(
         'assets/entity_stub.png'
     )
@@ -54,11 +58,22 @@ end
 
 function HitBox:addAttack(hbox)
     print('hbox'..tostring(hbox))
+    if inTable(hbox.obj, self.attackedObjects) then
+        print('already had attacked this hitbox')
+        return;
+    end
+    local attack = {
+        attacker = self.obj, 
+        target = hbox.obj
+    }
     table.insert(
-        self.obj.attacks, {
-            attacker = self.obj, 
-            target = hbox.obj
-        }
+        self.obj.attacks,
+        attack
+    )
+
+    table.insert(
+        self.attackedObjects,
+        hbox.obj
     )
 end
 

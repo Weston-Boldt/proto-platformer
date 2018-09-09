@@ -1,3 +1,18 @@
+--[[
+    if the needle is of type table
+    then it will compare the reference
+    so if you are looking for a 'empty' table
+    this function will not work
+--]]
+function inTable(needle,haystack)
+    for _, item in ipairs(haystack) do
+        if item == needle then
+            return true
+        end
+    end
+    return false
+end
+
 function empty(tblOrVar)
     if type(tblOrVar) == "table" then
         return #tblOrVar == 0

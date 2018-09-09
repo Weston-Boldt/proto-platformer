@@ -360,10 +360,12 @@ end
 function Map:handleAttacks()
     for _, object in ipairs(self.entities.entityList) do
         if not empty(object.attacks) then
+            print('len of attacks before'..tostring(#object.attacks))
             for _, attack in ipairs(object.attacks) do
                 self:handleAttack(attack)
             end
             object:clearAttacks()
+            print('len of attacks after'..tostring(#object.attacks))
         end
     end
 end
