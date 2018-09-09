@@ -130,7 +130,7 @@ function Map:getObjectToSpawn(objName)
     -- print("objName = "..tostring(objName))
     objects = {
         Player = function (x, y)
-            self.player = Player:init(x,y)
+            self.player = Player(x,y)
             self:addEntityToWorld(self.player)
             self:addEntityToHitBoxWorld(self.player.hitBox)
             -- print("player collisions = "..tostring(self.player.collisions))
@@ -351,6 +351,10 @@ function Map:handleAttack(attack)
     local target = attack.target
     print('attacker.name = '..tostring(attacker.name))
     print('target.name = '..tostring(target.name))
+    print('attacker.health = '..tostring(attacker.health))
+    local healthAfterAtk = target.health - attacker.attackDmg
+    target.health = healthAfterAtk
+    print('healthAfterAtk = '..tostring(healthAfterAtk))
 end
 
 function Map:handleAttacks()

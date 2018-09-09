@@ -15,7 +15,7 @@ local Entity = Class{
     attacks = {},
     objType = 'Entity',
     state = ENTS_ACTIVE,
-    hp = BASE_HEALTH,
+    health = BASE_HEALTH,
     attackDamage = BASE_ATTACK
 }
 

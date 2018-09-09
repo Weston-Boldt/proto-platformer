@@ -85,6 +85,7 @@ function Player:init(x,y,level)
     self.doRespawn = false
 
     self.health = BASE_HEALTH
+    print('health = '..tostring(self.health))
     self.attackDmg = BASE_DAMAGE
     --[[
     self.gundir = GD_HORIZONTAL

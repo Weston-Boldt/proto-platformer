@@ -50,6 +50,8 @@ function BaseEnemy:init(x,y)
     self.friction = 10
     self.gravity = NORMAL_GRAVITY
     self.state = ENS_RUN
+    self.health = BASE_HEALTH
+    print('health= '..tostring(self.health))
 
     print("enemy hitbox = "..tostring(self.hitBox))
     return self
