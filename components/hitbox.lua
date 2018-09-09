@@ -101,6 +101,9 @@ function HitBox:getCollisionFilter(item, other)
         print(tostring(key).." = "..tostring(value))
     end
     --]]
+    if item.obj.name == self.obj.name then
+        return 'cross'
+    end
     return 'slide'
 end
 

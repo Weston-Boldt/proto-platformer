@@ -340,6 +340,15 @@ function Map:checkForNewSpawningObject()
     end
 end
 
+function Map:handleAttacks()
+    for _, object in ipairs(self.entities.entityList) do
+        if not empty(object.attacks) then
+            print('this entity has attacks')
+            object:clearAttacks()
+        end
+    end
+end
+
 function Map:update(dt)
     self:checkForRespawn()
     -- print("self.player.doingAction = "..tostring(self.player.doingAction))
@@ -357,6 +366,8 @@ function Map:update(dt)
     -- once for the entities, then the hitboxes
     self:moveObjects(self.entities.entityList, dt)
     self:moveObjects(self.hitBoxes.entityList, dt)
+
+    self:handleAttacks()
 end
 
 function Map:draw(trans_x, trans_y)

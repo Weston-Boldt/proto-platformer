@@ -40,6 +40,13 @@ function Entity:handleCollisions(collisions, dt)
     end
 end
 
+function Entity:clearAttacks()
+    print('before self.attacks = '..tostring(self.attacks))
+    self.attacks = {}
+    print('after self.attacks = '..tostring(self.attacks))
+end
+
+
 function Entity:getRect()
     return self.x, self.y, self.w, self.h
 end
