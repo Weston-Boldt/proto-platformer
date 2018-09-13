@@ -11,7 +11,7 @@ right now i have time to spend about 1 - 3 hours a night 4 nights a week on this
 so on inbetween days i can kind of forget what to hack on. maybe the readme is not a good
 place for project management but i feel like at this time it might be manageable.
 
-ITERATION 1
+ITERATION 1 - still here
 goals:
   get enough features added to extend into a bigger game
   this is less than a prototype, its more of a base to build the prototype on
@@ -40,31 +40,22 @@ features i've added
   collisions
   entity spawning based on tiled
   trigger spawning based on tiled
+  basic enemies
   
 features in development
-  enemies -- spawning but don't do anything yet
-  sensors -- a way for entities other than the player to 'see' whats going on
-          -- could be a decent way to handle basic ai patterns
-          -- they are showing up but not doing anything
-  triggers -- should be automatic or by pressing the `action button` when overlapped
-           -- that works but the triggers themselves dont do anything
+  attacks -- need to enter damage state, data is there though
+  health system
+  attack system
+  enemy ai -- basic stuff is there right now ai logic exists in update methods
+
 
 features to dev next
   animations -- need to create more assets to animate but currently have a simple idle for blue guy
-  health system
-  enemy ai
-  attack system
   power up system
   level progression -- going to next room in a level, or next level itself
   bosses
 
 issues
-  - needs a code cleanup session soon
-  - currently too much code lives in the player class
-    such as gravity, what i'm imagining is that humps.Class
-    doesnt support a lot of features you would expect from inheritance models
-    so what could be done instead is adding little functions in the entity class
-    that can help, although not every entity will be affected by gravity so its a bit of a 
-    issue
-  - assets are basically done whenever i feel like it and need to be put to a schedule
-  - lots of code can be factored and rm
+    - need some design work on what mechanics need to be done
+    - need some time to figure out these state changes for damage
+    - need an asset pipeline (not a huge issue right now)
