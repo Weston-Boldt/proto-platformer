@@ -8,35 +8,27 @@ BaseEnemy = Class{
 
 local ENEMY_HEIGHT = 64
 local ENEMY_WIDTH = 32
+local HITBOX_HEIGHT = 64
+local HITBOX_WIDTH = 32
 
 -- enemy states
 local ENS_RUN = 0
-
-local RIGHT = 1
-local LEGFT = -1
 
 local MAX_SPEED = 80
 
 local BASE_FRICTION = 10
 
-local BASE_HEALTH = 2
-local BASE_DAMAGE = 1
-
 function BaseEnemy:init(x,y)
     Entity:init(x,y,ENEMY_WIDTH, ENEMY_HEIGHT)
     print("top of BaseEnemy init")
-    local img = love.graphics.newImage('assets/base_enemy_block.png')
-    local w = ENEMY_WIDTH
-    local h = ENEMY_HEIGHT
+    self.img = love.graphics.newImage('assets/base_enemy_block.png')
     self.name = "BaseEnemy"
     self.collType = "bounce"
 
     self.x = x
     self.y = y
-    self.w = w
-    self.h = h
-
-    self.img = img
+    self.w = ENEMY_WIDTH
+    self.h = ENEMY_HEIGHT
 
     self.hitBox = HitBox(self, self.x, self.y, HITBOX_WIDTH, HITBOX_HEIGHT)
     self.xspeed = 0;

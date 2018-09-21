@@ -17,8 +17,8 @@ PLAYER_WIDTH = 32
 PLAYER_HEIGHT = 64
 -- give the player a bit of edge room when being attacked
 -- but still want to collide normally with the map
-HITBOX_WIDTH = PLAYER_WIDTH
-HITBOX_HEIGHT = PLAYER_HEIGHT
+local HITBOX_WIDTH = PLAYER_WIDTH
+local HITBOX_HEIGHT = PLAYER_HEIGHT
 
 local GD_UP, GD_HORIZONTAL, GD_DOWN = 0,2,4 -- Gun directions
 
