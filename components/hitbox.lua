@@ -57,9 +57,9 @@ function HitBox:update(xPos,yPos,dt)
 end
 
 function HitBox:addAttack(hbox)
-    print('hbox'..tostring(hbox))
+    -- print('hbox'..tostring(hbox))
     if inTable(hbox.obj, self.attackedObjects) then
-        print('already had attacked this hitbox')
+        -- print('already had attacked this hitbox')
         return;
     end
     local attack = {
@@ -94,7 +94,7 @@ function HitBox:handleCollision(hbox, dt)
     if self.attack and hbox.obj.objType == 'Entity' then
         -- is the hitbox an entity 'attacking'
         -- another entity?
-        print('hbox'..tostring(hbox))
+        -- print('hbox'..tostring(hbox))
         self:addAttack(hbox)
     end
 end

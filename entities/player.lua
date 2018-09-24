@@ -35,6 +35,8 @@ local BASE_ACC = 45
 local HEALTH_MAX = 5
 local BASE_DAMAGE = 1
 
+local DAMAGE_TIME_MAX = 0.5
+
 local lg = love.graphics
 Player.__index = Player
 

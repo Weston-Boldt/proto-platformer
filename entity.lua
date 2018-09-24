@@ -1,8 +1,5 @@
 local Class = require'libs.hump.class'
 
-local BASE_HEALTH = 3
-local BASE_ATTACK = 1
-
 -- this is probably unecessary
 local ENTS_ACTIVE = 0
 
@@ -17,8 +14,6 @@ local Entity = Class{
     -- even if ya don't need em
     attacks = {},
     objType = 'Entity',
-    -- this is probably unecessary
-    state = ENTS_ACTIVE,
     health = BASE_HEALTH,
     attackDamage = BASE_ATTACK
 }
@@ -80,10 +75,12 @@ end
 function Entity:setDamage(dmg)
 end
 
+--[[
 function Entity:updateDamage(dt)
 end
 
 function Entity:updateDead(dt)
 end
+--]]
 
 return Entity

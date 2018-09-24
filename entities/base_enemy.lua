@@ -12,11 +12,13 @@ local HITBOX_HEIGHT = 64
 local HITBOX_WIDTH = 32
 
 -- enemy states
-local ENS_RUN, ENS_DAMAGE = 0, 1
+local ENS_RUN, ENS_DAMAGE, ENS_DEAD = 0, 1, 2
 
 local MAX_SPEED = 80
 
 local BASE_FRICTION = 10
+
+local DAMAGE_TIME_MAX = 0.5
 
 function BaseEnemy:init(x,y)
     Entity:init(x,y,ENEMY_WIDTH, ENEMY_HEIGHT)
@@ -43,6 +45,9 @@ function BaseEnemy:init(x,y)
     self.gravity = NORMAL_GRAVITY
     self.state = ENS_RUN
     self.health = BASE_HEALTH
+
+    self.damageTime = DAMAGE_TIME_MAX
+
     print('health= '..tostring(self.health))
 
     print("enemy hitbox = "..tostring(self.hitBox))
@@ -53,9 +58,11 @@ function BaseEnemy:update(dt)
     if self.state == ENS_RUN then
         self:updateRunning(dt)
     elseif self.state == ENS_DAMAGE then
-        self.state = self:updateDamage(dt)
+        print('should be damaged')
+        self:updateDamage(dt)
     elseif self.state == ENS_DEAD then
-        self.state = self:updateDamage(dt)
+        print('should be dead')
+        self:updateDamage(dt)
     end
 
     -- print("hitting baseEnemy:update")
@@ -93,9 +100,22 @@ end
 function BaseEnemy:setDamage(attackDmg)
     self.health = self.health - attackDmg
     if self.health < 0 then
+        print('state should be dead')
         self.state = ENS_DEAD
     else
         self.state = ENS_DAMAGE
+    end
+    self.damageTime = DAMAGE_TIME_MAX
+end
+
+function BaseEnemy:updateDamage(dt)
+    print('top of baseenemy:updatedamage')
+    if self.damageTime > 0 then
+        print('before  time = '..tostring(self.damageTime))
+        self.damageTime = self.damageTime - dt
+        print('after time = '..tostring(self.damageTime))
+    else
+        self.state = ENS_RUN
     end
 end
 
