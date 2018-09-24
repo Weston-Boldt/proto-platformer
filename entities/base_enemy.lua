@@ -12,7 +12,7 @@ local HITBOX_HEIGHT = 64
 local HITBOX_WIDTH = 32
 
 -- enemy states
-local ENS_RUN = 0
+local ENS_RUN, ENS_DAMAGE = 0, 1
 
 local MAX_SPEED = 80
 
@@ -52,6 +52,10 @@ end
 function BaseEnemy:update(dt)
     if self.state == ENS_RUN then
         self:updateRunning(dt)
+    elseif self.state == ENS_DAMAGE then
+        self.state = self:updateDamage(dt)
+    elseif self.state == ENS_DEAD then
+        self.state = self:updateDamage(dt)
     end
 
     -- print("hitting baseEnemy:update")
@@ -83,6 +87,15 @@ function BaseEnemy:handleCollisions(collisions,dt)
             self.onGround = true
             self.yspeed = 0
         end
+    end
+end
+
+function BaseEnemy:setDamage(attackDmg)
+    self.health = self.health - attackDmg
+    if self.health < 0 then
+        self.state = ENS_DEAD
+    else
+        self.state = ENS_DAMAGE
     end
 end
 

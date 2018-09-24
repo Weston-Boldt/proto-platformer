@@ -92,6 +92,16 @@ function ]]..className..[[:draw()
     lg.draw(self.img, math.floor(self.x), math.floor(self.y))
     self.hitBox:draw()
 end
+
+function ]]..BaseEnemy..[[:setDamage(attackDmg)
+    self.health = self.health - attackDmg
+    if self.health < 0 then
+        self.state = ]]..upper..[[_DEAD
+    else
+        self.state = ]]..upper..[[_DAMAGE
+    end
+end
+
 ]]
 
 local file,err = io.open("entities/"..className..".lua", "w")

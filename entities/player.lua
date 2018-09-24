@@ -12,7 +12,8 @@ Player = Class{
 }
 
 -- local PLAYER_WIDTH, PLAYER_HEIGHT = 16, 22 LEFT = -1
-PS_RUN, PS_SHOOTING, PS_CARRY, PS_THROW, PS_DEAD = 0,1,2,3,4,5 -- Player states 
+PS_RUN, PS_SHOOTING, PS_CARRY,
+PS_THROW, PS_DEAD, PS_DMG = 0,1,2,3,4,5,6 -- Player states 
 PLAYER_WIDTH = 32
 PLAYER_HEIGHT = 64
 -- give the player a bit of edge room when being attacked
