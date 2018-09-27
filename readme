@@ -1,6 +1,9 @@
 PROTO-PLATFORMER
 W-I-P (name not final)
 
+TODO: need to deal with the game running twice as fast on my thinkpad, there is delta time values where ever needed
+so i don't think thats the issue...it could also be a vsync thing? going to have to delegate some time to fix it...
+
 i am in the first half of iteration 1 still
 
 a note about what i mean about iterations
