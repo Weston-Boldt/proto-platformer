@@ -366,8 +366,19 @@ function Map:handleAttacks()
     end
 end
 
+function Map:removeInactiveEntities()
+    for index, object in pairs(self.entities.entityList) do
+        if not object.active then
+            print('object.active = '..tostring(object.active))
+            object:destroy()
+            self.entities:removeAt(index)
+        end
+    end
+end
+
 function Map:update(dt)
     self:checkForRespawn()
+    self:removeInactiveEntities()
     -- print("self.player.doingAction = "..tostring(self.player.doingAction))
     self:playerTriggerOverLap()
     self.entities:update(dt)

@@ -46,6 +46,8 @@ function BaseEnemy:init(x,y)
     self.state = ENS_RUN
     self.health = BASE_HEALTH
 
+    self.active = true
+
     self.damageTime = DAMAGE_TIME_MAX
 
     print('health= '..tostring(self.health))
@@ -58,11 +60,13 @@ function BaseEnemy:update(dt)
     if self.state == ENS_RUN then
         self:updateRunning(dt)
     elseif self.state == ENS_DAMAGE then
-        print('should be damaged')
         self:updateDamage(dt)
     elseif self.state == ENS_DEAD then
-        print('should be dead')
-        self:updateDamage(dt)
+        print('before = '..tostring(self.active))
+        self.active = false
+        print('after = '..tostring(self.active))
+
+        self:updateDead(dt)
     end
 
     -- print("hitting baseEnemy:update")
@@ -98,25 +102,33 @@ function BaseEnemy:handleCollisions(collisions,dt)
 end
 
 function BaseEnemy:setDamage(attackDmg)
+    if self.state == ENS_DAMAGE then
+        return
+    end
+
     self.health = self.health - attackDmg
-    if self.health < 0 then
+    print('self.health = '..tostring(self.health))
+    if self.health <= 0 then
         print('state should be dead')
         self.state = ENS_DEAD
     else
+        self.foo = ''
         self.state = ENS_DAMAGE
     end
+
     self.damageTime = DAMAGE_TIME_MAX
 end
 
 function BaseEnemy:updateDamage(dt)
-    print('top of baseenemy:updatedamage')
     if self.damageTime > 0 then
-        print('before  time = '..tostring(self.damageTime))
         self.damageTime = self.damageTime - dt
-        print('after time = '..tostring(self.damageTime))
     else
         self.state = ENS_RUN
     end
+end
+
+function BaseEnemy:updateDead(dt)
+    -- death animation
 end
 
 function BaseEnemy:draw()

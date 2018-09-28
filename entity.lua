@@ -4,18 +4,12 @@ local Class = require'libs.hump.class'
 local ENTS_ACTIVE = 0
 
 local Entity = Class{
-    -- if they are not active
-    -- they twill get swept up
-    -- and removed
-    -- my the map object
-    active = true,
-
     -- attacks on all entities
     -- even if ya don't need em
     attacks = {},
     objType = 'Entity',
-    health = BASE_HEALTH,
-    attackDamage = BASE_ATTACK
+    -- health = BASE_HEALTH,
+    -- attackDamage = BASE_ATTACK
 }
 
 function Entity:init(--[[world,--]]x,y,w,h)
@@ -36,6 +30,9 @@ function Entity:init(--[[world,--]]x,y,w,h)
     -- mutliple attacks ? todo fixme
     -- i don't know about this yet
     self.attackHitBoxes = nil
+    self.health = BASE_HEALTH
+    self.attackDamage = BASE_ATTACK
+    self.active = true
 end
 
 function Entity:handleCollisions(collisions, dt)
@@ -75,12 +72,16 @@ end
 function Entity:setDamage(dmg)
 end
 
---[[
 function Entity:updateDamage(dt)
 end
 
 function Entity:updateDead(dt)
 end
---]]
+
+function Entity:destroy()
+    if self.img then
+        self.img = nil
+    end
+end
 
 return Entity
