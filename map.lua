@@ -372,6 +372,14 @@ function Map:removeInactiveEntities()
             print('object.active = '..tostring(object.active))
             object:destroy()
             self.entities:removeAt(index)
+            self.world:remove(object)
+
+            local hbox = object.hitBox
+            if hbox then
+                hbox.obj = nil
+                self.hitBoxes:removeAt(index)
+                self.hitBoxWorld:remove(hbox)
+            end
         end
     end
 end
