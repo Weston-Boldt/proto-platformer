@@ -46,6 +46,7 @@ function Entity:clearAttacks()
     print('before self.attacks = '..tostring(self.attacks))
     self.attacks = {}
     print('after self.attacks = '..tostring(self.attacks))
+    self.attackedObjects = {}
 end
 
 

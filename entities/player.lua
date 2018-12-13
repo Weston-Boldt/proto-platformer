@@ -163,7 +163,6 @@ function Player:updateShooting(dt)
         self.attackTime = ATTACK_TIME_MAX
         self.state = PS_RUN
     end
-
     applyFriction(self, dt)
     applyGravity(self,dt)
     if not self.onGround then
@@ -258,16 +257,8 @@ function Player:jump()
         self.yspeed = self.yspeed - self.jumpAcc
     end
 end
-attackHBox = nil
+
 function Player:update(dt)
-    if self.attackHitBox and not attackHBox then
-        -- print('setting')
-        attackHBox = self.attackHitBox
-    end
-    if attackHBox then
-        -- print("hitboxes obj = "..tostring(attackHBox.obj))
-        -- print("player = "..tostring(self))
-    end
     --print("before doing action = "..tostring(self.doingAction))
     self.doingAction = false
     --print("after doing action = "..tostring(self.doingAction))
@@ -349,11 +340,10 @@ end
 
 function Player:shoot()
     if self.state == PS_SHOOTING then
-        print("here")
         return
     end
 
-    self.state=PS_SHOOTING;
+    self.state = PS_SHOOTING;
     local hitBoxX = self:getAttackHitBoxX()
     self.attackHitBox = HitBox(self,
         hitBoxX, self.y,

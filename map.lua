@@ -351,6 +351,7 @@ function Map:handleAttack(attack)
     local target = attack.target
     local healthAfterAtk = target.health - attacker.attackDmg
     target:setDamage(attacker.attackDmg)
+    --[[ good spot for screen shake ]]--
 end
 
 function Map:handleAttacks()
