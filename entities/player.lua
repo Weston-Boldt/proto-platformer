@@ -1,6 +1,7 @@
 local Class = require'libs.hump.class'
 local Entity = require'entity'
 local HitBox = require'components.hitbox'
+local lg = love.graphics
 
 Player = Class{
     --[[
@@ -294,9 +295,11 @@ end
 
 function Player:draw()
 
+    --[[
     self.hitBox:draw(
         math.floor(self.hitBox.x),math.floor(self.hitBox.y)
     )
+    --]]
     lg.draw(self.img, self.boundingQuad, math.floor(self.x), math.floor(self.y), 0, 1, 1, 4)
     if self.attackHitBox then
         self.attackHitBox:draw(

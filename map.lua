@@ -2,6 +2,7 @@ local bump = require'libs.bump.bump'
 local Entities = require'entities'
 -- print("Entities = "..tostring(Entities))
 local Class = require'libs.hump.class'
+local Timer = require'libs.hump.timer'
 local sti = require'libs.Simple-Tiled-Implementation.sti'
 -- local cartographer = require'libs.cartographer.cartographer'
 local lg = love.graphics
@@ -48,6 +49,8 @@ function Map.create(level, map)
     self.enemies = {}
     self.npcs = {}
     self.items = {}
+
+    self.screenShake = false
 
     self:populate()
     return self
@@ -346,12 +349,18 @@ function Map:checkForNewSpawningObject()
     end
 end
 
+function Map:turnScreenShakeOff()
+    self.screenShake = false
+end
+
 function Map:handleAttack(attack)
     local attacker = attack.attacker;
     local target = attack.target
     local healthAfterAtk = target.health - attacker.attackDmg
     target:setDamage(attacker.attackDmg)
     --[[ good spot for screen shake ]]--
+    self.screenShake = true
+    Timer.after(0.1, function() self.screenShake = false end)
 end
 
 function Map:handleAttacks()
@@ -386,6 +395,7 @@ function Map:removeInactiveEntities()
 end
 
 function Map:update(dt)
+    Timer.update(dt)
     self:checkForRespawn()
     self:removeInactiveEntities()
     -- print("self.player.doingAction = "..tostring(self.player.doingAction))
@@ -412,7 +422,7 @@ function Map:draw(trans_x, trans_y)
     self.furtherMostBackGroundLayer:draw()
     self.farBackGroundLayer:draw()
     self.backGroundLayer:draw()
-    self.foreGroundLayer:draw(-math.floor(translate_x), -math.floor(translate_y))
+    self.foreGroundLayer:draw()
     self.frontLayer:draw()
     self.triggers:draw()
     self.entities:draw()
