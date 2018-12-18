@@ -13,7 +13,7 @@ Player = Class{
 }
 
 -- local PLAYER_WIDTH, PLAYER_HEIGHT = 16, 22 LEFT = -1
-PS_RUN, PS_SHOOTING, PS_CARRY,
+PS_RUN, PS_SHOOTING, PS_LAUNCH,
 PS_THROW, PS_DEAD, PS_DMG = 0,1,2,3,4,5,6 -- Player states 
 PLAYER_WIDTH = 32
 PLAYER_HEIGHT = 64
@@ -57,11 +57,13 @@ function Player:init(x,y,level)
     self.h = h -- img:getHeight()
     self.xspeed = 0
     self.yspeed = 0
-    self.xacc = 45
-    self.friction = 10
+    self.xacc = 35
+    self.friction = 8
     self.gravity = NORMAL_GRAVITY
     self.jumpTime = JUMP_TIME_MAX
     self.letGoOfJump = false
+
+    self.mass = 2
 
     self.onGround = false
     self.lastDir = RIGHT
@@ -101,6 +103,16 @@ function Player:init(x,y,level)
     )
     self.timesJumped = 0
     --]]
+    self.needToLaunch = false
+
+    --[[
+    some weirdness here:
+        math.pi == directly up
+        0 == directly down
+        math.pi / 2 == directly right
+        3 * math.pi / 2 == directly left
+    --]]
+    self.launchAngle = math.rad(90)
 
     return self
 end
@@ -128,13 +140,22 @@ function Player:updateRunning(dt)
             self.dir = LEFT
             changedDir = true
         end 
+    elseif self.jumping and (not walkingRight and not walkingLeft) then
+        if self.dir == LEFT then
+            self.xspeed = self.xspeed - self.xspeed*dt
+        elseif self.dir == RIGHT then
+            self.xspeed = self.xspeed + self.xspeed*dt
+        end
     end
 
     self.xspeed = cap(self.xspeed, -MAX_SPEED, MAX_SPEED);
     if math.floor(self.xspeed) == 0 and not (walkingLeft or walkingRight) then
+        print('yoyo')
         self.xspeed = 0
+    else
+        print('nay')
     end
-    self.x = self.x + self.xspeed
+    self.x = self.x + self.xspeed * self.mass
 
     if not self.onGround then
         --print("not on the ground")
@@ -233,7 +254,7 @@ function Player:updateJumping(dt)
         self.yspeed = self.yspeed - self.jumpAcc * (dt / JUMP_TIME_MAX)
         local targetJumpSpeed = self.jumpAcc*dt;
         -- print("jump speed is gonna  = "..targetJumpSpeed.."\n")
-        self.yspeed = self.yspeed - targetJumpSpeed
+        self.yspeed = self.yspeed - math.sqrt(targetJumpSpeed)
     else
         self.letGoOfJump = true
     end
@@ -259,7 +280,17 @@ function Player:jump()
     end
 end
 
+function Player:updateLaunch(dt)
+    local speed = 200
+    self.x = self.x + math.sin(self.launchAngle) * dt * speed
+    self.y = self.y + math.cos(self.launchAngle) * dt * speed
+end
+
 function Player:update(dt)
+    if self.needToLaunch then
+        -- self.state = PS_LAUNCH
+        -- self:updateLaunch(dt)
+    end
     --print("before doing action = "..tostring(self.doingAction))
     self.doingAction = false
     --print("after doing action = "..tostring(self.doingAction))
@@ -275,6 +306,8 @@ function Player:update(dt)
         self:updateRunning(dt)
     elseif self.state == PS_SHOOTING then
         self:updateShooting(dt)
+    elseif self.state == PS_LAUNCH then
+        self:updateLaunch(dt)
     end
 
     self.hitBox:update(

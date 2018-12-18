@@ -40,6 +40,8 @@ function Map.create(level, map)
     self.world = bump.newWorld(32) 
     self.hitBoxWorld = bump.newWorld(32)
     self.mapData:bump_init(self.world)
+    -- TODO FIXME, figure out if this is good or bad!
+    self.mapData:bump_init(self.hitBoxWorld)
 
     self.entities = Entities(self)
     self.hitBoxes = Entities(self)

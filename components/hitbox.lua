@@ -77,7 +77,20 @@ function HitBox:addAttack(hbox)
     )
 end
 
+function HitBox:handleCollisionNotHbox(hbox, dt)
+    if not self.attack then
+        return
+    end
+    if hbox.properties.collidable and self.obj.name == "Player" then
+        self.obj.needToLaunch = true
+    end
+end
+
 function HitBox:handleCollision(hbox, dt)
+    if not hbox.obj then
+        self:handleCollisionNotHbox(hbox, dt)
+        return
+    end
     if hbox.obj.name == self.obj.name then
         return
         --[[
