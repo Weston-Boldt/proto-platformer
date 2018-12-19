@@ -26,7 +26,7 @@ local GD_UP, GD_HORIZONTAL, GD_DOWN = 0,2,4 -- Gun directions
 
 local BRAKE_SPEED = 350
 local MAX_SPEED = 160
-local MAX_JUMP = 100
+local MAX_JUMP = 50
 local JUMP_TIME_MAX = 0.5
 
 local ATTACK_TIME_MAX = 0.5
@@ -63,12 +63,12 @@ function Player:init(x,y,level)
     self.jumpTime = JUMP_TIME_MAX
     self.letGoOfJump = false
 
-    self.mass = 2
+    self.mass = 1
 
     self.onGround = false
     self.lastDir = RIGHT
     self.dir = RIGHT
-    self.jumpAcc = 25
+    self.jumpAcc = 22
 
     self.jumping = false;
     self.state = PS_RUN
