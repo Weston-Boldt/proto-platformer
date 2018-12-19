@@ -119,7 +119,6 @@ end
 
 function Player:updateRunning(dt)
     applyFriction(self, dt)
-    local changedDir = false
     local both = keystate.right and keystate.left
 
     local walkingRight = (not both and keystate.right) or
@@ -132,13 +131,11 @@ function Player:updateRunning(dt)
         self.xspeed = self.xspeed + self.xacc*dt
         if self.dir == LEFT then
             self.dir = RIGHT
-            changedDir = true
         end
     elseif walkingLeft and self.xspeed < MAX_SPEED then
         self.xspeed = self.xspeed - self.xacc*dt
         if self.dir == RIGHT then
             self.dir = LEFT
-            changedDir = true
         end 
     elseif self.jumping and (not walkingRight and not walkingLeft) then
         if self.dir == LEFT then
@@ -150,10 +147,7 @@ function Player:updateRunning(dt)
 
     self.xspeed = cap(self.xspeed, -MAX_SPEED, MAX_SPEED);
     if math.floor(self.xspeed) == 0 and not (walkingLeft or walkingRight) then
-        print('yoyo')
         self.xspeed = 0
-    else
-        print('nay')
     end
     self.x = self.x + self.xspeed * self.mass
 
@@ -172,6 +166,18 @@ function Player:updateRunning(dt)
 end
 
 function Player:updateShooting(dt)
+    if self.attackTime > (ATTACK_TIME_MAX - (ATTACK_TIME_MAX / 16)) then
+        if (keystate.left and self.dir ~= LEFT)
+        or (keystate.right and self.dir ~= RIGHT) then
+            print(self.attackHitBox.x)
+            print(self:getAttackHitBoxX())
+            self.lastDir = self.dir
+            self.dir = self.dir * -1
+            print(self:getAttackHitBoxX())
+            self.attackHitBox.x = self:getAttackHitBoxX()
+        end
+    end
+
     if self.attackTime > 0 then
         self.attackTime = self.attackTime - dt
     else
