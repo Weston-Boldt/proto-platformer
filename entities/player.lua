@@ -1,5 +1,6 @@
 local Class = require'libs.hump.class'
 local Entity = require'entity'
+local Timer = require'libs.hump.timer'
 local HitBox = require'components.hitbox'
 local lg = love.graphics
 
@@ -189,7 +190,20 @@ function Player:updateShooting(dt)
         -- print("after "..tostring(self.attackHitBox.obj))
         self.attackHitBox = false;
         self.attackTime = ATTACK_TIME_MAX
-        self.state = PS_RUN
+        if self.needToLaunch then
+            self.state = PS_LAUNCH
+            self:updateLaunch(dt)
+            Timer.after(0.5, function()
+                -- player can break out of launch by
+                -- punching again
+                if self.state == PS_LAUNCH then
+                    self.state = PS_RUN
+                end
+                self.needToLaunch = false
+            end)
+        else
+            self.state = PS_RUN
+        end
     end
     applyFriction(self, dt)
     applyGravity(self,dt)
@@ -287,16 +301,12 @@ function Player:jump()
 end
 
 function Player:updateLaunch(dt)
-    local speed = 200
+    local speed = 500
     self.x = self.x + math.sin(self.launchAngle) * dt * speed
     self.y = self.y + math.cos(self.launchAngle) * dt * speed
 end
 
 function Player:update(dt)
-    if self.needToLaunch then
-        -- self.state = PS_LAUNCH
-        -- self:updateLaunch(dt)
-    end
     --print("before doing action = "..tostring(self.doingAction))
     self.doingAction = false
     --print("after doing action = "..tostring(self.doingAction))
