@@ -205,8 +205,8 @@ function Player:updateShooting(dt)
             self.state = PS_RUN
         end
     end
-    applyFriction(self, dt)
-    applyGravity(self,dt)
+    -- applyFriction(self, dt)
+    -- applyGravity(self,dt)
     if not self.onGround then
         --print("not on the ground")
         if self.jumping then
@@ -411,6 +411,7 @@ function Player:action(actionName)
 
     if actionName == "jump" and not self.jumping then
         --print("initiating jump")
+        print('should be jumping');
         self:jump()
     elseif actionName == "left" or actionName == "right" then
         if actionName == "left" then
