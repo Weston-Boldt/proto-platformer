@@ -1,6 +1,10 @@
 LEFT = -1
 RIGHT = 1
 
+UP = 1
+NEUTRAL = 0
+DOWN = -1
+
 NORMAL_GRAVITY=80
 
 HB_ATTACK = true

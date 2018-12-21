@@ -69,6 +69,9 @@ function Player:init(x,y,level)
     self.onGround = false
     self.lastDir = RIGHT
     self.dir = RIGHT
+
+    self.upDir = NEUTRAL
+
     self.jumpAcc = 22
 
     self.jumping = false;
@@ -214,8 +217,8 @@ function Player:updateShooting(dt)
             self:updateJumping(dt)
         end
     end
-    self.x = self.x + self.xspeed 
-    self.y = self.y + self.yspeed 
+    -- self.x = self.x + self.xspeed 
+    -- self.y = self.y + self.yspeed 
 end
 
 function Player:getCollisionFilter(other)
@@ -359,8 +362,6 @@ end
 
 -- kind of a weak warp function
 function Player:warp(x,y)
-    print("hitting warp")
-    print("x = "..tostring(x).." y = "..tostring(y))
     self.x = x
     self.y = y
     self.xspeed = 0
@@ -368,7 +369,7 @@ function Player:warp(x,y)
 end
 
 function Player:respawn()
-    print("top of respawn()")
+    -- print("top of respawn()")
     self.doRespawn = true
     self:warp(
         self.spawnX,
@@ -394,6 +395,13 @@ function Player:shoot()
     if self.state == PS_SHOOTING then
         return
     end
+    self.xspeed = 0
+    self.yspeed = 0
+
+    if not self.jumpTime == JUMP_TIME_MAX then
+        self.letGoOfJump = true
+        self.jumpTime = 0
+    end
 
     self.state = PS_SHOOTING;
     local hitBoxX = self:getAttackHitBoxX()
@@ -402,7 +410,7 @@ function Player:shoot()
         64, 32,
         true
     )
-    print('should have created a hbox')
+    -- print('should have created a hbox')
 end
 
 function Player:action(actionName)
