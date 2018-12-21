@@ -97,6 +97,7 @@ function Player:init(x,y,level)
     self.health = BASE_HEALTH
     print('health = '..tostring(self.health))
     self.attackDmg = BASE_DAMAGE
+    self.canAttack = true
     --[[
     self.gundir = GD_HORIZONTAL
     self.shooting = false
@@ -208,15 +209,15 @@ function Player:updateShooting(dt)
             self.state = PS_RUN
         end
     end
-    -- applyFriction(self, dt)
-    -- applyGravity(self,dt)
-    if not self.onGround then
-        --print("not on the ground")
-        if self.jumping then
-           -- print("jumping so should be jumping")
-            self:updateJumping(dt)
-        end
-    end
+    -- -- applyFriction(self, dt)
+    -- -- applyGravity(self,dt)
+    -- if not self.onGround then
+    --     --print("not on the ground")
+    --     if self.jumping then
+    --        -- print("jumping so should be jumping")
+    --         self:updateJumping(dt)
+    --     end
+    -- end
     -- self.x = self.x + self.xspeed 
     -- self.y = self.y + self.yspeed 
 end
@@ -392,11 +393,17 @@ function Player:getAttackHitBoxX()
 end
 
 function Player:shoot()
-    if self.state == PS_SHOOTING then
+    if self.state == PS_SHOOTING
+    or not self.canAttack then
         return
     end
     self.xspeed = 0
     self.yspeed = 0
+
+    self.canAttack = false
+    Timer.after(1, function()
+        self.canAttack=true
+    end)
 
     if not self.jumpTime == JUMP_TIME_MAX then
         self.letGoOfJump = true
@@ -410,7 +417,6 @@ function Player:shoot()
         64, 32,
         true
     )
-    -- print('should have created a hbox')
 end
 
 function Player:action(actionName)
