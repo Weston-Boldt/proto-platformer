@@ -88,9 +88,14 @@ function Player:init(x,y,level)
         HITBOX_HEIGHT  
     )
     print('self.hitbox'..tostring(self.hitbox))
+    -- these hitboxes are initialized to false
+    -- because the way i'm using hump.Class is kinda busted
+    -- and setting them as nil or {} doesn't actually set them to nil
     self.attackHitBox = false;
+    self.launchHitBox = false;
     self.attackTime = ATTACK_TIME_MAX
     self.spawnX = self.x
+    -- low what tf
     self.spawnY = self.y - 10
     self.doRespawn = false
 
@@ -170,6 +175,30 @@ function Player:updateRunning(dt)
     -- self.x, self.y, collisions = map.world:move(self, self.x, self.y)
 end
 
+function Player:launch(dt)
+    self.state = PS_LAUNCH
+    -- TODO FIXME this may need to go away
+    -- need to test the behavior of both
+    self:updateLaunch(dt)
+    -- self.canAttack = true
+    self.needToLaunch = false
+
+    self.launchHitBox = HitBox(self,
+        self.x, self.y,
+        -- these will need to shift likely
+        64, 64,
+        true
+    )
+
+    Timer.after(0.5, function()
+        -- player can break out of launch by
+        -- punching again
+        if self.state == PS_LAUNCH then
+            self.state = PS_RUN
+        end
+    end)
+end
+
 function Player:updateShooting(dt)
     if self.attackTime > (ATTACK_TIME_MAX - (ATTACK_TIME_MAX / 16)) then
         if (keystate.left and self.dir ~= LEFT)
@@ -195,16 +224,7 @@ function Player:updateShooting(dt)
         self.attackHitBox = false;
         self.attackTime = ATTACK_TIME_MAX
         if self.needToLaunch then
-            self.state = PS_LAUNCH
-            self:updateLaunch(dt)
-            Timer.after(0.5, function()
-                -- player can break out of launch by
-                -- punching again
-                if self.state == PS_LAUNCH then
-                    self.state = PS_RUN
-                end
-                self.needToLaunch = false
-            end)
+            self:launch(dt)
         else
             self.state = PS_RUN
         end
