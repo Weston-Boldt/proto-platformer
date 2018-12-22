@@ -5,7 +5,7 @@ HitBox = Class {
     objType = 'HitBox'
 }
 
-function HitBox:init(obj,x,y,w,h,attack)
+function HitBox:init(obj,x,y,w,h,attack, debug)
     self.name = "HitBox"
     self.collType = "slide" -- default
     self.obj = obj
@@ -13,6 +13,8 @@ function HitBox:init(obj,x,y,w,h,attack)
     self.y = y
     self.w = w
     self.h = h
+
+    self.debug = debug
 
     if not attack then
         self.attack = false

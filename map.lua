@@ -337,6 +337,11 @@ function Map:checkForNewSpawningObject()
                 addHitBox(attackHitBox)
             end
         end
+
+        -- TODO FIXME get rid of this shit
+        if obj.launchHitBox then
+            addHitBox(obj.launchHitBox)
+        end
     end
 
     for key, hitBox in pairs(self.hitBoxes.entityList) do
@@ -361,6 +366,7 @@ function Map:handleAttack(attack)
     local healthAfterAtk = target.health - attacker.attackDmg
     target:setDamage(attacker.attackDmg)
     --[[ good spot for screen shake ]]--
+    print('screenshake')
     self.screenShake = true
     Timer.after(0.1, function() self.screenShake = false end)
 end

@@ -87,7 +87,7 @@ function Player:init(x,y,level)
         HITBOX_WIDTH,
         HITBOX_HEIGHT  
     )
-    print('self.hitbox'..tostring(self.hitbox))
+
     -- these hitboxes are initialized to false
     -- because the way i'm using hump.Class is kinda busted
     -- and setting them as nil or {} doesn't actually set them to nil
@@ -175,6 +175,11 @@ function Player:updateRunning(dt)
     -- self.x, self.y, collisions = map.world:move(self, self.x, self.y)
 end
 
+function Player:detachHitBox(hitBoxKey)
+    self[hitBoxKey]:detach()
+    self[hitBoxKey] = false
+end
+
 function Player:launch(dt)
     self.state = PS_LAUNCH
     -- TODO FIXME this may need to go away
@@ -187,15 +192,17 @@ function Player:launch(dt)
         self.x, self.y,
         -- these will need to shift likely
         64, 64,
-        true
+        true, true
     )
 
-    Timer.after(0.5, function()
+    Timer.after(2, function()
         -- player can break out of launch by
         -- punching again
         if self.state == PS_LAUNCH then
             self.state = PS_RUN
         end
+
+        self:detachHitBox('launchHitBox')
     end)
 end
 
@@ -219,9 +226,8 @@ function Player:updateShooting(dt)
         -- detatch the hitbox off the object
         -- to get swept up and removed by the 
         -- print("before "..tostring(self.attackHitBox.obj))
-        self.attackHitBox:detach()
-        -- print("after "..tostring(self.attackHitBox.obj))
-        self.attackHitBox = false;
+        self:detachHitBox('attackHitBox')
+
         self.attackTime = ATTACK_TIME_MAX
         if self.needToLaunch then
             self:launch(dt)
@@ -304,17 +310,6 @@ function Player:updateJumping(dt)
     end
 end
 
---[[
-you can do that! try setting a minimum and maximum jump speed.
-if Input.is_action_just_pressed("ui_up"):
-                    velocity.y = JUMP_SPEED
-if velocity.y < MIN_JUMP_SPEED and Input.is_action_just_released("ui_up"):
-                     velocity.y = MIN_JUMP_SPEED
-so your upwards velocity
-if it's greater than the minimum jump speed, and you release your jump button
-it makes a smaller jump
-but if you hold it, it'll give you the full jump height
---]]
 function Player:jump()
     if self.onGround then
         self.jumping = true
@@ -363,6 +358,13 @@ function Player:update(dt)
         )
     end
 
+    if self.launchHitBox then
+        self.launchHitBox:update(
+            self.x, self.y,
+            64, 64
+        )
+    end
+
     -- print("update player hitBox with x "..tostring(self.x))
 end
 
@@ -377,6 +379,11 @@ function Player:draw()
     if self.attackHitBox then
         self.attackHitBox:draw(
             math.floor(self.attackHitBox.x),math.floor(self.attackHitBox.y)
+        )
+    end
+    if self.launchHitBox then
+        self.launchHitBox:draw(
+            math.floor(self.launchHitBox.x),math.floor(self.launchHitBox.y)
         )
     end
 end
@@ -421,7 +428,7 @@ function Player:shoot()
     self.yspeed = 0
 
     self.canAttack = false
-    Timer.after(1, function()
+    Timer.after(0.8, function()
         self.canAttack=true
     end)
 
