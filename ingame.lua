@@ -19,29 +19,14 @@ function ingame.enter()
     state = STATE_INGAME
     translate_x, translate_y = 0, 0
 
-    -- player = Player.create(startx,starty,level)
     map = Map.create(level, map,player)
     player = map.player
-    -- entities:add(player)
-    -- entities:add(player.hitBox)
-    -- print(map)
     ingame.newgame()
 end
 
 function ingame.update(dt)
-    -- print("entities length"..tostring(#entities.entityList))
-    --print("hitbox entities length"..tostring(#hitboxEntities.entityList))
     updateKeys()
-    -- entities:update(dt)
     map:update(dt)
-    -- player:update(dt)
-    -- translate_x = cap(player.x-WIDTH/2, 0, WIDTH)
-    --[[
-    print("map.width = "..tostring(map.width))
-    print("map.mapData.width = "..tostring(map.mapData.width))
-    --]]
-    -- local mapWidth = map.width
-    -- local mapWidth = map.mapData.width * map.mapData.tilewidth
     local mapWidth = map.width * TILE_WIDTH
     local halfScreen = WIDTH / 2
 
