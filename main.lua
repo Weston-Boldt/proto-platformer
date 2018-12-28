@@ -2,6 +2,7 @@ require('require_entities')
 require("mainmenu")
 require("ingame")
 require("config")
+require("meta-config")
 require("util")
 require("map")
 require("globals")
@@ -108,7 +109,16 @@ end
 function love.textinput(text)
 end
 
+function updateSpecialKeys()
+    if not love.keyboard.isDown('lctrl') then
+        return
+    end
+    print('control')
+    handleMetaKeys()
+end
+
 function updateKeys()
+    updateSpecialKeys()
     for action, key in pairs(config_keys) do
         if love.keyboard.isDown(key) then
             keystate[action] = true
