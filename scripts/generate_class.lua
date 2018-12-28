@@ -93,7 +93,7 @@ function ]]..className..[[:draw()
     self.hitBox:draw()
 end
 
-function ]]..BaseEnemy..[[:setDamage(attackDmg)
+function ]]..className..[[:setDamage(attackDmg)
     self.health = self.health - attackDmg
     if self.health < 0 then
         self.state = ]]..upper..[[_DEAD
@@ -106,7 +106,8 @@ end
 
 local file,err = io.open("entities/"..className..".lua", "w")
 if (err) then
-print(err)
+    print(err)
+    return 1
 end
 file:write(code)
 file:close()

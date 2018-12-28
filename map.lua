@@ -2,6 +2,7 @@ local bump = require'libs.bump.bump'
 local Entities = require'entities'
 -- print("Entities = "..tostring(Entities))
 local Class = require'libs.hump.class'
+local Timer = require'libs.hump.timer'
 local sti = require'libs.Simple-Tiled-Implementation.sti'
 -- local cartographer = require'libs.cartographer.cartographer'
 local lg = love.graphics
@@ -39,6 +40,8 @@ function Map.create(level, map)
     self.world = bump.newWorld(32) 
     self.hitBoxWorld = bump.newWorld(32)
     self.mapData:bump_init(self.world)
+    -- TODO FIXME, figure out if this is good or bad!
+    self.mapData:bump_init(self.hitBoxWorld)
 
     self.entities = Entities(self)
     self.hitBoxes = Entities(self)
@@ -48,6 +51,8 @@ function Map.create(level, map)
     self.enemies = {}
     self.npcs = {}
     self.items = {}
+
+    self.screenShake = false
 
     self:populate()
     return self
@@ -346,11 +351,18 @@ function Map:checkForNewSpawningObject()
     end
 end
 
+function Map:turnScreenShakeOff()
+    self.screenShake = false
+end
+
 function Map:handleAttack(attack)
     local attacker = attack.attacker;
     local target = attack.target
     local healthAfterAtk = target.health - attacker.attackDmg
     target:setDamage(attacker.attackDmg)
+    --[[ good spot for screen shake ]]--
+    self.screenShake = true
+    Timer.after(0.1, function() self.screenShake = false end)
 end
 
 function Map:handleAttacks()
@@ -366,8 +378,28 @@ function Map:handleAttacks()
     end
 end
 
+function Map:removeInactiveEntities()
+    for index, object in pairs(self.entities.entityList) do
+        if not object.active then
+            print('object.active = '..tostring(object.active))
+            object:destroy()
+            self.entities:removeAt(index)
+            self.world:remove(object)
+
+            local hbox = object.hitBox
+            if hbox then
+                hbox.obj = nil
+                self.hitBoxes:removeAt(index)
+                self.hitBoxWorld:remove(hbox)
+            end
+        end
+    end
+end
+
 function Map:update(dt)
+    Timer.update(dt)
     self:checkForRespawn()
+    self:removeInactiveEntities()
     -- print("self.player.doingAction = "..tostring(self.player.doingAction))
     self:playerTriggerOverLap()
     self.entities:update(dt)
@@ -392,7 +424,7 @@ function Map:draw(trans_x, trans_y)
     self.furtherMostBackGroundLayer:draw()
     self.farBackGroundLayer:draw()
     self.backGroundLayer:draw()
-    self.foreGroundLayer:draw(-math.floor(translate_x), -math.floor(translate_y))
+    self.foreGroundLayer:draw()
     self.frontLayer:draw()
     self.triggers:draw()
     self.entities:draw()

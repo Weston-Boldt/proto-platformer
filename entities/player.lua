@@ -1,6 +1,8 @@
 local Class = require'libs.hump.class'
 local Entity = require'entity'
+local Timer = require'libs.hump.timer'
 local HitBox = require'components.hitbox'
+local lg = love.graphics
 
 Player = Class{
     --[[
@@ -12,7 +14,7 @@ Player = Class{
 }
 
 -- local PLAYER_WIDTH, PLAYER_HEIGHT = 16, 22 LEFT = -1
-PS_RUN, PS_SHOOTING, PS_CARRY,
+PS_RUN, PS_SHOOTING, PS_LAUNCH,
 PS_THROW, PS_DEAD, PS_DMG = 0,1,2,3,4,5,6 -- Player states 
 PLAYER_WIDTH = 32
 PLAYER_HEIGHT = 64
@@ -25,7 +27,7 @@ local GD_UP, GD_HORIZONTAL, GD_DOWN = 0,2,4 -- Gun directions
 
 local BRAKE_SPEED = 350
 local MAX_SPEED = 160
-local MAX_JUMP = 100
+local MAX_JUMP = 50
 local JUMP_TIME_MAX = 0.5
 
 local ATTACK_TIME_MAX = 0.5
@@ -56,16 +58,21 @@ function Player:init(x,y,level)
     self.h = h -- img:getHeight()
     self.xspeed = 0
     self.yspeed = 0
-    self.xacc = 45
-    self.friction = 10
+    self.xacc = 35
+    self.friction = 8
     self.gravity = NORMAL_GRAVITY
     self.jumpTime = JUMP_TIME_MAX
     self.letGoOfJump = false
 
+    self.mass = 1
+
     self.onGround = false
     self.lastDir = RIGHT
     self.dir = RIGHT
-    self.jumpAcc = 25
+
+    self.upDir = NEUTRAL
+
+    self.jumpAcc = 22
 
     self.jumping = false;
     self.state = PS_RUN
@@ -81,15 +88,21 @@ function Player:init(x,y,level)
         HITBOX_HEIGHT  
     )
     print('self.hitbox'..tostring(self.hitbox))
+    -- these hitboxes are initialized to false
+    -- because the way i'm using hump.Class is kinda busted
+    -- and setting them as nil or {} doesn't actually set them to nil
     self.attackHitBox = false;
+    self.launchHitBox = false;
     self.attackTime = ATTACK_TIME_MAX
     self.spawnX = self.x
+    -- low what tf
     self.spawnY = self.y - 10
     self.doRespawn = false
 
     self.health = BASE_HEALTH
     print('health = '..tostring(self.health))
     self.attackDmg = BASE_DAMAGE
+    self.canAttack = true
     --[[
     self.gundir = GD_HORIZONTAL
     self.shooting = false
@@ -100,13 +113,22 @@ function Player:init(x,y,level)
     )
     self.timesJumped = 0
     --]]
+    self.needToLaunch = false
+
+    --[[
+    some weirdness here:
+        math.pi == directly up
+        0 == directly down
+        math.pi / 2 == directly right
+        3 * math.pi / 2 == directly left
+    --]]
+    self.launchAngle = math.rad(90)
 
     return self
 end
 
 function Player:updateRunning(dt)
     applyFriction(self, dt)
-    local changedDir = false
     local both = keystate.right and keystate.left
 
     local walkingRight = (not both and keystate.right) or
@@ -119,21 +141,25 @@ function Player:updateRunning(dt)
         self.xspeed = self.xspeed + self.xacc*dt
         if self.dir == LEFT then
             self.dir = RIGHT
-            changedDir = true
         end
     elseif walkingLeft and self.xspeed < MAX_SPEED then
         self.xspeed = self.xspeed - self.xacc*dt
         if self.dir == RIGHT then
             self.dir = LEFT
-            changedDir = true
         end 
+    elseif self.jumping and (not walkingRight and not walkingLeft) then
+        if self.dir == LEFT then
+            self.xspeed = self.xspeed - self.xspeed*dt
+        elseif self.dir == RIGHT then
+            self.xspeed = self.xspeed + self.xspeed*dt
+        end
     end
 
     self.xspeed = cap(self.xspeed, -MAX_SPEED, MAX_SPEED);
     if math.floor(self.xspeed) == 0 and not (walkingLeft or walkingRight) then
         self.xspeed = 0
     end
-    self.x = self.x + self.xspeed
+    self.x = self.x + self.xspeed * self.mass
 
     if not self.onGround then
         --print("not on the ground")
@@ -149,7 +175,43 @@ function Player:updateRunning(dt)
     -- self.x, self.y, collisions = map.world:move(self, self.x, self.y)
 end
 
+function Player:launch(dt)
+    self.state = PS_LAUNCH
+    -- TODO FIXME this may need to go away
+    -- need to test the behavior of both
+    self:updateLaunch(dt)
+    -- self.canAttack = true
+    self.needToLaunch = false
+
+    self.launchHitBox = HitBox(self,
+        self.x, self.y,
+        -- these will need to shift likely
+        64, 64,
+        true
+    )
+
+    Timer.after(0.5, function()
+        -- player can break out of launch by
+        -- punching again
+        if self.state == PS_LAUNCH then
+            self.state = PS_RUN
+        end
+    end)
+end
+
 function Player:updateShooting(dt)
+    if self.attackTime > (ATTACK_TIME_MAX - (ATTACK_TIME_MAX / 16)) then
+        if (keystate.left and self.dir ~= LEFT)
+        or (keystate.right and self.dir ~= RIGHT) then
+            print(self.attackHitBox.x)
+            print(self:getAttackHitBoxX())
+            self.lastDir = self.dir
+            self.dir = self.dir * -1
+            print(self:getAttackHitBoxX())
+            self.attackHitBox.x = self:getAttackHitBoxX()
+        end
+    end
+
     if self.attackTime > 0 then
         self.attackTime = self.attackTime - dt
     else
@@ -161,20 +223,23 @@ function Player:updateShooting(dt)
         -- print("after "..tostring(self.attackHitBox.obj))
         self.attackHitBox = false;
         self.attackTime = ATTACK_TIME_MAX
-        self.state = PS_RUN
-    end
-
-    applyFriction(self, dt)
-    applyGravity(self,dt)
-    if not self.onGround then
-        --print("not on the ground")
-        if self.jumping then
-           -- print("jumping so should be jumping")
-            self:updateJumping(dt)
+        if self.needToLaunch then
+            self:launch(dt)
+        else
+            self.state = PS_RUN
         end
     end
-    self.x = self.x + self.xspeed 
-    self.y = self.y + self.yspeed 
+    -- -- applyFriction(self, dt)
+    -- -- applyGravity(self,dt)
+    -- if not self.onGround then
+    --     --print("not on the ground")
+    --     if self.jumping then
+    --        -- print("jumping so should be jumping")
+    --         self:updateJumping(dt)
+    --     end
+    -- end
+    -- self.x = self.x + self.xspeed 
+    -- self.y = self.y + self.yspeed 
 end
 
 function Player:getCollisionFilter(other)
@@ -233,7 +298,7 @@ function Player:updateJumping(dt)
         self.yspeed = self.yspeed - self.jumpAcc * (dt / JUMP_TIME_MAX)
         local targetJumpSpeed = self.jumpAcc*dt;
         -- print("jump speed is gonna  = "..targetJumpSpeed.."\n")
-        self.yspeed = self.yspeed - targetJumpSpeed
+        self.yspeed = self.yspeed - math.sqrt(targetJumpSpeed)
     else
         self.letGoOfJump = true
     end
@@ -258,16 +323,14 @@ function Player:jump()
         self.yspeed = self.yspeed - self.jumpAcc
     end
 end
-attackHBox = nil
+
+function Player:updateLaunch(dt)
+    local speed = 500
+    self.x = self.x + math.sin(self.launchAngle) * dt * speed
+    self.y = self.y + math.cos(self.launchAngle) * dt * speed
+end
+
 function Player:update(dt)
-    if self.attackHitBox and not attackHBox then
-        -- print('setting')
-        attackHBox = self.attackHitBox
-    end
-    if attackHBox then
-        -- print("hitboxes obj = "..tostring(attackHBox.obj))
-        -- print("player = "..tostring(self))
-    end
     --print("before doing action = "..tostring(self.doingAction))
     self.doingAction = false
     --print("after doing action = "..tostring(self.doingAction))
@@ -283,6 +346,8 @@ function Player:update(dt)
         self:updateRunning(dt)
     elseif self.state == PS_SHOOTING then
         self:updateShooting(dt)
+    elseif self.state == PS_LAUNCH then
+        self:updateLaunch(dt)
     end
 
     self.hitBox:update(
@@ -303,9 +368,11 @@ end
 
 function Player:draw()
 
+    --[[
     self.hitBox:draw(
         math.floor(self.hitBox.x),math.floor(self.hitBox.y)
     )
+    --]]
     lg.draw(self.img, self.boundingQuad, math.floor(self.x), math.floor(self.y), 0, 1, 1, 4)
     if self.attackHitBox then
         self.attackHitBox:draw(
@@ -316,8 +383,6 @@ end
 
 -- kind of a weak warp function
 function Player:warp(x,y)
-    print("hitting warp")
-    print("x = "..tostring(x).." y = "..tostring(y))
     self.x = x
     self.y = y
     self.xspeed = 0
@@ -325,7 +390,7 @@ function Player:warp(x,y)
 end
 
 function Player:respawn()
-    print("top of respawn()")
+    -- print("top of respawn()")
     self.doRespawn = true
     self:warp(
         self.spawnX,
@@ -348,19 +413,30 @@ function Player:getAttackHitBoxX()
 end
 
 function Player:shoot()
-    if self.state == PS_SHOOTING then
-        print("here")
+    if self.state == PS_SHOOTING
+    or not self.canAttack then
         return
     end
+    self.xspeed = 0
+    self.yspeed = 0
 
-    self.state=PS_SHOOTING;
+    self.canAttack = false
+    Timer.after(1, function()
+        self.canAttack=true
+    end)
+
+    if not self.jumpTime == JUMP_TIME_MAX then
+        self.letGoOfJump = true
+        self.jumpTime = 0
+    end
+
+    self.state = PS_SHOOTING;
     local hitBoxX = self:getAttackHitBoxX()
     self.attackHitBox = HitBox(self,
         hitBoxX, self.y,
         64, 32,
         true
     )
-    print('should have created a hbox')
 end
 
 function Player:action(actionName)
@@ -369,6 +445,7 @@ function Player:action(actionName)
 
     if actionName == "jump" and not self.jumping then
         --print("initiating jump")
+        print('should be jumping');
         self:jump()
     elseif actionName == "left" or actionName == "right" then
         if actionName == "left" then

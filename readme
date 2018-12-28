@@ -1,5 +1,19 @@
+# PROTO-PLATFORMER
+> w-i-p
+
+## name not final, thinking something like rocket-punch or something like that
+## game is in it's early early stages
+
+idea here is that you can punch enemies to shoot them at other directions
+and also punch the ground to give yourself a jump or push depnding where you are aiming
+
+## OLD README
+```
 PROTO-PLATFORMER
 W-I-P (name not final)
+
+TODO: need to deal with the game running twice as fast on my thinkpad, there is delta time values where ever needed
+so i don't think thats the issue...it could also be a vsync thing? going to have to delegate some time to fix it...
 
 i am in the first half of iteration 1 still
 
@@ -59,3 +73,4 @@ issues
     - need some design work on what mechanics need to be done
     - need some time to figure out these state changes for damage
     - need an asset pipeline (not a huge issue right now)
+```

@@ -46,6 +46,11 @@ end
 function ingame.draw()
     local trans_x = -math.floor(translate_x) 
     local trans_y = -math.floor(translate_y)
+    if map.screenShake then
+        print('yup should be shaking')
+        trans_x = trans_x + math.random(-4, 4)
+        trans_y = trans_y + math.random(-4, 4)
+    end
     lg.translate(trans_x, trans_y)
     map:draw(trans_x, trans_y)
     -- player:draw()
