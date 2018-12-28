@@ -210,12 +210,9 @@ function Player:updateShooting(dt)
     if self.attackTime > (ATTACK_TIME_MAX - (ATTACK_TIME_MAX / 16)) then
         if (keystate.left and self.dir ~= LEFT)
         or (keystate.right and self.dir ~= RIGHT) then
-            print(self.attackHitBox.x)
-            print(self:getAttackHitBoxX())
             self.lastDir = self.dir
             self.dir = self.dir * -1
-            print(self:getAttackHitBoxX())
-            self.attackHitBox.x = self:getAttackHitBoxX()
+            self.attackHitBox.x = self:getAttackHitBoxX(true)
         end
     end
 
@@ -351,7 +348,7 @@ function Player:update(dt)
     )
 
     if self.attackHitBox then
-        local hitBoxX = self:getAttackHitBoxX();
+        local hitBoxX = self:getAttackHitBoxX(false);
         self.attackHitBox:update(
             hitBoxX, self.y,
             64, 32
@@ -409,14 +406,24 @@ function Player:doAction()
     self.doingAction = true
 end
 
-function Player:getAttackHitBoxX()
-    local hitBoxX = nil;
-    if self.dir == LEFT then
-        hitBoxX = self.x - 64
-    else 
-        hitBoxX = self.x + self.w
+function Player:getAttackHitBoxX(changeViaKeys)
+    local getIfXIsLeft   = function() return self.x - (self.w * 2) end
+    local getIfXIsRight  = function() return self.x + self.w end
+    
+    if changeViaKeys then
+        if love.keyboard.isDown(config_keys.left)
+        and not love.keyboard.isDown(config_keys.right) then
+            return getIfXIsLeft()
+        elseif love.keyboard.isDown(config_keys.right)
+        and not love.keyboard.isDown(config_keys.left) then
+            return getIfXIsRight()
+        end
     end
-    return hitBoxX
+    if self.dir == LEFT then
+        return getIfXIsLeft()
+    else 
+        return getIfXIsRight()
+    end
 end
 
 function Player:shoot()
@@ -438,7 +445,7 @@ function Player:shoot()
     end
 
     self.state = PS_SHOOTING;
-    local hitBoxX = self:getAttackHitBoxX()
+    local hitBoxX = self:getAttackHitBoxX(true)
     self.attackHitBox = HitBox(self,
         hitBoxX, self.y,
         64, 32,
