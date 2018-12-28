@@ -59,16 +59,6 @@ function love.load()
     mainmenu.enter()
 end
 
--- This is a different example code because touching the default love.run is not necessary (in the no vsync scenario), and mine is a bit more specifically tailored... so this is a bit more minimal.
--- function love.update(dt)
---   accumulator = accumulator + dt
---   if accumulator >= tickPeriod then
---     -- Here be your fixed timestep.
---     acumulator = accumulator - tickPeriod
---   end
--- end
--- love.draw's case is more complex.
-
 function love.update(dt)
     if xacccool > 0 then
         xacccool = xacccool - dt
@@ -82,20 +72,6 @@ end
 function love.draw()
     local lg = love.graphics;
     lg.setLineStyle('rough')
-    --[[
-    for x = 1, WIDTH do
-        if x % TILE_SIZE == 0 then
-            lg.line(x, -HEIGHT, x, HEIGHT);
-        end 
-    end
-    for y = -1, -HEIGHT, -1 do
-        if y % TILE_SIZE == 0 then
-            lg.line(-WIDTH, -y, WIDTH, -y);
-        end
-    end
-    --]]
-    -- love.graphics.print(deltaTimeToShow)
-    -- love.graphics.print(timesHit)
     gamestates[state].draw()
 end
 
@@ -110,20 +86,18 @@ function love.textinput(text)
 end
 
 function updateSpecialKeys()
-    if not love.keyboard.isDown('lctrl') then
-        return
-    end
-    print('control')
-    handleMetaKeys()
 end
 
 function updateKeys()
-    updateSpecialKeys()
-    for action, key in pairs(config_keys) do
-        if love.keyboard.isDown(key) then
-            keystate[action] = true
-        else
-            keystate[action] = false
+    if love.keyboard.isDown('lctrl') then
+        handleMetaKeys()
+    else 
+        for action, key in pairs(config_keys) do
+            if love.keyboard.isDown(key) then
+                keystate[action] = true
+            else
+                keystate[action] = false
+            end
         end
     end
 

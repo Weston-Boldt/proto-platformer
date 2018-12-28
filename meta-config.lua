@@ -10,15 +10,18 @@ metaFunctions = {
     end,
 
     reloadResources = function()
+        -- note this doesn't actually do anything, but it is the right idea
         loadResources()
     end,
 }
 
 function handleMetaKeys()
     for action, key in pairs(meta_keys) do
-        local fn = metaFunction
-        if not fn == nil then
-            fn()
+        if love.keyboard.isDown(key) then
+            local fn = metaFunctions[action]
+            if fn then
+                fn()
+            end
         end
     end
 end
