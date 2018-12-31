@@ -176,6 +176,9 @@ function Player:updateRunning(dt)
 end
 
 function Player:detachHitBox(hitBoxKey)
+    if not self[hitBoxKey] then
+        return 
+    end
     self[hitBoxKey]:detach()
     self[hitBoxKey] = false
 end
@@ -185,8 +188,8 @@ function Player:launch(dt)
     -- TODO FIXME this may need to go away
     -- need to test the behavior of both
     self:updateLaunch(dt)
-    -- self.canAttack = true
-    self.needToLaunch = false
+    self.canAttack = false
+    -- self.needToLaunch = false
 
     self.launchHitBox = HitBox(self,
         self.x, self.y,
@@ -201,6 +204,8 @@ function Player:launch(dt)
         if self.state == PS_LAUNCH then
             self.state = PS_RUN
         end
+        self.needToLaunch = false
+        self.canAttack = true
 
         self:detachHitBox('launchHitBox')
     end)
@@ -213,6 +218,10 @@ function Player:updateShooting(dt)
             self.lastDir = self.dir
             self.dir = self.dir * -1
             self.attackHitBox.x = self:getAttackHitBoxX(true)
+        end
+
+        if (keystate.up and self.upDir ~= UP) 
+        or (keystate.down and self.upDir ~= DOWN) then
         end
     end
 
@@ -428,7 +437,8 @@ end
 
 function Player:shoot()
     if self.state == PS_SHOOTING
-    or not self.canAttack then
+    or not self.canAttack 
+    or self.state == PS_LAUNCH then
         return
     end
     self.xspeed = 0
