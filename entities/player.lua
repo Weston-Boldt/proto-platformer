@@ -23,7 +23,8 @@ PLAYER_HEIGHT = 64
 local HITBOX_WIDTH = PLAYER_WIDTH
 local HITBOX_HEIGHT = PLAYER_HEIGHT
 
-local GD_UP, GD_HORIZONTAL, GD_DOWN = 0,2,4 -- Gun directions
+-- attack directions
+local AD_UP_DIAG, AD_UP, AD_HORIZONTAL, AD_DOWN, AD_DOWN_DIAG = 2,1,0,-1,-2
 
 local BRAKE_SPEED = 350
 local MAX_SPEED = 160
@@ -103,16 +104,7 @@ function Player:init(x,y,level)
     print('health = '..tostring(self.health))
     self.attackDmg = BASE_DAMAGE
     self.canAttack = true
-    --[[
-    self.gundir = GD_HORIZONTAL
-    self.shooting = false
-    self.bulletStreamLength = 0
-    self.streamCollided = false
-    self.bulletQuad = love.graphics.newQuad(
-        0, 0, 10, 10, 16, 17
-    )
-    self.timesJumped = 0
-    --]]
+    self.attackDir = AD_HORIZONTAL
     self.needToLaunch = false
 
     --[[
@@ -212,7 +204,13 @@ function Player:launch(dt)
 end
 
 function Player:updateShooting(dt)
-    if self.attackTime > (ATTACK_TIME_MAX - (ATTACK_TIME_MAX / 16)) then
+    if self.attackTime > (ATTACK_TIME_MAX - (ATTACK_TIME_MAX / 8)) then
+
+        local attackDir = self:getAttackDir()
+        if self.attackDir ~= attackDir then
+            self.attackDir = attackDir
+        end
+
         if (keystate.left and self.dir ~= LEFT)
         or (keystate.right and self.dir ~= RIGHT) then
             self.lastDir = self.dir
@@ -220,9 +218,6 @@ function Player:updateShooting(dt)
             self.attackHitBox.x = self:getAttackHitBoxX(true)
         end
 
-        if (keystate.up and self.upDir ~= UP) 
-        or (keystate.down and self.upDir ~= DOWN) then
-        end
     end
 
     if self.attackTime > 0 then
@@ -415,23 +410,48 @@ function Player:doAction()
     self.doingAction = true
 end
 
+function Player:getAttackHitBoxY()
+    local getIfIsUp = function() return self.y - (self.y / 2) end
+end
+
 function Player:getAttackHitBoxX(changeViaKeys)
     local getIfXIsLeft   = function() return self.x - (self.w * 2) end
     local getIfXIsRight  = function() return self.x + self.w end
     
+    local xPos = nil;
     if changeViaKeys then
         if love.keyboard.isDown(config_keys.left)
         and not love.keyboard.isDown(config_keys.right) then
-            return getIfXIsLeft()
+            xPos = getIfXisLeft
+            -- return getIfXIsLeft()
         elseif love.keyboard.isDown(config_keys.right)
         and not love.keyboard.isDown(config_keys.left) then
-            return getIfXIsRight()
+            xPos = getIfXIsRight()
+            -- return getIfXIsRight()
         end
     end
     if self.dir == LEFT then
-        return getIfXIsLeft()
+        xPos = getIfXIsLeft()
+        -- return getIfXIsLeft()
     else 
-        return getIfXIsRight()
+        xPos = getIfXIsRight()
+        -- return getIfXIsRight()
+    end
+    return xPos
+end
+
+function Player:getAttackDir()
+    local leftOrRight = (keystate.left or keystate.right)
+    if keystate.up and not leftOrRight then
+        return AD_UP
+    elseif keystate.up and leftOrRight then
+        return AD_UP_DIAG
+    elseif keystate.down and leftOrRight then
+        return AD_DOWN_DIAG
+    elseif keystate.down and not leftOrRight then
+        return AD_DOWN
+    else
+        return AD_HORIZONTAL
     end
 end
 
@@ -455,7 +475,11 @@ function Player:shoot()
     end
 
     self.state = PS_SHOOTING;
+
+    self.attackDir = self:getAttackDir()
+
     local hitBoxX = self:getAttackHitBoxX(true)
+
     self.attackHitBox = HitBox(self,
         hitBoxX, self.y,
         64, 32,
