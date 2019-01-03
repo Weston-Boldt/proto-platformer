@@ -215,7 +215,7 @@ function Player:updateShooting(dt)
         or (keystate.right and self.dir ~= RIGHT) then
             self.lastDir = self.dir
             self.dir = self.dir * -1
-            self.attackHitBox.x = self:getAttackHitBoxX(true)
+            self.attackHitBox.x = self:getAttackHitBoxX()
         end
 
     end
@@ -326,6 +326,12 @@ function Player:updateLaunch(dt)
     self.y = self.y + math.cos(self.launchAngle) * dt * speed
 end
 
+function Player:getAttackHitBoxRect()
+    return self:getAttackHitBoxX(),
+        self:getAttackHitBoxY(),
+        self:getAttackHitBoxWH()
+end
+
 function Player:update(dt)
     --print("before doing action = "..tostring(self.doingAction))
     self.doingAction = false
@@ -352,10 +358,8 @@ function Player:update(dt)
     )
 
     if self.attackHitBox then
-        local hitBoxX = self:getAttackHitBoxX(false);
         self.attackHitBox:update(
-            hitBoxX, self.y,
-            64, 32
+            self:getAttackHitBoxRect()
         )
     end
 
@@ -411,33 +415,41 @@ function Player:doAction()
 end
 
 function Player:getAttackHitBoxY()
-    local getIfIsUp = function() return self.y - (self.y / 2) end
+    if self.attackDir == AD_UP then
+        return self.y - (self.h / 2)
+    elseif self.attackDir == AD_UP_DIAG then
+        return self.y - (self.h / 2)
+    elseif self.attackDir == AD_DOWN then
+        return self.y + self.h 
+    elseif self.attackDir == AD_DOWN_DIAG then
+        return self.y + (self.h /2)
+    -- TODO should there be a self.attackDir == AD_HORIZONTAL check?
+    else
+        return self.y
+    end
 end
 
-function Player:getAttackHitBoxX(changeViaKeys)
-    local getIfXIsLeft   = function() return self.x - (self.w * 2) end
-    local getIfXIsRight  = function() return self.x + self.w end
-    
-    local xPos = nil;
-    if changeViaKeys then
-        if love.keyboard.isDown(config_keys.left)
-        and not love.keyboard.isDown(config_keys.right) then
-            xPos = getIfXisLeft
-            -- return getIfXIsLeft()
-        elseif love.keyboard.isDown(config_keys.right)
-        and not love.keyboard.isDown(config_keys.left) then
-            xPos = getIfXIsRight()
-            -- return getIfXIsRight()
-        end
+-- don't have to change x pos if it's a diag attack because it
+-- the left corner will be the same
+function Player:getAttackHitBoxX()
+    -- up and down? return x 
+    if self.attackDir == AD_UP or self.attackDir == AD_DOWN then
+        return self.x
     end
+
     if self.dir == LEFT then
-        xPos = getIfXIsLeft()
-        -- return getIfXIsLeft()
-    else 
-        xPos = getIfXIsRight()
-        -- return getIfXIsRight()
+        if self.attackDir == AD_UP_DIAG or self.attackDir == AD_DOWN_DIAG then
+            return self.x - self.w
+        end
+
+        return self.x - (self.w * 2)
+    elseif self.dir == RIGHT then
+        return self.x + self.w
     end
-    return xPos
+
+    -- dir isn't set? just return self.x instead of nil
+    -- to keep game running but this shouldn't happen ever
+    return self.x
 end
 
 function Player:getAttackDir()
@@ -453,6 +465,17 @@ function Player:getAttackDir()
     else
         return AD_HORIZONTAL
     end
+end
+
+function Player:getAttackHitBoxWH()
+    if self.attackDir == AD_UP_DIAG
+    or self.attackDir == AD_DOWN_DIAG then
+        return (PLAYER_WIDTH / 2), (PLAYER_HEIGHT / 2)
+    elseif self.attackDir == AD_UP
+    or self.attackDir == AD_DOWN then
+        return (PLAYER_WIDTH / 2), PLAYER_HEIGHT
+    end
+    return PLAYER_WIDTH, PLAYER_HEIGHT
 end
 
 function Player:shoot()
@@ -478,11 +501,13 @@ function Player:shoot()
 
     self.attackDir = self:getAttackDir()
 
-    local hitBoxX = self:getAttackHitBoxX(true)
+    local hbX = self:getAttackHitBoxX()
+    local hbY = self:getAttackHitBoxY()
+    local hbW, hbH = self:getAttackHitBoxWH()
 
     self.attackHitBox = HitBox(self,
-        hitBoxX, self.y,
-        64, 32,
+        hitBoxX, hitBoxY,
+        hbH, hbW,
         true
     )
 end
@@ -495,12 +520,14 @@ function Player:action(actionName)
         --print("initiating jump")
         print('should be jumping');
         self:jump()
+    --[[
     elseif actionName == "left" or actionName == "right" then
         if actionName == "left" then
             self.lastDir = LEFT
         else
             self.lastDir = RIGHT
         end 
+    --]]
     elseif actionName == "shoot" then
         self:shoot()
     elseif actionName == "respawn" then
