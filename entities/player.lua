@@ -77,7 +77,6 @@ function Player:init(x,y,level)
 
     self.jumping = false;
     self.state = PS_RUN
-    self.actionName = "";
     self.hitBox = HitBox(
         self,
         self.x, self.y,
@@ -507,33 +506,19 @@ function Player:shoot()
 
     self.attackHitBox = HitBox(self,
         hitBoxX, hitBoxY,
-        hbH, hbW,
+        hbW, hbH,
         true
     )
 end
 
 function Player:action(actionName)
-    -- debugging 
-    self.actionName = actionName
-
     if actionName == "jump" and not self.jumping then
-        --print("initiating jump")
-        print('should be jumping');
         self:jump()
-    --[[
-    elseif actionName == "left" or actionName == "right" then
-        if actionName == "left" then
-            self.lastDir = LEFT
-        else
-            self.lastDir = RIGHT
-        end 
-    --]]
     elseif actionName == "shoot" then
         self:shoot()
     elseif actionName == "respawn" then
         self:respawn()
     elseif actionName == "action" then
-        print("self hitting action")
         self:doAction()
     end
 end
