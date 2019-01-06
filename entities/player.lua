@@ -65,8 +65,6 @@ function Player:init(x,y,level)
     self.jumpTime = JUMP_TIME_MAX
     self.letGoOfJump = false
 
-    self.mass = 1
-
     self.onGround = false
     self.lastDir = RIGHT
     self.dir = RIGHT
@@ -150,7 +148,7 @@ function Player:updateRunning(dt)
     if math.floor(self.xspeed) == 0 and not (walkingLeft or walkingRight) then
         self.xspeed = 0
     end
-    self.x = self.x + self.xspeed * self.mass
+    self.x = self.x + self.xspeed
 
     if not self.onGround then
         --print("not on the ground")
@@ -214,9 +212,11 @@ function Player:updateShooting(dt)
         or (keystate.right and self.dir ~= RIGHT) then
             self.lastDir = self.dir
             self.dir = self.dir * -1
+            self.attackHitBox.attack = false
             self.attackHitBox.x = self:getAttackHitBoxX()
         end
-
+    else
+        self.attackHitBox.attack = true
     end
 
     if self.attackTime > 0 then
@@ -469,7 +469,9 @@ end
 function Player:getAttackHitBoxWH()
     if self.attackDir == AD_UP_DIAG
     or self.attackDir == AD_DOWN_DIAG then
-        return (PLAYER_WIDTH / 2), (PLAYER_HEIGHT / 2)
+        -- give height a little bit more that way it'll
+        -- cause launching when hitting a diag
+        return (PLAYER_WIDTH / 2), (PLAYER_HEIGHT / 2) + 5 
     elseif self.attackDir == AD_UP
     or self.attackDir == AD_DOWN then
         return (PLAYER_WIDTH / 2), PLAYER_HEIGHT
@@ -506,8 +508,7 @@ function Player:shoot()
 
     self.attackHitBox = HitBox(self,
         hitBoxX, hitBoxY,
-        hbW, hbH,
-        true
+        hbW, hbH
     )
 end
 
