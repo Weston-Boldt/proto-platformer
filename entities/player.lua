@@ -106,12 +106,13 @@ function Player:init(x,y,level)
 
     --[[
     some weirdness here:
-        math.pi == directly up
-        0 == directly down
-        math.pi / 2 == directly right
-        3 * math.pi / 2 == directly left
+        math.pi         (180 deg) == directly up 
+        0     (360 deg) (0 deg)   == directly down
+        math.pi / 2     (90 deg)  == directly right
+        3 * math.pi / 2 (270 deg) == directly left
     --]]
-    self.launchAngle = math.rad(90)
+
+    self.launchAngle = toRadian(0)
 
     return self
 end
@@ -198,6 +199,35 @@ function Player:launch(dt)
 
         self:detachHitBox('launchHitBox')
     end)
+end
+
+function Player:getLaunchAngle()
+    local attackAngle = self:getAttackAngle()
+    return getOppAng(attackAngle)
+end
+
+function Player:getAttackAngle()
+    if self.attackDir == AD_UP then
+        return toRadian(90)
+    elseif self.attackDir == AD_DOWN then
+        return toRadian(270)
+    end
+
+    local baseAngle
+
+    if self.dir == RIGHT then
+        baseAngle = 180
+    elseif self.dir == LEFT then
+        baseAngle = 0
+    end
+
+    if self.attackDir == AD_HORIZONTAL then
+        return toRadian(baseAngle)
+    elseif self.attackDir == AD_UP_DIAG then
+        return toRadian((baseAngle + (45 * self.dir)) % 360)
+    elseif self.attackDir == AD_DOWN_DIAG then
+        return toRadian((baseAngle + (45 * -self.dir)) % 360)
+    end
 end
 
 function Player:updateShooting(dt)

@@ -7,6 +7,7 @@ require("util")
 require("map")
 require("globals")
 require("resources")
+require("game-math")
 print("HB_ATTACK = "..tostring(HB_ATTACK))
 
 -- libs
