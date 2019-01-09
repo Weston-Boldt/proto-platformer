@@ -112,8 +112,6 @@ function Player:init(x,y,level)
         3 * math.pi / 2 (270 deg) == directly left
     --]]
 
-    self.launchAngle = toRadian(0)
-
     return self
 end
 
@@ -231,6 +229,7 @@ function Player:getAttackAngle()
 end
 
 function Player:updateShooting(dt)
+    print('self.launchAngle = '..tostring(self.launchAngle));
     if self.attackTime > (ATTACK_TIME_MAX - (ATTACK_TIME_MAX / 8)) then
 
         local attackDir = self:getAttackDir()

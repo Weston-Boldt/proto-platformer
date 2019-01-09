@@ -23,6 +23,8 @@ function Entity:init(--[[world,--]]x,y,w,h)
     self.collisions = {}
     self.friction = 0
 
+    self.launchAngle = toRadian(0);
+
     -- an entity has a good chance of having a hitbox
     self.hitBox = nil
     -- singular attack
