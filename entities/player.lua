@@ -200,15 +200,10 @@ function Player:launch(dt)
 end
 
 function Player:getLaunchAngle()
-    local attackAngle = self:getAttackAngle()
-    return getOppAng(attackAngle)
-end
-
-function Player:getAttackAngle()
     if self.attackDir == AD_UP then
-        return toRadian(90)
-    elseif self.attackDir == AD_DOWN then
         return toRadian(270)
+    elseif self.attackDir == AD_DOWN then
+        return toRadian(90)
     end
 
     local baseAngle
@@ -229,8 +224,7 @@ function Player:getAttackAngle()
 end
 
 function Player:updateShooting(dt)
-    print('self.launchAngle = '..tostring(self.launchAngle));
-    if self.attackTime > (ATTACK_TIME_MAX - (ATTACK_TIME_MAX / 8)) then
+    if self.attackTime > (ATTACK_TIME_MAX - (ATTACK_TIME_MAX / 16)) then
 
         local attackDir = self:getAttackDir()
         if self.attackDir ~= attackDir then
@@ -244,6 +238,7 @@ function Player:updateShooting(dt)
             self.attackHitBox.attack = false
             self.attackHitBox.x = self:getAttackHitBoxX()
         end
+        self.launchAngle = self:getLaunchAngle()
     else
         self.attackHitBox.attack = true
     end

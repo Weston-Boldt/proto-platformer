@@ -9,8 +9,8 @@ function toRadian(deg)
     return math.rad(deg + 90);
 end
 
-function getOppAng(rad)
-    return ((rad + 180) % 360)
+function getOppAng(deg)
+    return (deg + 180) % 360
 end
 
 -- todo fixme, this may be useless
