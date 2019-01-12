@@ -50,6 +50,7 @@ function Player:init(x,y,level)
     local w = PLAYER_WIDTH
     local h = PLAYER_HEIGHT
     Entity.init(self,x,y,w,h)
+    -- AHHHHHH
     self.boundingQuad = lg.newQuad(12, 0, 53, 64, img:getDimensions())
     self.name = "Player"
     self.img = img
