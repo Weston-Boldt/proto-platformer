@@ -5,8 +5,9 @@
 Player has a punch button, when pressed the player can attempt to land an attack so hard that the
 screen shakes!
 
-if a player punches an enemy the player then can 'Aim' that enemy and it will launch towards another
-enemy hopefully causing a chain reaction
+player punches an enemy and causes them too launch away in whatever direction they punched em in
 
 if a player punches a wall, depending on what directional keys are pressed, the player will launch
 himself in 1 of 8 directions, this could be used to set up a punch for an enemy
+
+wondering about a ricochet system now,
