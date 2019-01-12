@@ -7,6 +7,7 @@
 ## First TODOs
 
 - strip out ALL DATA and put into a data store
+    - some progress on this, working on introducing the feature
 
 - Design Documents
 
@@ -22,8 +23,8 @@
 - [x] attack in all directions
     - needs tweaking
 
-- [ ] launch player if they punch a wall
-    - preliminary work
+- [x] launch player if they punch a wall
+    - needs tweaking
 
 - [ ] launch enemy if they punch a enemy
     - needs design
