@@ -13,6 +13,15 @@ function inTable(needle,haystack)
     return false
 end
 
+function fileExists(filename)
+    local f = io.open(filename, "r")
+    if f then
+        io.close(f) 
+        return true
+    end
+    return false
+end
+
 function empty(tblOrVar)
     if type(tblOrVar) == "table" then
         return #tblOrVar == 0
