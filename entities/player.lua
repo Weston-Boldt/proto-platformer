@@ -2,6 +2,7 @@ local Class = require'libs.hump.class'
 local Entity = require'entity'
 local Timer = require'libs.hump.timer'
 local HitBox = require'components.hitbox'
+local Anim8 = require'libs.anim8.anim8'
 local lg = love.graphics
 
 Player = Class{

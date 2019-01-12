@@ -40,6 +40,8 @@ function ]]..className..[[:init(x,y)
     self.w = ]]..upper..[[_WIDTH
     self.h = ]]..upper..[[_HEIGHT
 
+    self.dataFile = 'data/]]..className..[[-data.lua'
+
     self.hitBox = HitBox(self, self.x, self.y, HITBOX_WIDTH, HITBOX_HEIGHT)
 
     self.xspeed = 0;
@@ -109,6 +111,21 @@ if (err) then
     print(err)
     return 1
 end
+file:write(code)
+file:close()
+
+-- todo fill this out 
+local dataFileCode = [[
+return {
+}
+]]
+
+local file,err = io.open("data/"..className.."-data.lua", "w")
+if (err) then
+    print(err)
+    return 1
+end
+
 file:write(code)
 file:close()
 

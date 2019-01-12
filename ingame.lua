@@ -7,7 +7,6 @@ LEVEL_START = 1;
 -- todo fixme
 -- PLACEHOLDER VALUES
 level = TEST_LEVEL;
-map = LEVEL_START;
 
 local TILE_HEIGHT = 32
 local TILE_WIDTH = 32
