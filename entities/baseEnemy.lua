@@ -32,6 +32,8 @@ function BaseEnemy:init(x,y)
     self.w = ENEMY_WIDTH
     self.h = ENEMY_HEIGHT
 
+    self.dataFile = 'data/baseEnemy-data.lua'
+
     self.hitBox = HitBox(self, self.x, self.y, HITBOX_WIDTH, HITBOX_HEIGHT)
     self.xspeed = 0;
     self.yspeed = 0;

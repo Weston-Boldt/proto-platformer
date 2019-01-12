@@ -1,8 +1,8 @@
 return  {
     require('entities.player');
 
-    require('triggers.MapEnd');
-    require('triggers.enemy_collision');
+    require('triggers.mapEnd');
+    require('triggers.enemyCollision');
 
-    require('entities.base_enemy')
+    require('entities.baseEnemy')
 }

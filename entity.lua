@@ -23,7 +23,7 @@ function Entity:init(--[[world,--]]x,y,w,h)
     self.collisions = {}
     self.friction = 0
 
-    self.entityFile = 'data/entity.lua'
+    self.dataFile = 'data/entity-data.lua'
     self.launchAngle = nil;
 
     -- an entity has a good chance of having a hitbox
@@ -83,8 +83,11 @@ function Entity:updateDead(dt)
 end
 
 function Entity:reloadData()
-    print(self.name)
-    
+    if not fileExists(self.dataFile) then
+        return;
+    end
+    local entityData = loadfile(self.dataFile)
+    print(entityData)
 end
 
 function Entity:destroy()

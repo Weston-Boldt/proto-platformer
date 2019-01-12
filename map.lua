@@ -143,10 +143,8 @@ function Map:getObjectToSpawn(objName)
         end,
         BaseEnemy = function (x, y)
             local baseEnemy = BaseEnemy(x,y)
-            print("baseEnemy = "..tostring(baseEnemy))
             self:addEntityToWorld(baseEnemy)
             self:addEntityToHitBoxWorld(baseEnemy.hitBox)
-            print("base_enemy collisions = "..tostring(baseEnemy.collisions))
         end,
     }
     local returnObject = objects[objName]
