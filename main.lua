@@ -1,4 +1,4 @@
-require('require_entities')
+require('require-entities')
 require("mainmenu")
 require("ingame")
 require("config")
