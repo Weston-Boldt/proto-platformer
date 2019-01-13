@@ -1,11 +1,12 @@
+local JUMP_TIME_MAX = 0.5
 return {
     name = 'Player',
-    h = 64,
-    w = 32,
+    h = SZ_DBL_TILE,
+    w = SZ_TILE,
     xspeed = 0,
     yspeed = 0,
     max_speed = P_MAX_SPEED,
-    jump_time_max = 0.5,
+    jump_time_max = JUMP_TIME_MAX,
     attack_time_max = 0.5,
     health_max = 5,
     base_damage = 1,
@@ -21,14 +22,14 @@ return {
 
     launch_speed = 500,
 
-    attack_hit_box_w = 32,
-    attack_hit_box_h = 64,
+    jumpTime = JUMP_TIME_MAX,
+    attack_hit_box_w = SZ_TILE,
+    attack_hit_box_h = SZ_DBL_TILE,
 
-    launch_hit_box_w = 64,
-    launch_hit_box_h = 64,
+    launch_hit_box_w = SZ_DBL_TILE,
+    launch_hit_box_h = SZ_DBL_TILE,
 
     gravity = NORMAL_GRAVITY,
-    jumpTime = JUMP_TIME_MAX,
     letGoOfJump = false,
 
     onGround = false,

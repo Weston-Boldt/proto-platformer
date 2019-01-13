@@ -8,8 +8,8 @@ local lg = love.graphics
 -- local PLAYER_WIDTH, PLAYER_HEIGHT = 16, 22 LEFT = -1
 PS_RUN, PS_SHOOTING, PS_LAUNCH,
 PS_THROW, PS_DEAD, PS_DMG = 0,1,2,3,4,5,6 -- Player states 
-PLAYER_WIDTH = 32
-PLAYER_HEIGHT = 64
+PLAYER_WIDTH = SZ_TILE
+PLAYER_HEIGHT = SZ_DBL_TILE
 -- give the player a bit of edge room when being attacked
 -- but still want to collide normally with the map
 local HITBOX_WIDTH = PLAYER_WIDTH
@@ -19,6 +19,8 @@ local HITBOX_HEIGHT = PLAYER_HEIGHT
 local AD_UP_DIAG, AD_UP, AD_HORIZONTAL, AD_DOWN, AD_DOWN_DIAG = 2,1,0,-1,-2
 
 P_MAX_SPEED = 160
+
+P_JUMP_TIME_MAX = 0.5
 
 P_ATTACK_TIME_MAX = 0.5
 
@@ -44,7 +46,7 @@ function Player:init(x,y,level)
     self.img = love.graphics.newImage('assets/blue_tough_guy.png')
 
     -- AHHHHHH! this is a magic quad that works with the aseprite drawing i did 
-    self.boundingQuad = lg.newQuad(12, 0, 53, 64, self.img:getDimensions())
+    self.boundingQuad = lg.newQuad(12, 0, 53, SZ_DBL_TILE, self.img:getDimensions())
 
     self.name = "Player"
     self.x = x
@@ -132,7 +134,7 @@ function Player:launch(dt)
     self.launchHitBox = HitBox(self,
         self.x, self.y,
         -- these will need to shift likely
-        64, 64,
+        SZ_DBL_TILE, SZ_DBL_TILE,
         true, true
     )
 
@@ -261,7 +263,7 @@ function Player:handleCollisions(collisions, dt)
                 self.jumping = false
                 self.onGround = true
                 self.yspeed = 0
-                self.jumpTime = JUMP_TIME_MAX
+                self.jumpTime = self.jump_time_max
             end
         end
         -- todo fixme coll type will be depending
@@ -275,7 +277,7 @@ function Player:updateJumping(dt)
     and love.keyboard.isDown(config_keys.jump)
     and not self.letGoOfJump then
         self.jumpTime = self.jumpTime - dt
-        self.yspeed = self.yspeed - self.jumpAcc * (dt / JUMP_TIME_MAX)
+        self.yspeed = self.yspeed - self.jumpAcc * (dt / self.jump_time_max)
         local targetJumpSpeed = self.jumpAcc*dt;
         -- print("jump speed is gonna  = "..targetJumpSpeed.."\n")
         self.yspeed = self.yspeed - math.sqrt(targetJumpSpeed)
@@ -339,7 +341,7 @@ function Player:update(dt)
     if self.launchHitBox then
         self.launchHitBox:update(
             self.x, self.y,
-            64, 64
+            SZ_DBL_TILE, SZ_DBL_TILE
         )
     end
 
@@ -458,7 +460,7 @@ function Player:shoot()
         self.canAttack=true
     end)
 
-    if not self.jumpTime == JUMP_TIME_MAX then
+    if not self.jumpTime == self.jump_time_max then
         self.letGoOfJump = true
         self.jumpTime = 0
     end

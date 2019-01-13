@@ -15,7 +15,7 @@ local Class = require'libs.hump.class'
 local Entity = require'entity'
 local HitBox = require'components.hitbox'
 
-local ]]..upper..[[_RUN, ]]..upper..[[_DAMAGE, ]]..upper..[[_DEAD = 1,2,3
+]]..upper..[[_RUN, ]]..upper..[[_DAMAGE, ]]..upper..[[_DEAD = 1,2,3
 
 local ]]..upper..[[_HEIGHT = 64
 local ]]..upper..[[_WIDTH = 32
@@ -37,25 +37,10 @@ function ]]..className..[[:init(x,y)
 
     self.x = x
     self.y = y
-    self.w = ]]..upper..[[_WIDTH
-    self.h = ]]..upper..[[_HEIGHT
 
     self.dataFile = 'data/]]..className..[[-data.lua'
 
     self.hitBox = HitBox(self, self.x, self.y, HITBOX_WIDTH, HITBOX_HEIGHT)
-
-    self.xspeed = 0;
-    self.yspeed = 0;
-
-    self.xacc = 25
-    self.moving = false
-    self.onGround = false
-    self.lastDir = RIGHT
-    self.dir = RIGHT
-    self.friction = 10
-    self.gravity = NORMAL_GRAVITY
-    self.state = ]]..upper..[[_RUN
-    self.health = BASE_HEALTH
 
     self:reloadData()
 
@@ -119,6 +104,21 @@ file:close()
 -- todo fill this out 
 local dataFileCode = [[
 return {
+    x = SZ_TILE,
+    w = SZ_DBL_TILE,
+    xspeed = 0,
+    yspeed = 0,
+
+    xacc = 25,
+    moving = false,
+    onGround = false,
+    lastDir = RIGHT,
+    dir = RIGHT,
+    friction = 10,
+    gravity = NORMAL_GRAVITY,
+    state = ]]..upper..[[_RUN,
+    health = BASE_HEALTH,
+
 }
 ]]
 
