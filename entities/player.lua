@@ -49,6 +49,7 @@ function Player:init(x,y,level)
     self.name = "Player"
     self.x = x
     self.y = y
+
     self.hitBox = HitBox(
         self,
         self.x, self.y,
@@ -59,14 +60,6 @@ function Player:init(x,y,level)
         HITBOX_WIDTH,
         HITBOX_HEIGHT  
     )
-
-    --[[
-    some weirdness here:
-        math.pi         (180 deg) == directly up 
-        0     (360 deg) (0 deg)   == directly down
-        math.pi / 2     (90 deg)  == directly right
-        3 * math.pi / 2 (270 deg) == directly left
-    --]]
 
     self:reloadData()
     return self

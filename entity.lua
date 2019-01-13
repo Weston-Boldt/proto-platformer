@@ -92,7 +92,7 @@ function Entity:reloadData()
         print('no entity data, returning')
         return;
     end
-    local newEntityData = loadfile(self.dataFile)()
+    local newEntityData = loadfile(self.dataFile)('hello')
     for key, value in pairs(newEntityData) do
         self[key] = value
     end

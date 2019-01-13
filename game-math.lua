@@ -1,6 +1,14 @@
 PERSPECTIVE_DEG_OFFSET=90
 
 --[[
+some weirdness here:
+    math.pi         (180 deg) == directly up 
+    0     (360 deg) (0 deg)   == directly down
+    math.pi / 2     (90 deg)  == directly right
+    3 * math.pi / 2 (270 deg) == directly left
+--]]
+
+--[[
     for some reason or another
     there is a different perspective
     where 180 degrees isn't left, its up
