@@ -47,18 +47,20 @@ Player.__index = Player
 function Player:init(x,y,level)
 
     -- local img = love.graphics.newImage('assets/character_block.png')
-    local img = love.graphics.newImage('assets/blue_tough_guy.png')
-    local w = PLAYER_WIDTH
-    local h = PLAYER_HEIGHT
-    Entity.init(self,x,y,w,h)
-    -- AHHHHHH
-    self.boundingQuad = lg.newQuad(12, 0, 53, 64, img:getDimensions())
+    Entity.init(self,x,y,PLAYER_WIDTH,PLAYER_HEIGHT)
+
+    self.dataFile = 'data/player-data.lua'
+
+    self.img = love.graphics.newImage('assets/blue_tough_guy.png')
+
+    -- AHHHHHH! this is a magic quad that works with the aseprite drawing i did 
+    self.boundingQuad = lg.newQuad(12, 0, 53, 64, self.img:getDimensions())
+
     self.name = "Player"
-    self.img = img
-    self.x = x -- + PLAYER_WIDTH
+    self.x = x
     self.y = y
-    self.w = w -- img:getWidth()
-    self.h = h -- img:getHeight()
+    self.w = PLAYER_WIDTH
+    self.h = PLAYER_HEIGHT
     self.xspeed = 0
     self.yspeed = 0
     self.xacc = 35

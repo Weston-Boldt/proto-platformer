@@ -84,10 +84,15 @@ end
 
 function Entity:reloadData()
     if not fileExists(self.dataFile) then
+        print('no entity data, returning')
         return;
     end
-    local entityData = loadfile(self.dataFile)
-    print(entityData)
+    local newEntityData = loadfile(self.dataFile)()
+    for key, value in pairs(newEntityData) do
+        print('before '..key..' = '..tostring(self[key]))
+        self[key] = value
+        print('after '..key..' = '..tostring(self[key]))
+    end
 end
 
 function Entity:destroy()
