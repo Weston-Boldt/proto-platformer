@@ -12,7 +12,7 @@ local Entity = Class{
     -- attackDamage = BASE_ATTACK
 }
 
-function Entity:init(--[[world,--]]x,y,w,h)
+function Entity:init(x, y, w, h)
     -- self.world = world
     self.x = x
     self.y = y
@@ -36,6 +36,7 @@ function Entity:init(--[[world,--]]x,y,w,h)
     self.health = BASE_HEALTH
     self.attackDamage = BASE_ATTACK
     self.active = true
+    self:reloadData()
 end
 
 function Entity:handleCollisions(collisions, dt)
@@ -82,6 +83,10 @@ end
 function Entity:updateDead(dt)
 end
 
+--[[
+    will reload all the properties from the
+    entities dataFile and load them onto the object
+]]--
 function Entity:reloadData()
     if not fileExists(self.dataFile) then
         print('no entity data, returning')
@@ -89,9 +94,7 @@ function Entity:reloadData()
     end
     local newEntityData = loadfile(self.dataFile)()
     for key, value in pairs(newEntityData) do
-        print('before '..key..' = '..tostring(self[key]))
         self[key] = value
-        print('after '..key..' = '..tostring(self[key]))
     end
 end
 

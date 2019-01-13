@@ -5,15 +5,6 @@ local HitBox = require'components.hitbox'
 local Anim8 = require'libs.anim8.anim8'
 local lg = love.graphics
 
-Player = Class{
-    --[[
-    corners = {
-        -6, 5, -22, -0.5,
-    }; -- why does this need a semi colon --]]
-    __includes = Entity
-    -- todo fixme calibrate
-}
-
 -- local PLAYER_WIDTH, PLAYER_HEIGHT = 16, 22 LEFT = -1
 PS_RUN, PS_SHOOTING, PS_LAUNCH,
 PS_THROW, PS_DEAD, PS_DMG = 0,1,2,3,4,5,6 -- Player states 
@@ -27,27 +18,26 @@ local HITBOX_HEIGHT = PLAYER_HEIGHT
 -- attack directions
 local AD_UP_DIAG, AD_UP, AD_HORIZONTAL, AD_DOWN, AD_DOWN_DIAG = 2,1,0,-1,-2
 
-local BRAKE_SPEED = 350
-local MAX_SPEED = 160
-local MAX_JUMP = 50
-local JUMP_TIME_MAX = 0.5
+P_MAX_SPEED = 160
 
-local ATTACK_TIME_MAX = 0.5
-
-local BASE_ACC = 45
-
-local HEALTH_MAX = 5
-local BASE_DAMAGE = 1
+P_ATTACK_TIME_MAX = 0.5
 
 local DAMAGE_TIME_MAX = 0.5
 
-local lg = love.graphics
+Player = Class{
+    --[[
+    corners = {
+        -6, 5, -22, -0.5,
+    };
+    --]]
+    __includes = Entity
+}
+
 Player.__index = Player
 
 function Player:init(x,y,level)
 
-    -- local img = love.graphics.newImage('assets/character_block.png')
-    Entity.init(self,x,y,PLAYER_WIDTH,PLAYER_HEIGHT)
+    Entity.init(self,dataFile, x,y,PLAYER_WIDTH,PLAYER_HEIGHT)
 
     self.dataFile = 'data/player-data.lua'
 
@@ -59,26 +49,6 @@ function Player:init(x,y,level)
     self.name = "Player"
     self.x = x
     self.y = y
-    self.w = PLAYER_WIDTH
-    self.h = PLAYER_HEIGHT
-    self.xspeed = 0
-    self.yspeed = 0
-    self.xacc = 35
-    self.friction = 8
-    self.gravity = NORMAL_GRAVITY
-    self.jumpTime = JUMP_TIME_MAX
-    self.letGoOfJump = false
-
-    self.onGround = false
-    self.lastDir = RIGHT
-    self.dir = RIGHT
-
-    self.upDir = NEUTRAL
-
-    self.jumpAcc = 22
-
-    self.jumping = false;
-    self.state = PS_RUN
     self.hitBox = HitBox(
         self,
         self.x, self.y,
@@ -90,24 +60,6 @@ function Player:init(x,y,level)
         HITBOX_HEIGHT  
     )
 
-    -- these hitboxes are initialized to false
-    -- because the way i'm using hump.Class is kinda busted
-    -- and setting them as nil or {} doesn't actually set them to nil
-    self.attackHitBox = false;
-    self.launchHitBox = false;
-    self.attackTime = ATTACK_TIME_MAX
-    self.spawnX = self.x
-    -- low what tf
-    self.spawnY = self.y - 10
-    self.doRespawn = false
-
-    self.health = BASE_HEALTH
-    print('health = '..tostring(self.health))
-    self.attackDmg = BASE_DAMAGE
-    self.canAttack = true
-    self.attackDir = AD_HORIZONTAL
-    self.needToLaunch = false
-
     --[[
     some weirdness here:
         math.pi         (180 deg) == directly up 
@@ -116,6 +68,7 @@ function Player:init(x,y,level)
         3 * math.pi / 2 (270 deg) == directly left
     --]]
 
+    self:reloadData()
     return self
 end
 
@@ -129,12 +82,12 @@ function Player:updateRunning(dt)
                         (both and self.lastDir == LEFT)
 
 
-    if walkingRight and self.xspeed > -MAX_SPEED then
+    if walkingRight and self.xspeed > -P_MAX_SPEED then
         self.xspeed = self.xspeed + self.xacc*dt
         if self.dir == LEFT then
             self.dir = RIGHT
         end
-    elseif walkingLeft and self.xspeed < MAX_SPEED then
+    elseif walkingLeft and self.xspeed < P_MAX_SPEED then
         self.xspeed = self.xspeed - self.xacc*dt
         if self.dir == RIGHT then
             self.dir = LEFT
@@ -147,7 +100,7 @@ function Player:updateRunning(dt)
         end
     end
 
-    self.xspeed = cap(self.xspeed, -MAX_SPEED, MAX_SPEED);
+    self.xspeed = cap(self.xspeed, -P_MAX_SPEED, P_MAX_SPEED);
     if math.floor(self.xspeed) == 0 and not (walkingLeft or walkingRight) then
         self.xspeed = 0
     end
@@ -228,7 +181,7 @@ function Player:getLaunchAngle()
 end
 
 function Player:updateShooting(dt)
-    if self.attackTime > (ATTACK_TIME_MAX - (ATTACK_TIME_MAX / 16)) then
+    if self.attackTime > (P_ATTACK_TIME_MAX - (P_ATTACK_TIME_MAX / 16)) then
 
         local attackDir = self:getAttackDir()
         if self.attackDir ~= attackDir then
@@ -256,7 +209,7 @@ function Player:updateShooting(dt)
         -- print("before "..tostring(self.attackHitBox.obj))
         self:detachHitBox('attackHitBox')
 
-        self.attackTime = ATTACK_TIME_MAX
+        self.attackTime = P_ATTACK_TIME_MAX
         if self.needToLaunch then
             self:launch(dt)
         else
@@ -428,15 +381,6 @@ function Player:warp(x,y)
     self.yspeed = 0
 end
 
-function Player:respawn()
-    -- print("top of respawn()")
-    self.doRespawn = true
-    self:warp(
-        self.spawnX,
-        self.spawnY
-    )
-end
-
 function Player:doAction()
     self.doingAction = true
 end
@@ -545,8 +489,6 @@ function Player:action(actionName)
         self:jump()
     elseif actionName == "shoot" then
         self:shoot()
-    elseif actionName == "respawn" then
-        self:respawn()
     elseif actionName == "action" then
         self:doAction()
     end

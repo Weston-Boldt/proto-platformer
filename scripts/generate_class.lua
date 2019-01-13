@@ -57,6 +57,8 @@ function ]]..className..[[:init(x,y)
     self.state = ]]..upper..[[_RUN
     self.health = BASE_HEALTH
 
+    self:reloadData()
+
     return self
 end
 
