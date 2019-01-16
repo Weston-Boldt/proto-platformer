@@ -76,7 +76,6 @@ function Player:updateRunning(dt)
     local walkingLeft = (not both and keystate.left) or
                         (both and self.lastDir == LEFT)
 
-
     if walkingRight and self.xspeed > -P_MAX_SPEED then
         self.xspeed = self.xspeed + self.xacc*dt
         if self.dir == LEFT then
@@ -137,6 +136,13 @@ function Player:launch(dt)
         SZ_DBL_TILE, SZ_DBL_TILE,
         true, true
     )
+
+    -- if they hit a wall on their left, they should be 
+    -- facing the right direciton after the launch so set that now
+    -- as it's probably the most appropriate time
+    if not inTable(self.attackDir, {AD_UP, AD_DOWN}) then
+        self.dir = self.dir * -1
+    end
 
     Timer.after(2, function()
         -- player can break out of launch by
