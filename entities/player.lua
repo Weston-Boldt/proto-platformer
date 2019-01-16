@@ -253,7 +253,6 @@ function Player:handleCollisions(collisions, dt)
         self.onGround = false
         return
     end
-
     for i, coll in pairs(collisions) do
         -- skip these for now without checking what they are
         -- as we are choosing to go through em anyways

@@ -7,11 +7,16 @@
 ## First TODOs
 
 - strip out ALL DATA and put into a data store
-    - some progress on this, working on introducing the feature
+    - beginning implementations are going with the player obj
+        need to implement for other entities
+
+- Make State machine objects or some kinda component thing to reuse
+    some code, for instance the entities all need to launch, not just the player
 
 - Design Documents
+    - struggling to get to this
 
-- Core Mechanics
+- Implement Core Mechanics
 
 - Animation System Implementation
 > will likely just use anim8
