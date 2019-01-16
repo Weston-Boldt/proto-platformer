@@ -440,16 +440,21 @@ function Player:getAttackDir()
 end
 
 function Player:getAttackHitBoxWH()
+    -- shorten the width && height if they
+    -- are punchgin up diag or down diag
     if self.attackDir == AD_UP_DIAG
     or self.attackDir == AD_DOWN_DIAG then
         -- give height a little bit more that way it'll
         -- cause launching when hitting a diag
         return (PLAYER_WIDTH / 2), (PLAYER_HEIGHT / 2) + 5 
+    -- shorten just the width if it's just up && down
     elseif self.attackDir == AD_UP
     or self.attackDir == AD_DOWN then
         return (PLAYER_WIDTH / 2), PLAYER_HEIGHT
     end
-    return PLAYER_WIDTH, PLAYER_HEIGHT
+
+    -- normal attack width if it's a horizontal attack
+    return PLAYER_WIDTH * 2, PLAYER_HEIGHT
 end
 
 function Player:shoot()
