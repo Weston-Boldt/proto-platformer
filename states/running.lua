@@ -1,13 +1,16 @@
+local Class = require'libs.hump.class'
+
 StRunning = Class {
 }
 
-function StRunning:init(obj)
-    return {
-        name = 'Running',
-    }
+function StRunning:init(obj, updateFn)
+    self.name = 'Running';
+    self.obj = obj;
+    self.updateFn = updateFn;
+    return self
 end
 
-function StateRunning:update(dt)
+function StRunning:updateState(dt)
     applyFriction(self,dt)
 
     if self.moving then

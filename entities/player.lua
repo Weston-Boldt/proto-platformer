@@ -3,6 +3,7 @@ local Entity = require'entity'
 local Timer = require'libs.hump.timer'
 local HitBox = require'components.hitbox'
 local Anim8 = require'libs.anim8.anim8'
+
 local lg = love.graphics
 
 -- local PLAYER_WIDTH, PLAYER_HEIGHT = 16, 22 LEFT = -1
@@ -62,6 +63,9 @@ function Player:init(x,y,level)
         HITBOX_WIDTH,
         HITBOX_HEIGHT  
     )
+    states = {
+        ps_run = StPlayerRunning(self),
+    };
 
     self:reloadData()
     return self
@@ -123,6 +127,7 @@ function Player:detachHitBox(hitBoxKey)
 end
 
 function Player:launch(dt)
+    print('here')
     self.state = PS_LAUNCH
     -- TODO FIXME this may need to go away
     -- need to test the behavior of both
