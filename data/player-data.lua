@@ -29,7 +29,9 @@ return {
     launch_hit_box_w = SZ_DBL_TILE,
     launch_hit_box_h = SZ_DBL_TILE,
 
-    gravity = NORMAL_GRAVITY,
+    -- TODO
+    -- decide on this
+    gravity = NORMAL_GRAVITY + (NORMAL_GRAVITY / 4),
     letGoOfJump = false,
 
     onGround = false,
