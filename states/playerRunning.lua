@@ -1,16 +1,16 @@
 local Class = require'libs.hump.class'
 
 StPlayerRunning = Class {
-    __includes = StRunning
+    __includes = StBase
 }
 
 function StPlayerRunning:init(obj)
-    self = StRunning.init(self, obj)
+    self = StBase.init(self, obj)
     self.name = 'PlayerRunning'
     return self
 end
 
-function StPlayerRunning:updateRunning(dt)
+function StPlayerRunning:update(dt)
     applyFriction(self.obj, dt)
     local both = keystate.right and keystate.left
 

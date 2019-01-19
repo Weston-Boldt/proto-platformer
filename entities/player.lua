@@ -16,9 +16,6 @@ PLAYER_HEIGHT = SZ_DBL_TILE
 local HITBOX_WIDTH = PLAYER_WIDTH
 local HITBOX_HEIGHT = PLAYER_HEIGHT
 
--- attack directions
-local AD_UP_DIAG, AD_UP, AD_HORIZONTAL, AD_DOWN, AD_DOWN_DIAG = 2,1,0,-1,-2
-
 P_MAX_SPEED = 160
 
 P_JUMP_TIME_MAX = 0.5
@@ -40,7 +37,7 @@ Player.__index = Player
 
 function Player:init(x,y,level)
 
-    Entity.init(self,dataFile, x,y,PLAYER_WIDTH,PLAYER_HEIGHT)
+    self = Entity.init(self,dataFile, x,y,PLAYER_WIDTH,PLAYER_HEIGHT)
 
     self.dataFile = 'data/player-data.lua'
 
@@ -65,6 +62,7 @@ function Player:init(x,y,level)
     )
     states = {
         ps_run = StPlayerRunning(self),
+        ps_attack = StPlayerAttacking(self),
     };
 
     self:reloadData()
@@ -113,8 +111,8 @@ function Player:updateRunning(dt)
     end
     
     applyGravity(self,dt)
-
     self.y = self.y + self.yspeed
+
     -- self.x, self.y, collisions = map.world:move(self, self.x, self.y)
 end
 
@@ -131,7 +129,7 @@ function Player:launch(dt)
     self.state = PS_LAUNCH
     -- TODO FIXME this may need to go away
     -- need to test the behavior of both
-    self:updateLaunch(dt)
+    -- self:updateLaunch(dt)
     self.canAttack = false
     -- self.needToLaunch = false
 

@@ -58,6 +58,7 @@ function love.load()
 
 
     mainmenu.enter()
+
 end
 
 function love.update(dt)

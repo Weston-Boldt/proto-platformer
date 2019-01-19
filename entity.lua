@@ -37,6 +37,7 @@ function Entity:init(x, y, w, h)
     self.attackDamage = BASE_ATTACK
     self.active = true
     self:reloadData()
+    return self
 end
 
 function Entity:handleCollisions(collisions, dt)

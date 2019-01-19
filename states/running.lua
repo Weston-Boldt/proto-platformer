@@ -1,12 +1,12 @@
 local Class = require'libs.hump.class'
 
 StRunning = Class {
+    __includes = StBase
 }
 
-function StRunning:init(obj, updateFn)
+function StRunning:init(obj, beforeFn, afterFn)
+    self = StBase.init(self, obj, beforeFn, afterFn)
     self.name = 'Running';
-    self.obj = obj;
-    self.updateFn = updateFn;
     return self
 end
 

@@ -1,3 +1,10 @@
+function call(fn)
+    if isFn(fn) then return fn() else return end
+end
+
+function isFn(fn)
+    return type(fn) == "function"
+end
 --[[
     if the needle is of type table
     then it will compare the reference
