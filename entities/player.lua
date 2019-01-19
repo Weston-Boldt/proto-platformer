@@ -116,16 +116,7 @@ function Player:updateRunning(dt)
     -- self.x, self.y, collisions = map.world:move(self, self.x, self.y)
 end
 
-function Player:detachHitBox(hitBoxKey)
-    if not self[hitBoxKey] then
-        return 
-    end
-    self[hitBoxKey]:detach()
-    self[hitBoxKey] = false
-end
-
 function Player:launch(dt)
-    print('here')
     self.state = PS_LAUNCH
     -- TODO FIXME this may need to go away
     -- need to test the behavior of both

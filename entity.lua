@@ -40,6 +40,14 @@ function Entity:init(x, y, w, h)
     return self
 end
 
+function Entity:detachHitBox(hitBoxKey)
+    if not self[hitBoxKey] then
+        return 
+    end
+    self[hitBoxKey]:detach()
+    self[hitBoxKey] = false
+end
+
 function Entity:handleCollisions(collisions, dt)
     if #collisions == 0 then
         self.onGround = false
