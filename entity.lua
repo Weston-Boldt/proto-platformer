@@ -19,23 +19,7 @@ function Entity:init(x, y, w, h)
     self.w = w
     self.h = h
 
-    self.name = 'Entity'
-    self.collisions = {}
-    self.friction = 0
-
     self.dataFile = 'data/entity-data.lua'
-    self.launchAngle = nil;
-
-    -- an entity has a good chance of having a hitbox
-    self.hitBox = nil
-    -- singular attack
-    self.attackHitBox = nil
-    -- mutliple attacks ? todo fixme
-    -- i don't know about this yet
-    self.attackHitBoxes = nil
-    self.health = BASE_HEALTH
-    self.attackDamage = BASE_ATTACK
-    self.active = true
     self:reloadData()
     return self
 end

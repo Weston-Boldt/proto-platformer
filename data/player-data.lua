@@ -14,6 +14,7 @@ return {
     xacc = 35,
     friction = 8,
     jumpAcc = 22,
+    launchAngle = 0,
 
     launch_time = 2,
 
