@@ -6,6 +6,10 @@ local Anim8 = require'libs.anim8.anim8'
 
 local lg = love.graphics
 
+local run = 'run'
+local launch = 'launch'
+local attack = 'attack'
+
 -- local PLAYER_WIDTH, PLAYER_HEIGHT = 16, 22 LEFT = -1
 PS_RUN, PS_SHOOTING, PS_LAUNCH,
 PS_THROW, PS_DEAD, PS_DMG = 0,1,2,3,4,5,6 -- Player states 
@@ -60,9 +64,11 @@ function Player:init(x,y,level)
         HITBOX_WIDTH,
         HITBOX_HEIGHT  
     )
+
     states = {
-        ps_run = StPlayerRunning(self),
-        ps_attack = StPlayerAttacking(self),
+        run = StPlayerRunning(self),
+        attack = StPlayerAttacking(self),
+        launch = StLaunching(self)
     };
 
     self:reloadData()

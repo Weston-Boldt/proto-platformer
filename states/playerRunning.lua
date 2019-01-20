@@ -10,6 +10,12 @@ function StPlayerRunning:init(obj)
     return self
 end
 
+function StPlayerRunning:enter()
+end
+
+function StPlayerRunning:exit()
+end
+
 function StPlayerRunning:update(dt)
     applyFriction(self.obj, dt)
     local both = keystate.right and keystate.left
