@@ -9,6 +9,10 @@ function StPlayerAttacking:init(obj)
     return self
 end
 
+function StPlayerAttacking:exit(obj)
+    self.state = nil
+end
+
 function StPlayerAttacking:enter()
     local obj = self.obj
     if obj.state == 'psRun'
@@ -16,10 +20,12 @@ function StPlayerAttacking:enter()
     or self.state == 'psLaunch' then
         return
     end
+
     obj.xspeed = 0
     obj.yspeed = 0
     Timer.after(0.8, function()
         obj.canAttack=true
+        self:exit()
     end)
 
     if not obj.jumpTime == obj.jump_time_max then
