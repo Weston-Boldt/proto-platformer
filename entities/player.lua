@@ -77,6 +77,10 @@ end
 
 function Player:updateRunning(dt)
     applyFriction(self, dt)
+    --[[
+    this stuff could be moved to another function and
+    be called in the update function but ONLY if the object is moving
+    --]]
     local both = keystate.right and keystate.left
 
     local walkingRight = (not both and keystate.right) or

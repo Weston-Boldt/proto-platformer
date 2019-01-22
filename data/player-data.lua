@@ -1,6 +1,7 @@
 local JUMP_TIME_MAX = 0.5
 return {
     name = 'Player',
+    moving = false,
     h = SZ_DBL_TILE,
     w = SZ_TILE,
     xspeed = 0,
