@@ -52,20 +52,17 @@ end
 function StPlayerAttacking:update(dt)
     local obj = self.obj
     if obj.attackTime > (self.attack_time_max - (self.attack_time_max / self.attack_start_up_div)) then
-
-        local attackDir = obj.getAttackDir()
-        if obj.attackDir ~= attackDir then
-            obj.attackDir = attackDir
-        end
-
         if (keystate.left and obj.dir ~= LEFT)
         or (keystate.right and obj.dir ~= RIGHT) then
             obj.lastDir = obj.dir
             obj.dir = obj.dir * -1
-            obj.attackHitBox.attack = false
-            obj.attackHitBox.x = obj.getAttackHitBoxX()
         end
-        obj.launchAngle = obj.getLaunchAngle()
+
+        obj.attackDir = obj:getAttackDir()
+        obj.attackHitBox.x, obj.attackHitBox.y,
+        obj.attackHitBox.w, obj.attackHitBox.h = obj:getAttackHitBoxRect()
+
+        obj.launchAngle = obj:getLaunchAngle()
     else
         obj.attackHitBox.attack = true
     end

@@ -186,6 +186,7 @@ function Player:getLaunchAngle()
 end
 
 function Player:updateShooting(dt)
+    -- startup frames
     if self.attackTime > (P_ATTACK_TIME_MAX - (P_ATTACK_TIME_MAX / 16)) then
         if (keystate.left and self.dir ~= LEFT)
         or (keystate.right and self.dir ~= RIGHT) then
@@ -197,16 +198,6 @@ function Player:updateShooting(dt)
         self.attackHitBox.x, self.attackHitBox.y,
         self.attackHitBox.w, self.attackHitBox.h = self:getAttackHitBoxRect()
 
-        --[[
-        local attackDir = self:getAttackDir()
-        if self.attackDir ~= attackDir then
-            self.attackDir = attackDir
-        end
-
-            self.attackHitBox.attack = false
-            self.attackHitBox.x = self:getAttackHitBoxX()
-        end
-        --]]
         self.launchAngle = self:getLaunchAngle()
     else
         self.attackHitBox.attack = true
