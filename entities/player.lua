@@ -187,19 +187,26 @@ end
 
 function Player:updateShooting(dt)
     if self.attackTime > (P_ATTACK_TIME_MAX - (P_ATTACK_TIME_MAX / 16)) then
+        if (keystate.left and self.dir ~= LEFT)
+        or (keystate.right and self.dir ~= RIGHT) then
+            self.lastDir = self.dir
+            self.dir = self.dir * -1
+        end
 
+        self.attackDir = self:getAttackDir()
+        self.attackHitBox.x, self.attackHitBox.y,
+        self.attackHitBox.w, self.attackHitBox.h = self:getAttackHitBoxRect()
+
+        --[[
         local attackDir = self:getAttackDir()
         if self.attackDir ~= attackDir then
             self.attackDir = attackDir
         end
 
-        if (keystate.left and self.dir ~= LEFT)
-        or (keystate.right and self.dir ~= RIGHT) then
-            self.lastDir = self.dir
-            self.dir = self.dir * -1
             self.attackHitBox.attack = false
             self.attackHitBox.x = self:getAttackHitBoxX()
         end
+        --]]
         self.launchAngle = self:getLaunchAngle()
     else
         self.attackHitBox.attack = true
@@ -449,11 +456,11 @@ function Player:getAttackHitBoxWH()
     or self.attackDir == AD_DOWN_DIAG then
         -- give height a little bit more that way it'll
         -- cause launching when hitting a diag
-        return (PLAYER_WIDTH / 2), (PLAYER_HEIGHT / 2) + 5 
+        return PLAYER_WIDTH, (PLAYER_HEIGHT / 2) + 5 
     -- shorten just the width if it's just up && down
     elseif self.attackDir == AD_UP
     or self.attackDir == AD_DOWN then
-        return (PLAYER_WIDTH / 2), PLAYER_HEIGHT
+        return PLAYER_WIDTH, PLAYER_HEIGHT
     end
 
     -- normal attack width if it's a horizontal attack

@@ -124,7 +124,8 @@ function HitBox:handleCollisions(collisions,dt)
 end
 
 function HitBox:draw()
-    lg.draw(self.img, math.floor(self.x), math.floor(self.y))
+    lg.rectangle("fill", math.floor(self.x), math.floor(self.y), self.w, self.h)
+    -- lg.draw(self.img, math.floor(self.x), math.floor(self.y))
 end
 
 function HitBox:getCollisionFilter(item, other)
