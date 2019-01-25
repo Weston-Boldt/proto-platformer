@@ -80,91 +80,6 @@ function Player:init(x,y,level)
     return self
 end
 
-function Player:updateRunning(dt)
-    applyFriction(self, dt)
-    --[[
-    this stuff could be moved to another function and
-    be called in the update function but ONLY if the object is moving
-    --]]
-    local both = keystate.right and keystate.left
-
-    local walkingRight = (not both and keystate.right) or
-                         (both and self.lastDir == RIGHT)
-    local walkingLeft = (not both and keystate.left) or
-                        (both and self.lastDir == LEFT)
-
-    if walkingRight and self.xspeed > -P_MAX_SPEED then
-        self.xspeed = self.xspeed + self.xacc*dt
-        if self.dir == LEFT then
-            self.dir = RIGHT
-        end
-    elseif walkingLeft and self.xspeed < P_MAX_SPEED then
-        self.xspeed = self.xspeed - self.xacc*dt
-        if self.dir == RIGHT then
-            self.dir = LEFT
-        end 
-    elseif self.jumping and (not walkingRight and not walkingLeft) then
-        if self.dir == LEFT then
-            self.xspeed = self.xspeed - self.xspeed*dt
-        elseif self.dir == RIGHT then
-            self.xspeed = self.xspeed + self.xspeed*dt
-        end
-    end
-
-    self.xspeed = cap(self.xspeed, -P_MAX_SPEED, P_MAX_SPEED);
-    if math.floor(self.xspeed) == 0 and not (walkingLeft or walkingRight) then
-        self.xspeed = 0
-    end
-    self.x = self.x + self.xspeed
-
-    if not self.onGround then
-        --print("not on the ground")
-        if self.jumping then
-           -- print("jumping so should be jumping")
-            self:updateJumping(dt)
-        end
-    end
-    
-    applyGravity(self,dt)
-    self.y = self.y + self.yspeed
-
-    -- self.x, self.y, collisions = map.world:move(self, self.x, self.y)
-end
-
-function Player:launch(dt)
-    self.state = PS_LAUNCH
-    -- TODO FIXME this may need to go away
-    -- need to test the behavior of both
-    -- self:updateLaunch(dt)
-    self.canAttack = false
-    -- self.needToLaunch = false
-
-    self.launchHitBox = HitBox(self,
-        self.x, self.y,
-        -- these will need to shift likely
-        SZ_DBL_TILE, SZ_DBL_TILE,
-        true, true
-    )
-
-    -- if they hit a wall on their left, they should be 
-    -- facing the right direciton after the launch so set that now
-    -- as it's probably the most appropriate time
-    if not inTable(self.attackDir, {AD_UP, AD_DOWN}) then
-        self.dir = self.dir * -1
-    end
-
-    Timer.after(2, function()
-        -- player can break out of launch by
-        -- punching again
-        if self.state == PS_LAUNCH then
-            self.state = PS_RUN
-        end
-        self.needToLaunch = false
-        self.canAttack = true
-
-        self:detachHitBox('launchHitBox')
-    end)
-end
 
 function Player:getLaunchAngle()
     if self.attackDir == AD_UP then
@@ -188,53 +103,6 @@ function Player:getLaunchAngle()
     elseif self.attackDir == AD_DOWN_DIAG then
         return toRadian((baseAngle + (45 * -self.dir)) % 360)
     end
-end
-
-function Player:updateShooting(dt)
-    -- startup frames
-    if self.attackTime > (P_ATTACK_TIME_MAX - (P_ATTACK_TIME_MAX / 16)) then
-        if (keystate.left and self.dir ~= LEFT)
-        or (keystate.right and self.dir ~= RIGHT) then
-            self.lastDir = self.dir
-            self.dir = self.dir * -1
-        end
-
-        self.attackDir = self:getAttackDir()
-        self.attackHitBox.x, self.attackHitBox.y,
-        self.attackHitBox.w, self.attackHitBox.h = self:getAttackHitBoxRect()
-
-        self.launchAngle = self:getLaunchAngle()
-    else
-        self.attackHitBox.attack = true
-    end
-
-    if self.attackTime > 0 then
-        self.attackTime = self.attackTime - dt
-    else
-        -- print("about to detatch")
-        -- detatch the hitbox off the object
-        -- to get swept up and removed by the 
-        -- print("before "..tostring(self.attackHitBox.obj))
-        self:detachHitBox('attackHitBox')
-
-        self.attackTime = P_ATTACK_TIME_MAX
-        if self.needToLaunch then
-            self:launch(dt)
-        else
-            self.state = PS_RUN
-        end
-    end
-    -- -- applyFriction(self, dt)
-    -- -- applyGravity(self,dt)
-    -- if not self.onGround then
-    --     --print("not on the ground")
-    --     if self.jumping then
-    --        -- print("jumping so should be jumping")
-    --         self:updateJumping(dt)
-    --     end
-    -- end
-    -- self.x = self.x + self.xspeed 
-    -- self.y = self.y + self.yspeed 
 end
 
 function Player:getCollisionFilter(other)
@@ -338,14 +206,6 @@ function Player:update(dt)
 
     self.states[self.state]:update(dt)
 
-    if self.state == PS_RUN then
-        self:updateRunning(dt)
-    elseif self.state == PS_SHOOTING then
-        self:updateShooting(dt)
-    elseif self.state == PS_LAUNCH then
-        self:updateLaunch(dt)
-    end
-
     self.hitBox:update(
         self.x, self.y,
         dt
@@ -385,14 +245,6 @@ function Player:draw()
             math.floor(self.launchHitBox.x),math.floor(self.launchHitBox.y)
         )
     end
-end
-
--- kind of a weak warp function
-function Player:warp(x,y)
-    self.x = x
-    self.y = y
-    self.xspeed = 0
-    self.yspeed = 0
 end
 
 function Player:doAction()
@@ -468,39 +320,6 @@ function Player:getAttackHitBoxWH()
 
     -- normal attack width if it's a horizontal attack
     return PLAYER_WIDTH * 2, PLAYER_HEIGHT / 2
-end
-
-function Player:shoot()
-    if self.state == PS_SHOOTING
-    or not self.canAttack 
-    or self.state == PS_LAUNCH then
-        return
-    end
-    self.xspeed = 0
-    self.yspeed = 0
-
-    self.canAttack = false
-    Timer.after(0.8, function()
-        self.canAttack=true
-    end)
-
-    if not self.jumpTime == self.jump_time_max then
-        self.letGoOfJump = true
-        self.jumpTime = 0
-    end
-
-    self.state = PS_SHOOTING;
-
-    self.attackDir = self:getAttackDir()
-
-    local hbX = self:getAttackHitBoxX()
-    local hbY = self:getAttackHitBoxY()
-    local hbW, hbH = self:getAttackHitBoxWH()
-
-    self.attackHitBox = HitBox(self,
-        hitBoxX, hitBoxY,
-        hbW, hbH
-    )
 end
 
 function Player:action(actionName)
