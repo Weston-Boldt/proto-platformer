@@ -6,9 +6,9 @@ local Anim8 = require'libs.anim8.anim8'
 
 local lg = love.graphics
 
-local run = 'run'
-local launch = 'launch'
-local attack = 'attack'
+local RUN = 'run'
+local LAUNCH = 'launch'
+local ATTACK = 'attack'
 
 -- local PLAYER_WIDTH, PLAYER_HEIGHT = 16, 22 LEFT = -1
 PS_RUN, PS_SHOOTING, PS_LAUNCH,
@@ -40,8 +40,7 @@ Player = Class{
 Player.__index = Player
 
 function Player:init(x,y,level)
-
-    self = Entity.init(self,dataFile, x,y,PLAYER_WIDTH,PLAYER_HEIGHT)
+    self = Entity.init(self,x,y,PLAYER_WIDTH,PLAYER_HEIGHT)
 
     self.dataFile = 'data/player-data.lua'
 
@@ -54,6 +53,8 @@ function Player:init(x,y,level)
     self.x = x
     self.y = y
 
+    print('self.x')
+    print(self.x)
     self.hitBox = HitBox(
         self,
         self.x, self.y,
@@ -62,16 +63,20 @@ function Player:init(x,y,level)
         self.y + (self.h / 2 ),
         --]]
         HITBOX_WIDTH,
-        HITBOX_HEIGHT  
+        HITBOX_HEIGHT
     )
-
-    states = {
+    print(self.x)
+    self.states = {
         run = StPlayerRunning(self),
         attack = StPlayerAttacking(self),
         launch = StLaunching(self)
     };
 
+    print(self.x)
+    self:changeState(RUN)
     self:reloadData()
+
+    print(self.x)
     return self
 end
 
@@ -326,6 +331,13 @@ function Player:update(dt)
     -- reset shooting
     -- self.shooting = false
     -- first update states
+
+    if not self.state then
+        self:changeState(RUN)
+    end
+
+    self.states[self.state]:update(dt)
+
     if self.state == PS_RUN then
         self:updateRunning(dt)
     elseif self.state == PS_SHOOTING then
@@ -495,7 +507,8 @@ function Player:action(actionName)
     if actionName == "jump" and not self.jumping then
         self:jump()
     elseif actionName == "shoot" then
-        self:shoot()
+        print('should be here')
+        self:changeState(ATTACK)
     elseif actionName == "action" then
         self:doAction()
     end

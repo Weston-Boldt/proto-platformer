@@ -1,4 +1,5 @@
 local Class = require'libs.hump.class'
+local Timer = require'libs.hump.timer'
 
 StLaunching = Class {
     __includes = StBase
@@ -6,48 +7,43 @@ StLaunching = Class {
 
 function StLaunching:init(obj)
     self = StBase.init(self, obj)
+    self.name = 'launch'
     return self
 end
 
 function StLaunching:enter()
     local obj = self.obj
-    obj.canAttack = false
+    self.obj.canAttack = false
 
-    obj.launchHitBox = HitBox(obj,
-        obj.x, obj.y,
+    self.obj.launchHitBox = HitBox(self.obj,
+        self.obj.x, self.obj.y,
         -- these will need to shift likely
-        SZ_DBL_TIRE, SZ_DBL_TILE,
+        SZ_DBL_TILE, SZ_DBL_TILE,
         true, true
     )
 
     -- if they hit a wall on their left, they should be 
     -- facing the right direciton after the launch so set that now
     -- as it's probably the most appropriate time
-    if not inTable(self.attackDir, {AD_UP, AD_DOWN}) then
-        self.dir = self.dir * -1
+    if not inTable(self.obj.attackDir, {AD_UP, AD_DOWN}) then
+        self.obj.dir = self.obj.dir * -1
     end
 
     Timer.after(2, function()
-        obj.needToLaunch = false
-        obj.canAttack = true
+        self.obj.needToLaunch = false
+        self.obj.canAttack = true
 
-        obj:detachHitBox('launchHitBox')
+        self.obj:detachHitBox('launchHitBox')
 
         self:exit()
 
     end)
+    self.obj.state = self.name
 end
 
 function StLaunching:update(dt)
     -- lol todo abstract this into a data file
     local speed = 500
-    self.x = self.x + math.sin(self.launchAngle) * dt * speed
-    self.y = self.y + math.cos(self.launchAngle) * dt * speed
-end
-
-function StLaunching:exit(obj)
-    -- clear the state key on the obj
-    -- which the obj will catch and then
-    -- reset the obj.state to another state
-    self.obj.state = nil
+    self.obj.x = self.obj.x + math.sin(self.obj.launchAngle) * dt * speed
+    self.obj.y = self.obj.y + math.cos(self.obj.launchAngle) * dt * speed
 end

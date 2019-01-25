@@ -6,14 +6,8 @@ StPlayerRunning = Class {
 
 function StPlayerRunning:init(obj)
     self = StBase.init(self, obj)
-    self.name = 'PlayerRunning'
+    self.name = 'run'
     return self
-end
-
-function StPlayerRunning:enter()
-end
-
-function StPlayerRunning:exit()
 end
 
 function StPlayerRunning:update(dt)

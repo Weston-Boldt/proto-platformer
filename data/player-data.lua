@@ -43,11 +43,10 @@ return {
     upDir = NEUTRAL,
 
     jumping = false,
-    state = PS_RUN,
 
     attackHitBox = false,
     launchHitBox = false,
-    attackTime = P_ATTACK_TIME_MAX,
+    attackTime = attack_time_max,
     doRespawn = false,
 
     health = 5,

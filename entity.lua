@@ -24,6 +24,10 @@ function Entity:init(x, y, w, h)
     return self
 end
 
+function Entity:changeState(key)
+    self.states[key]:enter()
+end
+
 function Entity:detachHitBox(hitBoxKey)
     if not self[hitBoxKey] then
         return 

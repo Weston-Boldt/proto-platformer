@@ -1,4 +1,5 @@
 local Class = require'libs.hump.class'
+local Timer = require'libs.hump.timer'
 
 StPlayerAttacking = Class {
     __includes = StBase
@@ -6,26 +7,22 @@ StPlayerAttacking = Class {
 
 function StPlayerAttacking:init(obj)
     self = StBase.init(self,obj)
+    self.name = 'attack'
     return self
-end
-
-function StPlayerAttacking:exit(obj)
-    self.state = nil
 end
 
 function StPlayerAttacking:enter()
     local obj = self.obj
-    if obj.state == 'psRun'
-    or not self.canAttack
-    or self.state == 'psLaunch' then
+    if not obj.canAttack
+    or obj.state == 'launch' then
+        print(obj.state)
         return
     end
-
+    obj.canAttack = false
     obj.xspeed = 0
     obj.yspeed = 0
     Timer.after(0.8, function()
         obj.canAttack=true
-        self:exit()
     end)
 
     if not obj.jumpTime == obj.jump_time_max then
@@ -46,12 +43,12 @@ function StPlayerAttacking:enter()
         hbW, hbH
     )
 
-    obj.state = 'psAttack'
+    obj.state = 'attack'
 end
 
 function StPlayerAttacking:update(dt)
     local obj = self.obj
-    if obj.attackTime > (self.attack_time_max - (self.attack_time_max / self.attack_start_up_div)) then
+    if obj.attackTime > (obj.attack_time_max - (obj.attack_time_max / obj.attack_start_up_div)) then
         if (keystate.left and obj.dir ~= LEFT)
         or (keystate.right and obj.dir ~= RIGHT) then
             obj.lastDir = obj.dir
@@ -74,13 +71,14 @@ function StPlayerAttacking:update(dt)
         -- detatch the hitbox off the object
         -- to get swept up and removed by the 
         -- print("before "..tostring(obj.attackHitBox.obj))
-        obj.detachHitBox('attackHitBox')
+        obj:detachHitBox('attackHitBox')
 
-        obj.attackTime = self.attack_time_max
+        obj.attackTime = obj.attack_time_max
         if obj.needToLaunch then
-            obj.launch(dt)
+            print('about to launch')
+            obj:changeState('launch')
         else
-            obj.state = PS_RUN
+            self:exit()
         end
     end
 end

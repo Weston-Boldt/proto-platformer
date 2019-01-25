@@ -135,13 +135,18 @@ function Map:getObjectToSpawn(objName)
     -- print("objName = "..tostring(objName))
     objects = {
         Player = function (x, y)
+            print("here i am")
             self.player = Player(x,y)
+            print(self.player)
+            print('self.player.x')
+            print(self.player.x)
             self:addEntityToWorld(self.player)
             self:addEntityToHitBoxWorld(self.player.hitBox)
             -- print("player collisions = "..tostring(self.player.collisions))
             return self.player
         end,
         BaseEnemy = function (x, y)
+            print("here i am 2")
             local baseEnemy = BaseEnemy(x,y)
             self:addEntityToWorld(baseEnemy)
             self:addEntityToHitBoxWorld(baseEnemy.hitBox)

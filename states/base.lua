@@ -4,7 +4,7 @@ StBase = Class {
 }
 
 function StBase:init(obj, beforeFn, afterFn)
-    self.name = 'Running';
+    self.name = 'run';
     self.obj = obj;
     self.beforeFn = beforeFn;
     self.afterFn = afterFn;
@@ -12,9 +12,13 @@ function StBase:init(obj, beforeFn, afterFn)
 end
 
 function StBase:enter(dt)
+    print("self.name = "..self.name)
+    self.obj.state = self.name
 end
 
 function StBase:exit(dt)
+    print("self.name = "..self.name)
+    self.obj.state = nil
 end
 
 function StBase:before(dt)
