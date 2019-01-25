@@ -455,7 +455,7 @@ function Player:getAttackHitBoxWH()
     end
 
     -- normal attack width if it's a horizontal attack
-    return PLAYER_WIDTH * 2, PLAYER_HEIGHT
+    return PLAYER_WIDTH * 2, PLAYER_HEIGHT / 2
 end
 
 function Player:shoot()
