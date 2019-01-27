@@ -43,7 +43,7 @@ end
 
 function StLaunching:update(dt)
     -- lol todo abstract this into a data file
-    local speed = 500
+    local speed = 1000
     self.obj.x = self.obj.x + math.sin(self.obj.launchAngle) * dt * speed
     self.obj.y = self.obj.y + math.cos(self.obj.launchAngle) * dt * speed
 end
