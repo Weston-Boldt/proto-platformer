@@ -26,7 +26,7 @@ P_JUMP_TIME_MAX = 0.5
 
 P_ATTACK_TIME_MAX = 0.5
 
-local DAMAGE_TIME_MAX = 0.5
+DAMAGE_TIME_MAX = 0.5
 
 Player = Class{
     --[[
@@ -53,8 +53,6 @@ function Player:init(x,y,level)
     self.x = x
     self.y = y
 
-    print('self.x')
-    print(self.x)
     self.hitBox = HitBox(
         self,
         self.x, self.y,
@@ -65,18 +63,15 @@ function Player:init(x,y,level)
         HITBOX_WIDTH,
         HITBOX_HEIGHT
     )
-    print(self.x)
     self.states = {
         run = StPlayerRunning(self),
         attack = StPlayerAttacking(self),
         launch = StLaunching(self)
     };
 
-    print(self.x)
     self:changeState(RUN)
     self:reloadData()
 
-    print(self.x)
     return self
 end
 
@@ -173,12 +168,6 @@ function Player:jump()
         self.letGoOfJump = false
         self.yspeed = self.yspeed - self.jumpAcc
     end
-end
-
-function Player:updateLaunch(dt)
-    local speed = 500
-    self.x = self.x + math.sin(self.launchAngle) * dt * speed
-    self.y = self.y + math.cos(self.launchAngle) * dt * speed
 end
 
 function Player:getAttackHitBoxRect()

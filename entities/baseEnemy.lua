@@ -6,55 +6,39 @@ BaseEnemy = Class{
     __includes = Entity
 }
 
-local ENEMY_HEIGHT = 64
-local ENEMY_WIDTH = 32
-local HITBOX_HEIGHT = 64
-local HITBOX_WIDTH = 32
+BASE_ENEMY_HEIGHT = 64
+BASE_ENEMY_WIDTH = 32
+BASE_ENEMY_HITBOX_HEIGHT = 64
+BASE_ENEMY_HITBOX_WIDTH = 32
 
 -- enemy states
-local ENS_RUN, ENS_DAMAGE, ENS_DEAD = 0, 1, 2
+ENS_RUN, ENS_DAMAGE, ENS_DEAD = 0, 1, 2
 
-local MAX_SPEED = 80
+MAX_SPEED = 80
 
-local BASE_FRICTION = 10
+BASE_FRICTION = 10
 
-local DAMAGE_TIME_MAX = 0.5
+DAMAGE_TIME_MAX = 0.5
 
 function BaseEnemy:init(x,y)
-    Entity:init(x,y,ENEMY_WIDTH, ENEMY_HEIGHT)
-    print("top of BaseEnemy init")
+    Entity:init(x,y,BASE_ENEMY_WIDTH, BASE_ENEMY_HEIGHT)
+
     self.img = love.graphics.newImage('assets/base_enemy_block.png')
     self.name = "BaseEnemy"
     self.collType = "bounce"
 
     self.x = x
     self.y = y
-    self.w = ENEMY_WIDTH
-    self.h = ENEMY_HEIGHT
 
     self.dataFile = 'data/baseEnemy-data.lua'
 
-    self.hitBox = HitBox(self, self.x, self.y, HITBOX_WIDTH, HITBOX_HEIGHT)
-    self.xspeed = 0;
-    self.yspeed = 0;
+    self.hitBox = HitBox(self,
+        self.x, self.y,
+        BASE_ENEMY_HITBOX_WIDTH,
+        BASE_ENEMY_HITBOX_HEIGHT
+    )
 
-    self.xacc = 25
-    self.moving = true
-    self.onGround = false
-    self.lastDir = RIGHT
-    self.dir = RIGHT
-    self.friction = 10
-    self.gravity = NORMAL_GRAVITY
-    self.state = ENS_RUN
-    self.health = BASE_HEALTH
-
-    self.active = true
-
-    self.damageTime = DAMAGE_TIME_MAX
-
-    print('health= '..tostring(self.health))
-
-    print("enemy hitbox = "..tostring(self.hitBox))
+    self:reloadData()
     return self
 end
 

@@ -18,7 +18,7 @@ function StLaunching:enter()
     self.obj.launchHitBox = HitBox(self.obj,
         self.obj.x, self.obj.y,
         -- these will need to shift likely
-        SZ_DBL_TILE, SZ_DBL_TILE,
+        SZ_TILE, SZ_DBL_TILE,
         true, true
     )
 
