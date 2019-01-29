@@ -1,5 +1,8 @@
 # Core Mechanics
 
+maybe the player can 'select' attacks
+like the player could have the punch attack, a grab, and maybe a projectile attack?
+
 ## Player's Punch
 
 Player has a punch button, when pressed the player can attempt to land an attack so hard that the
