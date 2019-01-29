@@ -13,6 +13,9 @@
 - Make State machine objects or some kinda component thing to reuse
     some code, for instance the entities all need to launch, not just the player
 
+- Character / Enemy Designs
+    - In progress
+
 - Design Documents
     - struggling to get to this
 
