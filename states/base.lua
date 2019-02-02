@@ -22,11 +22,15 @@ function StBase:exit(dt)
 end
 
 function StBase:before(dt)
-    call(self.beforeFn(dt, self.obj))
+    if (self.beforeFn) then
+        self.beforeFn(dt, self.obj)
+    end
 end
 
 function StBase:after(dt)
-    call(self.afterFn(dt, self.obj))
+    if (self.afterFn) then
+        self.afterFn(dt, self.obj)
+    end
 end
 
 function StBase:update(dt)

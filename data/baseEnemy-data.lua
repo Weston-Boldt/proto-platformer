@@ -11,7 +11,6 @@ return {
     dir = RIGHT,
     friction = 10,
     gravity = NORMAL_GRAVITY,
-    state = ENS_RUN,
     health = BASE_HEALTH,
 
     active = true,

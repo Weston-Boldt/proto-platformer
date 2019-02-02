@@ -11,8 +11,6 @@ local LAUNCH = 'launch'
 local ATTACK = 'attack'
 
 -- local PLAYER_WIDTH, PLAYER_HEIGHT = 16, 22 LEFT = -1
-PS_RUN, PS_SHOOTING, PS_LAUNCH,
-PS_THROW, PS_DEAD, PS_DMG = 0,1,2,3,4,5,6 -- Player states 
 PLAYER_WIDTH = SZ_TILE
 PLAYER_HEIGHT = SZ_DBL_TILE
 -- give the player a bit of edge room when being attacked

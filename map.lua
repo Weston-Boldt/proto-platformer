@@ -367,6 +367,7 @@ function Map:handleAttack(attack)
     --[[ good spot for screen shake ]]--
     print('screenshake')
     self.screenShake = true
+    -- TODO this is a good indicator for an EVENT
     Timer.after(0.1, function() self.screenShake = false end)
 end
 

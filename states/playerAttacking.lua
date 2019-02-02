@@ -30,8 +30,6 @@ function StPlayerAttacking:enter()
         obj.jumpTime = 0
     end
 
-    obj.state = PS_SHOOTING;
-
     obj.attackDir = obj:getAttackDir()
 
     local hbX = obj:getAttackHitBoxX()

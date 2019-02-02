@@ -19,6 +19,10 @@ function Entity:init(x, y, w, h)
     self.w = w
     self.h = h
 
+    self.states = {
+        base = StBase(self)
+    }
+
     self.dataFile = 'data/entity-data.lua'
     self:reloadData()
     return self

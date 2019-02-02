@@ -11,6 +11,10 @@ BASE_ENEMY_WIDTH = 32
 BASE_ENEMY_HITBOX_HEIGHT = 64
 BASE_ENEMY_HITBOX_WIDTH = 32
 
+local RUN = 'run'
+local DAMAGE = 'damage'
+local DEAD = 'dead'
+
 -- enemy states
 ENS_RUN, ENS_DAMAGE, ENS_DEAD = 0, 1, 2
 
@@ -38,11 +42,24 @@ function BaseEnemy:init(x,y)
         BASE_ENEMY_HITBOX_HEIGHT
     )
 
+    self.states = {
+        run = StRunning(self),
+        damage = StDamage(self),
+        dead = StDead(self)
+    }
+    self.state = RUN
     self:reloadData()
     return self
 end
 
 function BaseEnemy:update(dt)
+    if not self.state then
+        self:changeState(RUN)
+    end
+
+    self.states[self.state]:update(dt)
+
+    --[[
     if self.state == ENS_RUN then
         self:updateRunning(dt)
     elseif self.state == ENS_DAMAGE then
@@ -54,6 +71,7 @@ function BaseEnemy:update(dt)
 
         self:updateDead(dt)
     end
+    --]]
 
     -- print("hitting baseEnemy:update")
     self.hitBox:update(self.x,self.y,dt)
@@ -88,7 +106,7 @@ function BaseEnemy:handleCollisions(collisions,dt)
 end
 
 function BaseEnemy:setDamage(attackDmg)
-    if self.state == ENS_DAMAGE then
+    if self.state == DAMAGE then
         return
     end
 
@@ -96,10 +114,9 @@ function BaseEnemy:setDamage(attackDmg)
     print('self.health = '..tostring(self.health))
     if self.health <= 0 then
         print('state should be dead')
-        self.state = ENS_DEAD
+        self:changeState(DEAD)
     else
-        self.foo = ''
-        self.state = ENS_DAMAGE
+        self:changeState(DAMAGE)
     end
 
     self.damageTime = DAMAGE_TIME_MAX
@@ -109,7 +126,7 @@ function BaseEnemy:updateDamage(dt)
     if self.damageTime > 0 then
         self.damageTime = self.damageTime - dt
     else
-        self.state = ENS_RUN
+        self:changeState(RUN)
     end
 end
 
