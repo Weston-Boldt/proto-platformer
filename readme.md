@@ -2,6 +2,7 @@
 > in development platformer written for love2d
 > game in pre-pre-alpha
 
+> currently working on art assets and design stuff
 ---
 
 ## First TODOs
