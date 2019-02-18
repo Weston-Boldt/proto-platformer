@@ -241,8 +241,9 @@ end
 function Player:getAttackHitBoxY()
     if self.attackDir == AD_UP then
         return self.y - (self.h / 2)
-    elseif self.attackDir == AD_UP_DIAG then
-        return self.y - (self.h / 2)
+    elseif self.attackDir == AD_UP_DIAG
+    or self.attackDir == AD_DOWN_DIAG then
+        return self.y
     elseif self.attackDir == AD_DOWN then
         return self.y + self.h 
     elseif self.attackDir == AD_DOWN_DIAG then
@@ -301,7 +302,9 @@ function Player:getAttackHitBoxWH()
         return PLAYER_WIDTH, (PLAYER_HEIGHT / 2) + 5 
     -- shorten just the width if it's just up && down
     elseif self.attackDir == AD_UP
-    or self.attackDir == AD_DOWN then
+    or self.attackDir == AD_DOWN
+    or self.attackDir == AD_UP_DIAG
+    or self.attackDir == AD_DOWN_DIAG then
         return PLAYER_WIDTH, PLAYER_HEIGHT
     end
 
