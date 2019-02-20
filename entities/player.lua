@@ -299,7 +299,7 @@ function Player:getAttackHitBoxWH()
     or self.attackDir == AD_DOWN_DIAG then
         -- give height a little bit more that way it'll
         -- cause launching when hitting a diag
-        return PLAYER_WIDTH, (PLAYER_HEIGHT / 2) + 5 
+        return PLAYER_WIDTH, PLAYER_HEIGHT
     -- shorten just the width if it's just up && down
     elseif self.attackDir == AD_UP
     or self.attackDir == AD_DOWN

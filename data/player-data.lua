@@ -20,7 +20,7 @@ return {
     launch_time = 2,
 
     -- see 16 in updateShooting def (ATTACK_TIME_MAX - (ATTACK_TIME_MAX / 16))
-    attack_start_up_div = 16,
+    attack_start_up_div = 32,
 
     launch_speed = 500,
 
