@@ -1,0 +1,6 @@
+[submodule "libs/HUMP"]
+	path = libs/HUMP
+	url = https://love2d.org/wiki/HUMP
+[submodule "bump"]
+	path = libs/bump.lua
+	url = https://github.com/kikito/bump.lua
