@@ -44,7 +44,7 @@
 ## Installation
 
 ```sh
-$ git clone https://github.com/Weston-Boldt/proto-platformer
+$ git clone https://github.com/head-lamp/proto-platformer
 ```
 
 ## Useage
